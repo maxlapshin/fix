@@ -8,5 +8,5 @@
                   stdlib
                  ]},
   {mod, { fix_app, []}},
-  {env, []}
+  {env, [{config, []}]}
  ]}.
