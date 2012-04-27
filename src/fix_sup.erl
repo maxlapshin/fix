@@ -23,7 +23,7 @@ start_session(Name, Desc) ->
   }).
 
 
-init([fix_connection]) ->
+init([fix_session]) ->
   {ok, {{one_for_one, 5, 10}, []}};
 
 init([]) ->
