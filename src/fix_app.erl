@@ -12,10 +12,11 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
-  case file:path_consult("fix.conf", ["."]) of
-    {ok, Env, _} ->
+  case file:path_consult(["."], "fix.conf") of
+    {ok, Env, Path} ->
+      error_logger:info_msg("Load FIX config from ~s~n", [Path]),
       application:set_env(fix, config, Env);
-    _ ->
+    {error, enoent} ->
       ok
   end,  
   fix_sup:start_link().

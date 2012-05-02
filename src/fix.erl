@@ -12,44 +12,6 @@
 
 -type fix_message() :: any().
 
-login() ->
-  {ok, Env} = application:get_env(fix, config),
-  {ip, IP} = lists:keyfind(ip, 1, Env),
-  {port, Port} = lists:keyfind(port, 1, Env),
-  {password, Password} = lists:keyfind(password, 1, Env),
-  {target, TargetCompID} = lists:keyfind(target, 1, Env),
-  put(target_id, TargetCompID),
-  {sender, SenderCompID} = lists:keyfind(sender, 1, Env),
-  put(sender_id, SenderCompID),
-  {heartbeat, HeartBTInt} = lists:keyfind(heartbeat, 1, Env),
-  
-  {ok, Sock} = gen_tcp:connect(IP, Port, [binary, {packet,raw}, {active, false}]),
-  put(seq_num, 1),
-  
-  Bin1 = pack(logon, [{'EncryptMethod', 0},{'HeartBTInt', HeartBTInt},{'ResetSeqNumFlag', "Y"},{'Password', Password}]),
-  ok = gen_tcp:send(Sock, Bin1),
-  {ok, R1} = gen_tcp:recv(Sock, 0, 4000),
-  ?D(decode(R1)),
-  
-  Bin2 = pack(market_data, [{'MDReqID', 42}, {'SubscriptionRequestType', 1}, {'MarketDepth', 1}, {'MDUpdateType', 0},
-    {'NoMDEntryTypes',2},{'MDEntryType',0},{'MDEntryType',1},{'NoRelatedSym',1},
-    {'Symbol', proplists:get_value(symbol, Env)},{'CFICode', "EXXXXX"},{'SecurityExchange', proplists:get_value(security, Env)}]),
-  gen_tcp:send(Sock, Bin2),
-
-  % timer:send_after(HeartBTInt*1000, hearbeat),
-
-  {ok, R2} = gen_tcp:recv(Sock, 0, 4000),
-  ?D(decode(R2)),
-
-  {ok, R3} = gen_tcp:recv(Sock, 0, 4000),
-  ?D(decode(R3)),
-  
-  Bin10 = pack(logout, [{'Text', "closing"}]),
-  ok = gen_tcp:send(Sock, Bin10),
-  gen_tcp:close(Sock),
-  ok.
-  % Bin.
-
 pack(MessageType, Body) ->
   Seq = get(seq_num),
   Bin = pack(MessageType, Body, Seq, get(sender_id), get(target_id)),

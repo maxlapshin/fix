@@ -41,14 +41,14 @@ open() ->
 logon(Pid) ->
   Password = get(Pid, password),
   Heartbeat = get(Pid, hearbeat),
-  gen_server:call(Pid, {msg, logon, [{'EncryptMethod', 0},{'HeartBTInt', Heartbeat},{'ResetSeqNumFlag', "Y"},{'Password', Password}]}),
+  gen_server:call(Pid, {msg, logon, [{encrypt_method, 0},{heart_bt_int, Heartbeat},{reset_seq_num_flag, "Y"},{password, Password}]}),
   ok.
 
 subscribe(Pid, Symbol, Exchange) ->
-  Opts = [{'MDReqID', 42}, {'SubscriptionRequestType', 1}, {'MarketDepth', 0}, {'MDUpdateType', 0},
-    {'NoMDEntryTypes',2},{'MDEntryType',0},{'MDEntryType',1},{'NoRelatedSym',1},
-    {'Symbol', Symbol},{'CFICode', "EXXXXX"},{'SecurityExchange', Exchange}],
-  gen_server:call(Pid, {msg, market_data, Opts}),
+  Opts = [{md_req_id, 42}, {subscription_request_type, 1}, {market_depth, 0}, {md_update_type, 0},
+    {no_md_entry_types,2},{md_entry_type,0},{md_entry_type,1},{no_related_sym,1},
+    {symbol, Symbol},{cfi_code, "EXXXXX"},{security_exchange, Exchange}],
+  gen_server:call(Pid, {msg, market_data_request, Opts}),
   ok.
 
 init([Consumer, Options]) ->
@@ -57,7 +57,7 @@ init([Consumer, Options]) ->
   {password, Password} = lists:keyfind(password, 1, Options),
   {sender, Sender} = lists:keyfind(sender, 1, Options),
   {target, Target} = lists:keyfind(target, 1, Options),
-  {hearbeat, Heartbeat} = lists:keyfind(hearbeat, 1, Options),
+  Heartbeat = proplists:get_value(heartbeat, Options, 30),
   {ok, Socket} = gen_tcp:connect(Host, Port, [binary, {packet,raw}, {active, once}]),
   timer:send_interval(Heartbeat*1000, hearbeat),
   erlang:monitor(process, Consumer),
@@ -72,23 +72,14 @@ handle_info({'DOWN', _, _, Consumer, _}, #fix_session{consumer = Consumer} = Ses
   ?D({session_exit}),
   {stop, normal, send(logout, [], Session)};
 
-handle_info({tcp, Socket, Data}, #fix_session{buffer = Buffer, consumer = Consumer} = Session) ->
+handle_info({tcp, Socket, Data}, #fix_session{buffer = Buffer} = Session) ->
   Bin = case Buffer of
     <<>> -> Data;
     _ -> <<Buffer/binary, Data/binary>>
   end,
   inet:setopts(Socket, [{active,once}]),
-  case fix:decode(Bin) of
-    % FIXME: сделать парсинг нескольких сообщений в пакете
-    {ok, Message, Rest} ->
-      ?D({fix, Message}),
-      Consumer ! {fix, self(), Message},
-      {noreply, Session#fix_session{buffer = Rest}};
-    {more, _} ->
-      {noreply, Session#fix_session{buffer = Bin}};
-    error ->
-      {stop, {error, {invalid_fix, Bin}}, Session}
-  end;    
+  {Messages, Rest} = decode_messages(Bin),
+  handle_messages(Messages, Session#fix_session{buffer = Rest});
 
 handle_info(Msg, Session) ->
   ?D({unknown,Msg}),
@@ -111,3 +102,22 @@ send(MessageType, Body, #fix_session{seq = Seq, sender = Sender, target = Target
 
 terminate(_,_) ->
   ok.
+
+decode_messages(Bin) ->
+  decode_messages(Bin, []).
+
+decode_messages(Bin, Acc) ->
+  case fix:decode(Bin) of
+    {ok, Message, Rest} ->
+      decode_messages(Rest, [Message|Acc]);
+    {more, _} ->
+      {lists:reverse(Acc), Bin}
+  end.
+
+handle_messages([Message|Messages], #fix_session{consumer = Consumer} = Session) ->
+  ?D({fix, Message}),
+  Consumer ! {fix, self(), Message},
+  handle_messages(Messages, Session);
+
+handle_messages([], #fix_session{} = Session) ->
+  {noreply, Session}.
