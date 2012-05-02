@@ -1,4 +1,8 @@
 -record(ioi, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   ioi_id,
   ioi_trans_type,
   ioi_ref_id,
@@ -24,6 +28,10 @@
 }).
 
 -record(advertisement, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   adv_id,
   adv_trans_type,
   adv_ref_id,
@@ -45,6 +53,10 @@
 }).
 
 -record(execution_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   secondary_order_id,
   secondary_cl_ord_id,
@@ -193,6 +205,10 @@
 }).
 
 -record(order_cancel_reject, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   secondary_order_id,
   secondary_cl_ord_id,
@@ -218,6 +234,10 @@
 }).
 
 -record(news, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   orig_time,
   urgency,
   headline,
@@ -235,6 +255,10 @@
 }).
 
 -record(email, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   email_thread_id,
   email_type,
   orig_time,
@@ -254,6 +278,10 @@
 }).
 
 -record(new_order_single, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   cl_ord_id,
   secondary_cl_ord_id,
   cl_ord_link_id,
@@ -328,6 +356,10 @@
 }).
 
 -record(new_order_list, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   bid_id,
   client_bid_id,
@@ -420,6 +452,10 @@
 }).
 
 -record(order_cancel_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   orig_cl_ord_id,
   order_id,
   cl_ord_id,
@@ -440,6 +476,10 @@
 }).
 
 -record(order_cancel_replace_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   trade_origination_date,
   trade_date,
@@ -514,6 +554,10 @@
 }).
 
 -record(order_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   cl_ord_id,
   secondary_cl_ord_id,
@@ -526,6 +570,10 @@
 }).
 
 -record(allocation_instruction, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   alloc_id,
   alloc_trans_type,
   alloc_type,
@@ -624,6 +672,10 @@
 }).
 
 -record(list_cancel_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   transact_time,
   trade_origination_date,
@@ -635,6 +687,10 @@
 }).
 
 -record(list_execute, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   client_bid_id,
   bid_id,
@@ -646,6 +702,10 @@
 }).
 
 -record(list_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   text,
   encoded_text_len,
@@ -654,6 +714,10 @@
 }).
 
 -record(list_status, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   list_status_type,
   no_rpts,
@@ -681,6 +745,10 @@
 }).
 
 -record(allocation_instruction_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   alloc_id,
   secondary_alloc_id,
   trade_date,
@@ -707,6 +775,10 @@
 }).
 
 -record(dont_know_trade, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   secondary_order_id,
   exec_id,
@@ -721,6 +793,10 @@
 }).
 
 -record(quote_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   rfq_req_id,
   cl_ord_id,
@@ -761,6 +837,10 @@
 }).
 
 -record(quote, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   quote_id,
   quote_resp_id,
@@ -822,6 +902,10 @@
 }).
 
 -record(settlement_instructions, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   settl_inst_msg_id,
   settl_inst_req_id,
   settl_inst_mode,
@@ -854,6 +938,10 @@
 }).
 
 -record(market_data_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   md_req_id,
   subscription_request_type,
   market_depth,
@@ -871,6 +959,10 @@
 }).
 
 -record(market_data_snapshot_full_refresh, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   md_req_id,
   financial_status,
   corporate_action,
@@ -914,6 +1006,10 @@
 }).
 
 -record(market_data_incremental_refresh, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   md_req_id,
   md_update_action,
   delete_reason,
@@ -961,6 +1057,10 @@
 }).
 
 -record(market_data_request_reject, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   md_req_id,
   md_req_rej_reason,
   alt_md_source_id,
@@ -971,6 +1071,10 @@
 }).
 
 -record(quote_cancel, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   quote_id,
   quote_cancel_type,
@@ -984,6 +1088,10 @@
 }).
 
 -record(quote_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_status_req_id,
   quote_id,
   account,
@@ -996,6 +1104,10 @@
 }).
 
 -record(mass_quote_acknowledgement, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   quote_id,
   quote_status,
@@ -1040,6 +1152,10 @@
 }).
 
 -record(security_definition_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_request_type,
   currency,
@@ -1054,6 +1170,10 @@
 }).
 
 -record(security_definition, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_response_id,
   security_response_type,
@@ -1070,6 +1190,10 @@
 }).
 
 -record(security_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_status_req_id,
   currency,
   subscription_request_type,
@@ -1079,6 +1203,10 @@
 }).
 
 -record(security_status, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_status_req_id,
   currency,
   trading_session_id,
@@ -1104,6 +1232,10 @@
 }).
 
 -record(trading_session_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trad_ses_req_id,
   trading_session_id,
   trading_session_sub_id,
@@ -1114,6 +1246,10 @@
 }).
 
 -record(trading_session_status, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trad_ses_req_id,
   trading_session_id,
   trading_session_sub_id,
@@ -1135,6 +1271,10 @@
 }).
 
 -record(mass_quote, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   quote_id,
   quote_type,
@@ -1176,6 +1316,10 @@
 }).
 
 -record(business_message_reject, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   ref_seq_num,
   ref_msg_type,
   business_reject_ref_id,
@@ -1187,6 +1331,10 @@
 }).
 
 -record(bid_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   bid_id,
   client_bid_id,
   bid_request_trans_type,
@@ -1238,6 +1386,10 @@
 }).
 
 -record(bid_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   bid_id,
   client_bid_id,
   list_id,
@@ -1258,6 +1410,10 @@
 }).
 
 -record(list_strike_price, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   list_id,
   tot_no_strikes,
   last_fragment,
@@ -1274,6 +1430,10 @@
 }).
 
 -record(registration_instructions, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   regist_id,
   regist_trans_type,
   regist_ref_id,
@@ -1302,6 +1462,10 @@
 }).
 
 -record(registration_instructions_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   regist_id,
   regist_trans_type,
   regist_ref_id,
@@ -1315,6 +1479,10 @@
 }).
 
 -record(order_mass_cancel_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   cl_ord_id,
   secondary_cl_ord_id,
   mass_cancel_request_type,
@@ -1329,6 +1497,10 @@
 }).
 
 -record(order_mass_cancel_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   cl_ord_id,
   secondary_cl_ord_id,
   order_id,
@@ -1351,6 +1523,10 @@
 }).
 
 -record(new_order_cross, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   cross_id,
   cross_type,
   cross_prioritization,
@@ -1426,6 +1602,10 @@
 }).
 
 -record(cross_order_cancel_replace_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   cross_id,
   orig_cross_id,
@@ -1505,6 +1685,10 @@
 }).
 
 -record(cross_order_cancel_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   cross_id,
   orig_cross_id,
@@ -1527,6 +1711,10 @@
 }).
 
 -record(security_type_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   text,
   encoded_text_len,
@@ -1540,6 +1728,10 @@
 }).
 
 -record(security_types, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_response_id,
   security_response_type,
@@ -1559,6 +1751,10 @@
 }).
 
 -record(security_list_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_list_request_type,
   currency,
@@ -1572,6 +1768,10 @@
 }).
 
 -record(security_list, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_response_id,
   security_request_result,
@@ -1592,6 +1792,10 @@
 }).
 
 -record(derivative_security_list_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_list_request_type,
   security_sub_type,
@@ -1606,6 +1810,10 @@
 }).
 
 -record(derivative_security_list, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   security_req_id,
   security_response_id,
   security_request_result,
@@ -1622,6 +1830,10 @@
 }).
 
 -record(new_order_multileg, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   cl_ord_id,
   secondary_cl_ord_id,
   cl_ord_link_id,
@@ -1707,6 +1919,10 @@
 }).
 
 -record(multileg_order_cancel_replace, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   order_id,
   orig_cl_ord_id,
   cl_ord_id,
@@ -1795,6 +2011,10 @@
 }).
 
 -record(trade_capture_report_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trade_request_id,
   trade_request_type,
   subscription_request_type,
@@ -1830,6 +2050,10 @@
 }).
 
 -record(trade_capture_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trade_report_id,
   trade_report_trans_type,
   trade_report_type,
@@ -1955,6 +2179,10 @@
 }).
 
 -record(order_mass_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   mass_status_req_id,
   mass_status_req_type,
   account,
@@ -1966,6 +2194,10 @@
 }).
 
 -record(quote_request_reject, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_req_id,
   rfq_req_id,
   quote_request_reject_reason,
@@ -2004,6 +2236,10 @@
 }).
 
 -record(rfq_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   rfq_req_id,
   prev_close_px,
   quote_request_type,
@@ -2015,6 +2251,10 @@
 }).
 
 -record(quote_status_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_status_req_id,
   quote_req_id,
   quote_id,
@@ -2075,6 +2315,10 @@
 }).
 
 -record(quote_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   quote_resp_id,
   quote_id,
   quote_resp_type,
@@ -2138,6 +2382,10 @@
 }).
 
 -record(confirmation, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   confirm_id,
   confirm_ref_id,
   confirm_req_id,
@@ -2207,6 +2455,10 @@
 }).
 
 -record(position_maintenance_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   pos_req_id,
   pos_trans_type,
   pos_maint_action,
@@ -2233,6 +2485,10 @@
 }).
 
 -record(position_maintenance_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   pos_maint_rpt_id,
   pos_trans_type,
   pos_req_id,
@@ -2259,6 +2515,10 @@
 }).
 
 -record(request_for_positions, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   pos_req_id,
   pos_req_type,
   match_status,
@@ -2282,6 +2542,10 @@
 }).
 
 -record(request_for_positions_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   pos_maint_rpt_id,
   pos_req_id,
   total_num_pos_reports,
@@ -2301,6 +2565,10 @@
 }).
 
 -record(position_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   pos_maint_rpt_id,
   pos_req_id,
   pos_req_type,
@@ -2329,6 +2597,10 @@
 }).
 
 -record(trade_capture_report_request_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trade_request_id,
   trade_request_type,
   subscription_request_type,
@@ -2345,6 +2617,10 @@
 }).
 
 -record(trade_capture_report_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   trade_report_id,
   trade_report_trans_type,
   trade_report_type,
@@ -2396,6 +2672,10 @@
 }).
 
 -record(allocation_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   alloc_report_id,
   alloc_id,
   alloc_trans_type,
@@ -2498,6 +2778,10 @@
 }).
 
 -record(allocation_report_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   alloc_report_id,
   alloc_id,
   secondary_alloc_id,
@@ -2525,6 +2809,10 @@
 }).
 
 -record(confirmation_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   confirm_id,
   trade_date,
   transact_time,
@@ -2538,6 +2826,10 @@
 }).
 
 -record(settlement_instruction_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   settl_inst_req_id,
   transact_time,
   alloc_account,
@@ -2556,6 +2848,10 @@
 }).
 
 -record(assignment_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   asgn_rpt_id,
   tot_num_assignment_reports,
   last_rpt_requested,
@@ -2581,6 +2877,10 @@
 }).
 
 -record(collateral_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_req_id,
   coll_asgn_reason,
   transact_time,
@@ -2625,6 +2925,10 @@
 }).
 
 -record(collateral_assignment, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_asgn_id,
   coll_req_id,
   coll_asgn_reason,
@@ -2672,6 +2976,10 @@
 }).
 
 -record(collateral_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_resp_id,
   coll_asgn_id,
   coll_req_id,
@@ -2715,6 +3023,10 @@
 }).
 
 -record(collateral_report, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_rpt_id,
   coll_inquiry_id,
   coll_status,
@@ -2759,6 +3071,10 @@
 }).
 
 -record(collateral_inquiry, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_inquiry_id,
   coll_inquiry_qualifier,
   subscription_request_type,
@@ -2799,6 +3115,10 @@
 }).
 
 -record(network_counterparty_system_status_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   network_request_type,
   network_request_id,
   ref_comp_id,
@@ -2809,6 +3129,10 @@
 }).
 
 -record(network_counterparty_system_status_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   network_status_response_type,
   network_request_id,
   network_response_id,
@@ -2823,6 +3147,10 @@
 }).
 
 -record(user_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   user_request_id,
   user_request_type,
   username,
@@ -2834,6 +3162,10 @@
 }).
 
 -record(user_response, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   user_request_id,
   username,
   user_status,
@@ -2842,6 +3174,10 @@
 }).
 
 -record(collateral_inquiry_ack, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   coll_inquiry_id,
   coll_inquiry_status,
   coll_inquiry_result,
@@ -2874,6 +3210,10 @@
 }).
 
 -record(confirmation_request, {
+  sender_comp_id,
+  target_comp_id,
+  msg_seq_num,
+  sending_time,
   confirm_req_id,
   confirm_type,
   cl_ord_id,
