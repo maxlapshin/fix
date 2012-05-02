@@ -5,7 +5,7 @@
 -export([start_link/2]).
 -export([init/1, handle_info/2, handle_call/3, terminate/2]).
 -export([open/0, default_options/0]).
--export([logon/1, subscribe/3]).
+-export([logon/1, subscribe/3, status/1]).
 
 -record(fix_session, {
   socket,
@@ -52,6 +52,10 @@ subscribe(Pid, Symbol, Exchange) ->
   gen_server:call(Pid, {msg, market_data_request, Opts}),
   ok.
 
+
+status(Pid) ->
+  gen_server:call(Pid, status).
+
 init([Consumer, Options]) ->
   {host, Host} = lists:keyfind(host, 1, Options),
   {port, Port} = lists:keyfind(port, 1, Options),
@@ -86,11 +90,14 @@ handle_info(Msg, Session) ->
   ?D({unknown,Msg}),
   {noreply, Session}.
 
-handle_call({get_field, Key}, _From, Media) ->
-  {reply, get(Media, Key), Media};
+handle_call({get_field, Key}, _From, Session) ->
+  {reply, get(Session, Key), Session};
 
-handle_call({set_field, Key, Value}, _From, Media) ->
-  {reply, ok, set(Media, Key, Value)};
+handle_call({set_field, Key, Value}, _From, Session) ->
+  {reply, ok, set(Session, Key, Value)};
+
+handle_call(status, _From, #fix_session{} = Session) ->
+  {reply, [], Session};
 
 handle_call({msg, MessageType, Body}, _From, #fix_session{} = Session) ->  
   {reply, ok, send(MessageType, Body, Session)}.
