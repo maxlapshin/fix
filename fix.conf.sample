@@ -1,0 +1,8 @@
+{host, "broker.com"}.
+{port, 9000}.
+{password, "Password"}.
+{target, "TargetCompID"}.
+{sender, "SenderCompID"}.
+{heartbeat, 30}.
+{symbol, "APPL"}.
+{security, "NYSE"}.

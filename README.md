@@ -17,4 +17,9 @@ Mention that FIX names such as `RefSeqNum` are translated to more convenient `re
 Usage
 =====
 
-Empty here yet.
+Edit fix.conf.sample and put it into root of your project.
+
+Don't forget to `application:start(fix).`
+
+Now take a look at `fix_session:open/0`. This call creates session, login to broker and subscribe to market data.
+
