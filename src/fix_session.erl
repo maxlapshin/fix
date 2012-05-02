@@ -4,7 +4,8 @@
 
 -export([start_link/2]).
 -export([init/1, handle_info/2, handle_call/3, terminate/2]).
--export([open/0, logon/1, default_options/0]).
+-export([open/0, default_options/0]).
+-export([logon/1, subscribe/3]).
 
 -record(fix_session, {
   socket,
@@ -96,6 +97,7 @@ handle_call({msg, MessageType, Body}, _From, #fix_session{} = Session) ->
 
 
 send(MessageType, Body, #fix_session{seq = Seq, sender = Sender, target = Target, socket = Socket} = Session) ->
+  ?D({pack, MessageType, Body, Seq, Sender, Target}),
   Bin = fix:pack(MessageType, Body, Seq, Sender, Target),
   gen_tcp:send(Socket, Bin),
   Session#fix_session{seq = Seq + 1}.
@@ -111,7 +113,10 @@ decode_messages(Bin, Acc) ->
     {ok, Message, Rest} ->
       decode_messages(Rest, [Message|Acc]);
     {more, _} ->
-      {lists:reverse(Acc), Bin}
+      {lists:reverse(Acc), Bin};
+    error ->
+      ?D({error, Bin}),
+      erlang:error(broken_fix)
   end.
 
 handle_messages([Message|Messages], #fix_session{consumer = Consumer} = Session) ->

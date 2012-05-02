@@ -137,12 +137,16 @@ generate_encode_typed_field(Fields) ->
   [
   lists:map(fun
     (#field{name = "msg_type"}) -> ["encode_typed_field(msg_type, V) -> number_by_message(V);\n"];
-    (#field{name = Name, type = int}) -> ["encode_typed_field(",Name,", V) -> list_to_binary(integer_to_list(V));\n"];
-    (#field{name = Name, type = float}) -> ["encode_typed_field(",Name,", V) -> iolist_to_binary(io_lib:format(\"~.3f\", [V*1.0]));\n"];
+    (#field{name = Name, type = int}) -> ["encode_typed_field(",Name,", V) when is_integer(V) -> list_to_binary(integer_to_list(V));\n"];
+    (#field{name = Name, type = float}) -> ["encode_typed_field(",Name,", V) when is_float(V) -> iolist_to_binary(io_lib:format(\"~.3f\", [V*1.0]));\n"];
     (#field{name = Name, type = bool}) -> ["encode_typed_field(",Name,", true) -> <<\"Y\">>;\nencode_typed_field(",Name,",false) -> <<\"N\">>;\n"];
-    (#field{name = Name}) -> ["encode_typed_field(",Name,", V) -> V;\n"]
+    (#field{}) -> []
   end, Fields),
-  "encode_typed_field(_Key, V) -> V.\n\n"
+  "encode_typed_field(_Key, V) when is_binary(V) -> V;\n"
+  "encode_typed_field(_Key, V) when is_list(V) -> V;\n"
+  "encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));\n"
+  "encode_typed_field(_Key, V) when is_float(V) -> iolist_to_binary(io_lib:format(\"~.3f\", [V*1.0])).\n"
+  "\n"
   ].
 
 

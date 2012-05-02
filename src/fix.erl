@@ -20,13 +20,16 @@ pack(MessageType, Body) ->
 
 pack(MessageType, Body, SeqNum, Sender, Target) ->
   Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum},
-  {poss_dup_flag, "N"},{sending_time, sending_time()}],
+  {poss_dup_flag, "N"}] ++ case proplists:get_value(sending_time, Body) of
+    undefined -> [{sending_time, sending_time()}];
+    _ -> []
+  end,
   Body1 = encode(Header2 ++ Body),
   BodyLength = iolist_size(Body1),
   Body2 = iolist_to_binary([encode([{begin_string, "FIX.4.4"}, {body_length, BodyLength}]), Body1]),
   CheckSum = checksum(Body2),
   Body3 = [Body2, encode([{check_sum, CheckSum}])],
-  ?D({out,dump(Body3)}),
+  ?D({out,Header2, dump(Body3)}),
   Body3.
 
 checksum(Packet) ->
@@ -70,12 +73,15 @@ decode(<<"8", Rest/binary>>) when length(Rest) < 14 ->
 
 decode(<<"8", _/binary>>) ->
   {more, 1};
+
+decode(<<>>) ->
+  {more, 14};
           
 decode(<<_/binary>>) ->
   error.
 
 decode_message(Message) ->
-  ?D({in, dump(Message)}),
+  % ?D({in, dump(Message)}),
   fix_parser:decode_message(Message).
   
 decode_fields(Message) ->
@@ -103,6 +109,7 @@ sample_fix() ->
     56,61,50,1,50,54,57,61,48,1,50,55,48,61,50,49,56,46,56,55,48,1,50,55,49,61,
     50,48,1,50,54,57,61,49,1,50,55,48,61,50,49,57,46,48,51,48,1,50,55,49,61,49,
     52,48,1>>.
+  
 
 profile() ->
   FIX = sample_fix(),
@@ -171,3 +178,14 @@ decode_test() ->
   {no_md_entries,2}, {md_entry_type,<<"0">>}, {md_entry_px,218.87}, {md_entry_size,20}, 
   {md_entry_type,<<"1">>}, {md_entry_px,219.03}, {md_entry_size,140}], fix:decode_fields(sample_fix())).
 
+pack_test() ->
+  Out = fix:pack(market_data_request, [{sending_time,"20120502-13:08:35"}, {md_req_id,42},{subscription_request_type,1},{market_depth,0},{md_update_type,0},{no_md_entry_types,2},
+  {md_entry_type,0},{md_entry_type,1},{no_related_sym,1},{symbol,"URKA"},{cfi_code,"EXXXXX"},{security_exchange,"MICEX"}], 31, "SENDER", "TARGET"),  
+  Fix = <<"8=FIX.4.4|9=135|35=V|49=SENDER|56=TARGET|34=31|43=N|52=20120502-13:08:35|262=42|263=1|264=0|265=0|267=2|269=0|269=1|146=1|55=URKA|461=EXXXXX|207=MICEX|10=158|">>,
+
+  ?assertEqual(Fix, dump(iolist_to_binary(Out))).
+
+  
+  
+  
+  
