@@ -286,6 +286,10 @@ decode_message_heartbeat(Message, #heartbeat{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #heartbeat{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#heartbeat{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#heartbeat{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#heartbeat{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#heartbeat{sending_time = V};
     ({test_req_id,V}, Rec) -> Rec#heartbeat{test_req_id = V};
     ({K,V}, #heartbeat{fields = F} = Rec) -> Rec#heartbeat{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -297,6 +301,10 @@ decode_message_test_request(Message, #test_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #test_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#test_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#test_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#test_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#test_request{sending_time = V};
     ({test_req_id,V}, Rec) -> Rec#test_request{test_req_id = V};
     ({K,V}, #test_request{fields = F} = Rec) -> Rec#test_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -308,8 +316,12 @@ decode_message_resend_request(Message, #resend_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #resend_request{fields = F} = lists:foldl(fun
-    ({begin_seq_no,V}, Rec) -> Rec#resend_request{begin_seq_no = list_to_integer(binary_to_list(V))};
-    ({end_seq_no,V}, Rec) -> Rec#resend_request{end_seq_no = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#resend_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#resend_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#resend_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#resend_request{sending_time = V};
+    ({begin_seq_no,V}, Rec) -> Rec#resend_request{begin_seq_no = fix:parse_num(V)};
+    ({end_seq_no,V}, Rec) -> Rec#resend_request{end_seq_no = fix:parse_num(V)};
     ({K,V}, #resend_request{fields = F} = Rec) -> Rec#resend_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#resend_request{fields = lists:reverse(F)}.
@@ -320,12 +332,16 @@ decode_message_reject(Message, #reject{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #reject{fields = F} = lists:foldl(fun
-    ({ref_seq_num,V}, Rec) -> Rec#reject{ref_seq_num = list_to_integer(binary_to_list(V))};
-    ({ref_tag_id,V}, Rec) -> Rec#reject{ref_tag_id = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#reject{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#reject{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#reject{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#reject{sending_time = V};
+    ({ref_seq_num,V}, Rec) -> Rec#reject{ref_seq_num = fix:parse_num(V)};
+    ({ref_tag_id,V}, Rec) -> Rec#reject{ref_tag_id = fix:parse_num(V)};
     ({ref_msg_type,V}, Rec) -> Rec#reject{ref_msg_type = V};
-    ({session_reject_reason,V}, Rec) -> Rec#reject{session_reject_reason = list_to_integer(binary_to_list(V))};
+    ({session_reject_reason,V}, Rec) -> Rec#reject{session_reject_reason = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#reject{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#reject{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#reject{encoded_text = V};
     ({K,V}, #reject{fields = F} = Rec) -> Rec#reject{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -337,8 +353,12 @@ decode_message_sequence_reset(Message, #sequence_reset{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #sequence_reset{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#sequence_reset{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#sequence_reset{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#sequence_reset{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#sequence_reset{sending_time = V};
     ({gap_fill_flag,V}, Rec) -> Rec#sequence_reset{gap_fill_flag = V == <<"Y">>};
-    ({new_seq_no,V}, Rec) -> Rec#sequence_reset{new_seq_no = list_to_integer(binary_to_list(V))};
+    ({new_seq_no,V}, Rec) -> Rec#sequence_reset{new_seq_no = fix:parse_num(V)};
     ({K,V}, #sequence_reset{fields = F} = Rec) -> Rec#sequence_reset{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#sequence_reset{fields = lists:reverse(F)}.
@@ -349,8 +369,12 @@ decode_message_logout(Message, #logout{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #logout{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#logout{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#logout{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#logout{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#logout{sending_time = V};
     ({text,V}, Rec) -> Rec#logout{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#logout{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#logout{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#logout{encoded_text = V};
     ({K,V}, #logout{fields = F} = Rec) -> Rec#logout{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -362,26 +386,30 @@ decode_message_ioi(Message, #ioi{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #ioi{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#ioi{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#ioi{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#ioi{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#ioi{sending_time = V};
     ({ioi_id,V}, Rec) -> Rec#ioi{ioi_id = V};
     ({ioi_trans_type,V}, Rec) -> Rec#ioi{ioi_trans_type = V};
     ({ioi_ref_id,V}, Rec) -> Rec#ioi{ioi_ref_id = V};
     ({side,V}, Rec) -> Rec#ioi{side = V};
-    ({qty_type,V}, Rec) -> Rec#ioi{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#ioi{qty_type = fix:parse_num(V)};
     ({ioi_qty,V}, Rec) -> Rec#ioi{ioi_qty = V};
     ({currency,V}, Rec) -> Rec#ioi{currency = V};
     ({leg_ioi_qty,V}, Rec) -> Rec#ioi{leg_ioi_qty = V};
-    ({price_type,V}, Rec) -> Rec#ioi{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#ioi{price = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#ioi{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#ioi{price = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#ioi{valid_until_time = V};
     ({ioi_qlty_ind,V}, Rec) -> Rec#ioi{ioi_qlty_ind = V};
     ({ioi_natural_flag,V}, Rec) -> Rec#ioi{ioi_natural_flag = V == <<"Y">>};
     ({ioi_qualifier,V}, Rec) -> Rec#ioi{ioi_qualifier = V};
     ({text,V}, Rec) -> Rec#ioi{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#ioi{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#ioi{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#ioi{encoded_text = V};
     ({transact_time,V}, Rec) -> Rec#ioi{transact_time = V};
     ({url_link,V}, Rec) -> Rec#ioi{url_link = V};
-    ({routing_type,V}, Rec) -> Rec#ioi{routing_type = list_to_integer(binary_to_list(V))};
+    ({routing_type,V}, Rec) -> Rec#ioi{routing_type = fix:parse_num(V)};
     ({routing_id,V}, Rec) -> Rec#ioi{routing_id = V};
     ({K,V}, #ioi{fields = F} = Rec) -> Rec#ioi{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -393,18 +421,22 @@ decode_message_advertisement(Message, #advertisement{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #advertisement{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#advertisement{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#advertisement{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#advertisement{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#advertisement{sending_time = V};
     ({adv_id,V}, Rec) -> Rec#advertisement{adv_id = V};
     ({adv_trans_type,V}, Rec) -> Rec#advertisement{adv_trans_type = V};
     ({adv_ref_id,V}, Rec) -> Rec#advertisement{adv_ref_id = V};
     ({adv_side,V}, Rec) -> Rec#advertisement{adv_side = V};
-    ({quantity,V}, Rec) -> Rec#advertisement{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#advertisement{qty_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#advertisement{price = list_to_float(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#advertisement{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#advertisement{qty_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#advertisement{price = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#advertisement{currency = V};
     ({trade_date,V}, Rec) -> Rec#advertisement{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#advertisement{transact_time = V};
     ({text,V}, Rec) -> Rec#advertisement{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#advertisement{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#advertisement{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#advertisement{encoded_text = V};
     ({url_link,V}, Rec) -> Rec#advertisement{url_link = V};
     ({last_mkt,V}, Rec) -> Rec#advertisement{last_mkt = V};
@@ -420,6 +452,10 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #execution_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#execution_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#execution_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#execution_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#execution_report{sending_time = V};
     ({order_id,V}, Rec) -> Rec#execution_report{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#execution_report{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#execution_report{secondary_cl_ord_id = V};
@@ -430,28 +466,28 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({quote_resp_id,V}, Rec) -> Rec#execution_report{quote_resp_id = V};
     ({ord_status_req_id,V}, Rec) -> Rec#execution_report{ord_status_req_id = V};
     ({mass_status_req_id,V}, Rec) -> Rec#execution_report{mass_status_req_id = V};
-    ({tot_num_reports,V}, Rec) -> Rec#execution_report{tot_num_reports = list_to_integer(binary_to_list(V))};
+    ({tot_num_reports,V}, Rec) -> Rec#execution_report{tot_num_reports = fix:parse_num(V)};
     ({last_rpt_requested,V}, Rec) -> Rec#execution_report{last_rpt_requested = V == <<"Y">>};
     ({trade_origination_date,V}, Rec) -> Rec#execution_report{trade_origination_date = V};
     ({contra_broker,V}, Rec) -> Rec#execution_report{contra_broker = V};
     ({contra_trader,V}, Rec) -> Rec#execution_report{contra_trader = V};
-    ({contra_trade_qty,V}, Rec) -> Rec#execution_report{contra_trade_qty = list_to_integer(binary_to_list(V))};
+    ({contra_trade_qty,V}, Rec) -> Rec#execution_report{contra_trade_qty = fix:parse_num(V)};
     ({contra_trade_time,V}, Rec) -> Rec#execution_report{contra_trade_time = V};
     ({contra_leg_ref_id,V}, Rec) -> Rec#execution_report{contra_leg_ref_id = V};
     ({list_id,V}, Rec) -> Rec#execution_report{list_id = V};
     ({cross_id,V}, Rec) -> Rec#execution_report{cross_id = V};
     ({orig_cross_id,V}, Rec) -> Rec#execution_report{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#execution_report{cross_type = list_to_integer(binary_to_list(V))};
+    ({cross_type,V}, Rec) -> Rec#execution_report{cross_type = fix:parse_num(V)};
     ({exec_id,V}, Rec) -> Rec#execution_report{exec_id = V};
     ({exec_ref_id,V}, Rec) -> Rec#execution_report{exec_ref_id = V};
     ({exec_type,V}, Rec) -> Rec#execution_report{exec_type = V};
     ({ord_status,V}, Rec) -> Rec#execution_report{ord_status = V};
     ({working_indicator,V}, Rec) -> Rec#execution_report{working_indicator = V == <<"Y">>};
-    ({ord_rej_reason,V}, Rec) -> Rec#execution_report{ord_rej_reason = list_to_integer(binary_to_list(V))};
-    ({exec_restatement_reason,V}, Rec) -> Rec#execution_report{exec_restatement_reason = list_to_integer(binary_to_list(V))};
+    ({ord_rej_reason,V}, Rec) -> Rec#execution_report{ord_rej_reason = fix:parse_num(V)};
+    ({exec_restatement_reason,V}, Rec) -> Rec#execution_report{exec_restatement_reason = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#execution_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#execution_report{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#execution_report{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#execution_report{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#execution_report{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#execution_report{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#execution_report{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#execution_report{prealloc_method = V};
@@ -460,14 +496,14 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({cash_margin,V}, Rec) -> Rec#execution_report{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#execution_report{clearing_fee_indicator = V};
     ({side,V}, Rec) -> Rec#execution_report{side = V};
-    ({qty_type,V}, Rec) -> Rec#execution_report{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#execution_report{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#execution_report{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#execution_report{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#execution_report{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#execution_report{stop_px = list_to_float(binary_to_list(V))};
-    ({pegged_price,V}, Rec) -> Rec#execution_report{pegged_price = list_to_float(binary_to_list(V))};
-    ({discretion_price,V}, Rec) -> Rec#execution_report{discretion_price = list_to_float(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#execution_report{target_strategy = list_to_integer(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#execution_report{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#execution_report{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#execution_report{stop_px = fix:parse_num(V)};
+    ({pegged_price,V}, Rec) -> Rec#execution_report{pegged_price = fix:parse_num(V)};
+    ({discretion_price,V}, Rec) -> Rec#execution_report{discretion_price = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#execution_report{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#execution_report{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#execution_report{participation_rate = V};
     ({target_strategy_performance,V}, Rec) -> Rec#execution_report{target_strategy_performance = V};
@@ -481,31 +517,31 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({exec_inst,V}, Rec) -> Rec#execution_report{exec_inst = V};
     ({order_capacity,V}, Rec) -> Rec#execution_report{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#execution_report{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#execution_report{cust_order_capacity = list_to_integer(binary_to_list(V))};
-    ({last_qty,V}, Rec) -> Rec#execution_report{last_qty = list_to_integer(binary_to_list(V))};
-    ({underlying_last_qty,V}, Rec) -> Rec#execution_report{underlying_last_qty = list_to_integer(binary_to_list(V))};
-    ({last_px,V}, Rec) -> Rec#execution_report{last_px = list_to_float(binary_to_list(V))};
-    ({underlying_last_px,V}, Rec) -> Rec#execution_report{underlying_last_px = list_to_float(binary_to_list(V))};
-    ({last_par_px,V}, Rec) -> Rec#execution_report{last_par_px = list_to_float(binary_to_list(V))};
-    ({last_spot_rate,V}, Rec) -> Rec#execution_report{last_spot_rate = list_to_float(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#execution_report{cust_order_capacity = fix:parse_num(V)};
+    ({last_qty,V}, Rec) -> Rec#execution_report{last_qty = fix:parse_num(V)};
+    ({underlying_last_qty,V}, Rec) -> Rec#execution_report{underlying_last_qty = fix:parse_num(V)};
+    ({last_px,V}, Rec) -> Rec#execution_report{last_px = fix:parse_num(V)};
+    ({underlying_last_px,V}, Rec) -> Rec#execution_report{underlying_last_px = fix:parse_num(V)};
+    ({last_par_px,V}, Rec) -> Rec#execution_report{last_par_px = fix:parse_num(V)};
+    ({last_spot_rate,V}, Rec) -> Rec#execution_report{last_spot_rate = fix:parse_num(V)};
     ({last_forward_points,V}, Rec) -> Rec#execution_report{last_forward_points = V};
     ({last_mkt,V}, Rec) -> Rec#execution_report{last_mkt = V};
     ({trading_session_id,V}, Rec) -> Rec#execution_report{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#execution_report{trading_session_sub_id = V};
     ({time_bracket,V}, Rec) -> Rec#execution_report{time_bracket = V};
     ({last_capacity,V}, Rec) -> Rec#execution_report{last_capacity = V};
-    ({leaves_qty,V}, Rec) -> Rec#execution_report{leaves_qty = list_to_integer(binary_to_list(V))};
-    ({cum_qty,V}, Rec) -> Rec#execution_report{cum_qty = list_to_integer(binary_to_list(V))};
-    ({avg_px,V}, Rec) -> Rec#execution_report{avg_px = list_to_float(binary_to_list(V))};
-    ({day_order_qty,V}, Rec) -> Rec#execution_report{day_order_qty = list_to_integer(binary_to_list(V))};
-    ({day_cum_qty,V}, Rec) -> Rec#execution_report{day_cum_qty = list_to_integer(binary_to_list(V))};
-    ({day_avg_px,V}, Rec) -> Rec#execution_report{day_avg_px = list_to_float(binary_to_list(V))};
-    ({gt_booking_inst,V}, Rec) -> Rec#execution_report{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({leaves_qty,V}, Rec) -> Rec#execution_report{leaves_qty = fix:parse_num(V)};
+    ({cum_qty,V}, Rec) -> Rec#execution_report{cum_qty = fix:parse_num(V)};
+    ({avg_px,V}, Rec) -> Rec#execution_report{avg_px = fix:parse_num(V)};
+    ({day_order_qty,V}, Rec) -> Rec#execution_report{day_order_qty = fix:parse_num(V)};
+    ({day_cum_qty,V}, Rec) -> Rec#execution_report{day_cum_qty = fix:parse_num(V)};
+    ({day_avg_px,V}, Rec) -> Rec#execution_report{day_avg_px = fix:parse_num(V)};
+    ({gt_booking_inst,V}, Rec) -> Rec#execution_report{gt_booking_inst = fix:parse_num(V)};
     ({trade_date,V}, Rec) -> Rec#execution_report{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#execution_report{transact_time = V};
     ({report_to_exch,V}, Rec) -> Rec#execution_report{report_to_exch = V == <<"Y">>};
     ({gross_trade_amt,V}, Rec) -> Rec#execution_report{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#execution_report{num_days_interest = list_to_integer(binary_to_list(V))};
+    ({num_days_interest,V}, Rec) -> Rec#execution_report{num_days_interest = fix:parse_num(V)};
     ({ex_date,V}, Rec) -> Rec#execution_report{ex_date = V};
     ({accrued_interest_rate,V}, Rec) -> Rec#execution_report{accrued_interest_rate = V};
     ({accrued_interest_amt,V}, Rec) -> Rec#execution_report{accrued_interest_amt = V};
@@ -515,7 +551,7 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({end_cash,V}, Rec) -> Rec#execution_report{end_cash = V};
     ({traded_flat_switch,V}, Rec) -> Rec#execution_report{traded_flat_switch = V == <<"Y">>};
     ({basis_feature_date,V}, Rec) -> Rec#execution_report{basis_feature_date = V};
-    ({basis_feature_price,V}, Rec) -> Rec#execution_report{basis_feature_price = list_to_float(binary_to_list(V))};
+    ({basis_feature_price,V}, Rec) -> Rec#execution_report{basis_feature_price = fix:parse_num(V)};
     ({concession,V}, Rec) -> Rec#execution_report{concession = V};
     ({total_takedown,V}, Rec) -> Rec#execution_report{total_takedown = V};
     ({net_money,V}, Rec) -> Rec#execution_report{net_money = V};
@@ -524,16 +560,16 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({settl_curr_fx_rate,V}, Rec) -> Rec#execution_report{settl_curr_fx_rate = V};
     ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#execution_report{settl_curr_fx_rate_calc = V};
     ({handl_inst,V}, Rec) -> Rec#execution_report{handl_inst = V};
-    ({min_qty,V}, Rec) -> Rec#execution_report{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#execution_report{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#execution_report{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#execution_report{max_floor = fix:parse_num(V)};
     ({position_effect,V}, Rec) -> Rec#execution_report{position_effect = V};
-    ({max_show,V}, Rec) -> Rec#execution_report{max_show = list_to_integer(binary_to_list(V))};
-    ({booking_type,V}, Rec) -> Rec#execution_report{booking_type = list_to_integer(binary_to_list(V))};
+    ({max_show,V}, Rec) -> Rec#execution_report{max_show = fix:parse_num(V)};
+    ({booking_type,V}, Rec) -> Rec#execution_report{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#execution_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#execution_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#execution_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#execution_report{encoded_text = V};
     ({settl_date2,V}, Rec) -> Rec#execution_report{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#execution_report{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#execution_report{order_qty2 = fix:parse_num(V)};
     ({last_forward_points2,V}, Rec) -> Rec#execution_report{last_forward_points2 = V};
     ({multi_leg_reporting_type,V}, Rec) -> Rec#execution_report{multi_leg_reporting_type = V};
     ({cancellation_rights,V}, Rec) -> Rec#execution_report{cancellation_rights = V};
@@ -544,26 +580,26 @@ decode_message_execution_report(Message, #execution_report{} = Record) ->
     ({exec_valuation_point,V}, Rec) -> Rec#execution_report{exec_valuation_point = V};
     ({exec_price_type,V}, Rec) -> Rec#execution_report{exec_price_type = V};
     ({exec_price_adjustment,V}, Rec) -> Rec#execution_report{exec_price_adjustment = V};
-    ({priority_indicator,V}, Rec) -> Rec#execution_report{priority_indicator = list_to_integer(binary_to_list(V))};
+    ({priority_indicator,V}, Rec) -> Rec#execution_report{priority_indicator = fix:parse_num(V)};
     ({price_improvement,V}, Rec) -> Rec#execution_report{price_improvement = V};
-    ({last_liquidity_ind,V}, Rec) -> Rec#execution_report{last_liquidity_ind = list_to_integer(binary_to_list(V))};
-    ({cont_amt_type,V}, Rec) -> Rec#execution_report{cont_amt_type = list_to_integer(binary_to_list(V))};
+    ({last_liquidity_ind,V}, Rec) -> Rec#execution_report{last_liquidity_ind = fix:parse_num(V)};
+    ({cont_amt_type,V}, Rec) -> Rec#execution_report{cont_amt_type = fix:parse_num(V)};
     ({cont_amt_value,V}, Rec) -> Rec#execution_report{cont_amt_value = V};
     ({cont_amt_curr,V}, Rec) -> Rec#execution_report{cont_amt_curr = V};
-    ({leg_qty,V}, Rec) -> Rec#execution_report{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#execution_report{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({leg_qty,V}, Rec) -> Rec#execution_report{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#execution_report{leg_swap_type = fix:parse_num(V)};
     ({leg_position_effect,V}, Rec) -> Rec#execution_report{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#execution_report{leg_covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({leg_covered_or_uncovered,V}, Rec) -> Rec#execution_report{leg_covered_or_uncovered = fix:parse_num(V)};
     ({leg_ref_id,V}, Rec) -> Rec#execution_report{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#execution_report{leg_price = list_to_float(binary_to_list(V))};
+    ({leg_price,V}, Rec) -> Rec#execution_report{leg_price = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#execution_report{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#execution_report{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#execution_report{leg_last_px = list_to_float(binary_to_list(V))};
+    ({leg_last_px,V}, Rec) -> Rec#execution_report{leg_last_px = fix:parse_num(V)};
     ({copy_msg_indicator,V}, Rec) -> Rec#execution_report{copy_msg_indicator = V == <<"Y">>};
     ({misc_fee_amt,V}, Rec) -> Rec#execution_report{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#execution_report{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#execution_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#execution_report{misc_fee_basis = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#execution_report{misc_fee_basis = fix:parse_num(V)};
     ({K,V}, #execution_report{fields = F} = Rec) -> Rec#execution_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#execution_report{fields = lists:reverse(F)}.
@@ -574,6 +610,10 @@ decode_message_order_cancel_reject(Message, #order_cancel_reject{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_cancel_reject{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_reject{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_cancel_reject{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_reject{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_cancel_reject{sending_time = V};
     ({order_id,V}, Rec) -> Rec#order_cancel_reject{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#order_cancel_reject{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#order_cancel_reject{secondary_cl_ord_id = V};
@@ -585,15 +625,15 @@ decode_message_order_cancel_reject(Message, #order_cancel_reject{} = Record) ->
     ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_reject{orig_ord_mod_time = V};
     ({list_id,V}, Rec) -> Rec#order_cancel_reject{list_id = V};
     ({account,V}, Rec) -> Rec#order_cancel_reject{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_reject{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#order_cancel_reject{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#order_cancel_reject{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#order_cancel_reject{account_type = fix:parse_num(V)};
     ({trade_origination_date,V}, Rec) -> Rec#order_cancel_reject{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#order_cancel_reject{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#order_cancel_reject{transact_time = V};
     ({cxl_rej_response_to,V}, Rec) -> Rec#order_cancel_reject{cxl_rej_response_to = V};
-    ({cxl_rej_reason,V}, Rec) -> Rec#order_cancel_reject{cxl_rej_reason = list_to_integer(binary_to_list(V))};
+    ({cxl_rej_reason,V}, Rec) -> Rec#order_cancel_reject{cxl_rej_reason = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#order_cancel_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_reject{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_reject{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#order_cancel_reject{encoded_text = V};
     ({K,V}, #order_cancel_reject{fields = F} = Rec) -> Rec#order_cancel_reject{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -605,13 +645,17 @@ decode_message_logon(Message, #logon{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #logon{fields = F} = lists:foldl(fun
-    ({encrypt_method,V}, Rec) -> Rec#logon{encrypt_method = list_to_integer(binary_to_list(V))};
-    ({heart_bt_int,V}, Rec) -> Rec#logon{heart_bt_int = list_to_integer(binary_to_list(V))};
-    ({raw_data_length,V}, Rec) -> Rec#logon{raw_data_length = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#logon{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#logon{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#logon{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#logon{sending_time = V};
+    ({encrypt_method,V}, Rec) -> Rec#logon{encrypt_method = fix:parse_num(V)};
+    ({heart_bt_int,V}, Rec) -> Rec#logon{heart_bt_int = fix:parse_num(V)};
+    ({raw_data_length,V}, Rec) -> Rec#logon{raw_data_length = fix:parse_num(V)};
     ({raw_data,V}, Rec) -> Rec#logon{raw_data = V};
     ({reset_seq_num_flag,V}, Rec) -> Rec#logon{reset_seq_num_flag = V == <<"Y">>};
-    ({next_expected_msg_seq_num,V}, Rec) -> Rec#logon{next_expected_msg_seq_num = list_to_integer(binary_to_list(V))};
-    ({max_message_size,V}, Rec) -> Rec#logon{max_message_size = list_to_integer(binary_to_list(V))};
+    ({next_expected_msg_seq_num,V}, Rec) -> Rec#logon{next_expected_msg_seq_num = fix:parse_num(V)};
+    ({max_message_size,V}, Rec) -> Rec#logon{max_message_size = fix:parse_num(V)};
     ({ref_msg_type,V}, Rec) -> Rec#logon{ref_msg_type = V};
     ({msg_direction,V}, Rec) -> Rec#logon{msg_direction = V};
     ({test_message_indicator,V}, Rec) -> Rec#logon{test_message_indicator = V == <<"Y">>};
@@ -627,18 +671,22 @@ decode_message_news(Message, #news{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #news{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#news{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#news{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#news{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#news{sending_time = V};
     ({orig_time,V}, Rec) -> Rec#news{orig_time = V};
     ({urgency,V}, Rec) -> Rec#news{urgency = V};
     ({headline,V}, Rec) -> Rec#news{headline = V};
-    ({encoded_headline_len,V}, Rec) -> Rec#news{encoded_headline_len = list_to_integer(binary_to_list(V))};
+    ({encoded_headline_len,V}, Rec) -> Rec#news{encoded_headline_len = fix:parse_num(V)};
     ({encoded_headline,V}, Rec) -> Rec#news{encoded_headline = V};
-    ({routing_type,V}, Rec) -> Rec#news{routing_type = list_to_integer(binary_to_list(V))};
+    ({routing_type,V}, Rec) -> Rec#news{routing_type = fix:parse_num(V)};
     ({routing_id,V}, Rec) -> Rec#news{routing_id = V};
     ({text,V}, Rec) -> Rec#news{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#news{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#news{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#news{encoded_text = V};
     ({url_link,V}, Rec) -> Rec#news{url_link = V};
-    ({raw_data_length,V}, Rec) -> Rec#news{raw_data_length = list_to_integer(binary_to_list(V))};
+    ({raw_data_length,V}, Rec) -> Rec#news{raw_data_length = fix:parse_num(V)};
     ({raw_data,V}, Rec) -> Rec#news{raw_data = V};
     ({K,V}, #news{fields = F} = Rec) -> Rec#news{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -650,20 +698,24 @@ decode_message_email(Message, #email{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #email{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#email{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#email{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#email{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#email{sending_time = V};
     ({email_thread_id,V}, Rec) -> Rec#email{email_thread_id = V};
     ({email_type,V}, Rec) -> Rec#email{email_type = V};
     ({orig_time,V}, Rec) -> Rec#email{orig_time = V};
     ({subject,V}, Rec) -> Rec#email{subject = V};
-    ({encoded_subject_len,V}, Rec) -> Rec#email{encoded_subject_len = list_to_integer(binary_to_list(V))};
+    ({encoded_subject_len,V}, Rec) -> Rec#email{encoded_subject_len = fix:parse_num(V)};
     ({encoded_subject,V}, Rec) -> Rec#email{encoded_subject = V};
-    ({routing_type,V}, Rec) -> Rec#email{routing_type = list_to_integer(binary_to_list(V))};
+    ({routing_type,V}, Rec) -> Rec#email{routing_type = fix:parse_num(V)};
     ({routing_id,V}, Rec) -> Rec#email{routing_id = V};
     ({order_id,V}, Rec) -> Rec#email{order_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#email{cl_ord_id = V};
     ({text,V}, Rec) -> Rec#email{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#email{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#email{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#email{encoded_text = V};
-    ({raw_data_length,V}, Rec) -> Rec#email{raw_data_length = list_to_integer(binary_to_list(V))};
+    ({raw_data_length,V}, Rec) -> Rec#email{raw_data_length = fix:parse_num(V)};
     ({raw_data,V}, Rec) -> Rec#email{raw_data = V};
     ({K,V}, #email{fields = F} = Rec) -> Rec#email{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -675,44 +727,48 @@ decode_message_new_order_single(Message, #new_order_single{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #new_order_single{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#new_order_single{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#new_order_single{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#new_order_single{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#new_order_single{sending_time = V};
     ({cl_ord_id,V}, Rec) -> Rec#new_order_single{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_single{secondary_cl_ord_id = V};
     ({cl_ord_link_id,V}, Rec) -> Rec#new_order_single{cl_ord_link_id = V};
     ({trade_origination_date,V}, Rec) -> Rec#new_order_single{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#new_order_single{trade_date = V};
     ({account,V}, Rec) -> Rec#new_order_single{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_single{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#new_order_single{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#new_order_single{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#new_order_single{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#new_order_single{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#new_order_single{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#new_order_single{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#new_order_single{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#new_order_single{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_single{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_single{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#new_order_single{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#new_order_single{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_single{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#new_order_single{alloc_qty = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#new_order_single{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#new_order_single{settl_date = V};
     ({cash_margin,V}, Rec) -> Rec#new_order_single{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_single{clearing_fee_indicator = V};
     ({handl_inst,V}, Rec) -> Rec#new_order_single{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#new_order_single{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_single{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#new_order_single{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#new_order_single{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#new_order_single{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#new_order_single{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#new_order_single{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#new_order_single{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#new_order_single{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_single{prev_close_px = list_to_float(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#new_order_single{prev_close_px = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#new_order_single{side = V};
     ({locate_reqd,V}, Rec) -> Rec#new_order_single{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#new_order_single{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_single{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#new_order_single{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#new_order_single{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_single{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#new_order_single{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#new_order_single{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#new_order_single{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#new_order_single{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#new_order_single{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#new_order_single{currency = V};
     ({compliance_id,V}, Rec) -> Rec#new_order_single{compliance_id = V};
     ({solicited_flag,V}, Rec) -> Rec#new_order_single{solicited_flag = V == <<"Y">>};
@@ -722,23 +778,23 @@ decode_message_new_order_single(Message, #new_order_single{} = Record) ->
     ({effective_time,V}, Rec) -> Rec#new_order_single{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#new_order_single{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#new_order_single{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_single{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#new_order_single{gt_booking_inst = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#new_order_single{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#new_order_single{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_single{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#new_order_single{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#new_order_single{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#new_order_single{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_single{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#new_order_single{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#new_order_single{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_single{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#new_order_single{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#new_order_single{encoded_text = V};
     ({settl_date2,V}, Rec) -> Rec#new_order_single{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#new_order_single{order_qty2 = list_to_integer(binary_to_list(V))};
-    ({price2,V}, Rec) -> Rec#new_order_single{price2 = list_to_float(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#new_order_single{order_qty2 = fix:parse_num(V)};
+    ({price2,V}, Rec) -> Rec#new_order_single{price2 = fix:parse_num(V)};
     ({position_effect,V}, Rec) -> Rec#new_order_single{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_single{covered_or_uncovered = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#new_order_single{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#new_order_single{target_strategy = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_single{covered_or_uncovered = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#new_order_single{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#new_order_single{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#new_order_single{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#new_order_single{participation_rate = V};
     ({cancellation_rights,V}, Rec) -> Rec#new_order_single{cancellation_rights = V};
@@ -755,65 +811,69 @@ decode_message_new_order_list(Message, #new_order_list{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #new_order_list{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#new_order_list{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#new_order_list{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#new_order_list{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#new_order_list{sending_time = V};
     ({list_id,V}, Rec) -> Rec#new_order_list{list_id = V};
     ({bid_id,V}, Rec) -> Rec#new_order_list{bid_id = V};
     ({client_bid_id,V}, Rec) -> Rec#new_order_list{client_bid_id = V};
-    ({prog_rpt_reqs,V}, Rec) -> Rec#new_order_list{prog_rpt_reqs = list_to_integer(binary_to_list(V))};
-    ({bid_type,V}, Rec) -> Rec#new_order_list{bid_type = list_to_integer(binary_to_list(V))};
-    ({prog_period_interval,V}, Rec) -> Rec#new_order_list{prog_period_interval = list_to_integer(binary_to_list(V))};
+    ({prog_rpt_reqs,V}, Rec) -> Rec#new_order_list{prog_rpt_reqs = fix:parse_num(V)};
+    ({bid_type,V}, Rec) -> Rec#new_order_list{bid_type = fix:parse_num(V)};
+    ({prog_period_interval,V}, Rec) -> Rec#new_order_list{prog_period_interval = fix:parse_num(V)};
     ({cancellation_rights,V}, Rec) -> Rec#new_order_list{cancellation_rights = V};
     ({money_laundering_status,V}, Rec) -> Rec#new_order_list{money_laundering_status = V};
     ({regist_id,V}, Rec) -> Rec#new_order_list{regist_id = V};
     ({list_exec_inst_type,V}, Rec) -> Rec#new_order_list{list_exec_inst_type = V};
     ({list_exec_inst,V}, Rec) -> Rec#new_order_list{list_exec_inst = V};
-    ({encoded_list_exec_inst_len,V}, Rec) -> Rec#new_order_list{encoded_list_exec_inst_len = list_to_integer(binary_to_list(V))};
+    ({encoded_list_exec_inst_len,V}, Rec) -> Rec#new_order_list{encoded_list_exec_inst_len = fix:parse_num(V)};
     ({encoded_list_exec_inst,V}, Rec) -> Rec#new_order_list{encoded_list_exec_inst = V};
     ({allowable_one_sidedness_pct,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_pct = V};
     ({allowable_one_sidedness_value,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_value = V};
     ({allowable_one_sidedness_curr,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_curr = V};
-    ({tot_no_orders,V}, Rec) -> Rec#new_order_list{tot_no_orders = list_to_integer(binary_to_list(V))};
+    ({tot_no_orders,V}, Rec) -> Rec#new_order_list{tot_no_orders = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#new_order_list{last_fragment = V == <<"Y">>};
     ({cl_ord_id,V}, Rec) -> Rec#new_order_list{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_list{secondary_cl_ord_id = V};
-    ({list_seq_no,V}, Rec) -> Rec#new_order_list{list_seq_no = list_to_integer(binary_to_list(V))};
+    ({list_seq_no,V}, Rec) -> Rec#new_order_list{list_seq_no = fix:parse_num(V)};
     ({cl_ord_link_id,V}, Rec) -> Rec#new_order_list{cl_ord_link_id = V};
     ({settl_inst_mode,V}, Rec) -> Rec#new_order_list{settl_inst_mode = V};
     ({trade_origination_date,V}, Rec) -> Rec#new_order_list{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#new_order_list{trade_date = V};
     ({account,V}, Rec) -> Rec#new_order_list{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_list{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#new_order_list{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#new_order_list{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#new_order_list{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#new_order_list{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#new_order_list{booking_unit = V};
     ({alloc_id,V}, Rec) -> Rec#new_order_list{alloc_id = V};
     ({prealloc_method,V}, Rec) -> Rec#new_order_list{prealloc_method = V};
     ({alloc_account,V}, Rec) -> Rec#new_order_list{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_list{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_list{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#new_order_list{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#new_order_list{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_list{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#new_order_list{alloc_qty = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#new_order_list{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#new_order_list{settl_date = V};
     ({cash_margin,V}, Rec) -> Rec#new_order_list{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_list{clearing_fee_indicator = V};
     ({handl_inst,V}, Rec) -> Rec#new_order_list{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#new_order_list{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_list{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#new_order_list{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#new_order_list{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#new_order_list{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#new_order_list{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#new_order_list{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#new_order_list{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#new_order_list{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_list{prev_close_px = list_to_float(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#new_order_list{prev_close_px = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#new_order_list{side = V};
-    ({side_value_ind,V}, Rec) -> Rec#new_order_list{side_value_ind = list_to_integer(binary_to_list(V))};
+    ({side_value_ind,V}, Rec) -> Rec#new_order_list{side_value_ind = fix:parse_num(V)};
     ({locate_reqd,V}, Rec) -> Rec#new_order_list{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#new_order_list{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_list{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#new_order_list{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#new_order_list{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_list{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#new_order_list{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#new_order_list{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#new_order_list{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#new_order_list{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#new_order_list{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#new_order_list{currency = V};
     ({compliance_id,V}, Rec) -> Rec#new_order_list{compliance_id = V};
     ({solicited_flag,V}, Rec) -> Rec#new_order_list{solicited_flag = V == <<"Y">>};
@@ -823,23 +883,23 @@ decode_message_new_order_list(Message, #new_order_list{} = Record) ->
     ({effective_time,V}, Rec) -> Rec#new_order_list{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#new_order_list{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#new_order_list{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_list{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#new_order_list{gt_booking_inst = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#new_order_list{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#new_order_list{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_list{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#new_order_list{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#new_order_list{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#new_order_list{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_list{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#new_order_list{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#new_order_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_list{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#new_order_list{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#new_order_list{encoded_text = V};
     ({settl_date2,V}, Rec) -> Rec#new_order_list{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#new_order_list{order_qty2 = list_to_integer(binary_to_list(V))};
-    ({price2,V}, Rec) -> Rec#new_order_list{price2 = list_to_float(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#new_order_list{order_qty2 = fix:parse_num(V)};
+    ({price2,V}, Rec) -> Rec#new_order_list{price2 = fix:parse_num(V)};
     ({position_effect,V}, Rec) -> Rec#new_order_list{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_list{covered_or_uncovered = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#new_order_list{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#new_order_list{target_strategy = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_list{covered_or_uncovered = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#new_order_list{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#new_order_list{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#new_order_list{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#new_order_list{participation_rate = V};
     ({designation,V}, Rec) -> Rec#new_order_list{designation = V};
@@ -853,6 +913,10 @@ decode_message_order_cancel_request(Message, #order_cancel_request{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_cancel_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_cancel_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_cancel_request{sending_time = V};
     ({orig_cl_ord_id,V}, Rec) -> Rec#order_cancel_request{orig_cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#order_cancel_request{order_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#order_cancel_request{cl_ord_id = V};
@@ -861,13 +925,13 @@ decode_message_order_cancel_request(Message, #order_cancel_request{} = Record) -
     ({list_id,V}, Rec) -> Rec#order_cancel_request{list_id = V};
     ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_request{orig_ord_mod_time = V};
     ({account,V}, Rec) -> Rec#order_cancel_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#order_cancel_request{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#order_cancel_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#order_cancel_request{account_type = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#order_cancel_request{side = V};
     ({transact_time,V}, Rec) -> Rec#order_cancel_request{transact_time = V};
     ({compliance_id,V}, Rec) -> Rec#order_cancel_request{compliance_id = V};
     ({text,V}, Rec) -> Rec#order_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#order_cancel_request{encoded_text = V};
     ({K,V}, #order_cancel_request{fields = F} = Rec) -> Rec#order_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -879,6 +943,10 @@ decode_message_order_cancel_replace_request(Message, #order_cancel_replace_reque
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_cancel_replace_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_replace_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_cancel_replace_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_replace_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_cancel_replace_request{sending_time = V};
     ({order_id,V}, Rec) -> Rec#order_cancel_replace_request{order_id = V};
     ({trade_origination_date,V}, Rec) -> Rec#order_cancel_replace_request{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#order_cancel_replace_request{trade_date = V};
@@ -889,36 +957,36 @@ decode_message_order_cancel_replace_request(Message, #order_cancel_replace_reque
     ({list_id,V}, Rec) -> Rec#order_cancel_replace_request{list_id = V};
     ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_replace_request{orig_ord_mod_time = V};
     ({account,V}, Rec) -> Rec#order_cancel_replace_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#order_cancel_replace_request{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#order_cancel_replace_request{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#order_cancel_replace_request{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#order_cancel_replace_request{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#order_cancel_replace_request{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#order_cancel_replace_request{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#order_cancel_replace_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#order_cancel_replace_request{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#order_cancel_replace_request{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#order_cancel_replace_request{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#order_cancel_replace_request{alloc_qty = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#order_cancel_replace_request{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#order_cancel_replace_request{settl_date = V};
     ({cash_margin,V}, Rec) -> Rec#order_cancel_replace_request{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#order_cancel_replace_request{clearing_fee_indicator = V};
     ({handl_inst,V}, Rec) -> Rec#order_cancel_replace_request{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#order_cancel_replace_request{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#order_cancel_replace_request{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#order_cancel_replace_request{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#order_cancel_replace_request{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#order_cancel_replace_request{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#order_cancel_replace_request{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#order_cancel_replace_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#order_cancel_replace_request{trading_session_sub_id = V};
     ({side,V}, Rec) -> Rec#order_cancel_replace_request{side = V};
     ({transact_time,V}, Rec) -> Rec#order_cancel_replace_request{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#order_cancel_replace_request{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#order_cancel_replace_request{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#order_cancel_replace_request{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#order_cancel_replace_request{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#order_cancel_replace_request{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#order_cancel_replace_request{stop_px = list_to_float(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#order_cancel_replace_request{target_strategy = list_to_integer(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#order_cancel_replace_request{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#order_cancel_replace_request{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#order_cancel_replace_request{stop_px = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#order_cancel_replace_request{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#order_cancel_replace_request{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#order_cancel_replace_request{participation_rate = V};
     ({compliance_id,V}, Rec) -> Rec#order_cancel_replace_request{compliance_id = V};
@@ -928,22 +996,22 @@ decode_message_order_cancel_replace_request(Message, #order_cancel_replace_reque
     ({effective_time,V}, Rec) -> Rec#order_cancel_replace_request{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#order_cancel_replace_request{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#order_cancel_replace_request{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#order_cancel_replace_request{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#order_cancel_replace_request{gt_booking_inst = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#order_cancel_replace_request{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#order_cancel_replace_request{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#order_cancel_replace_request{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#order_cancel_replace_request{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#order_cancel_replace_request{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#order_cancel_replace_request{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#order_cancel_replace_request{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#order_cancel_replace_request{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#order_cancel_replace_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_replace_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_replace_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#order_cancel_replace_request{encoded_text = V};
     ({settl_date2,V}, Rec) -> Rec#order_cancel_replace_request{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#order_cancel_replace_request{order_qty2 = list_to_integer(binary_to_list(V))};
-    ({price2,V}, Rec) -> Rec#order_cancel_replace_request{price2 = list_to_float(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#order_cancel_replace_request{order_qty2 = fix:parse_num(V)};
+    ({price2,V}, Rec) -> Rec#order_cancel_replace_request{price2 = fix:parse_num(V)};
     ({position_effect,V}, Rec) -> Rec#order_cancel_replace_request{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#order_cancel_replace_request{covered_or_uncovered = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#order_cancel_replace_request{max_show = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#order_cancel_replace_request{covered_or_uncovered = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#order_cancel_replace_request{max_show = fix:parse_num(V)};
     ({locate_reqd,V}, Rec) -> Rec#order_cancel_replace_request{locate_reqd = V == <<"Y">>};
     ({cancellation_rights,V}, Rec) -> Rec#order_cancel_replace_request{cancellation_rights = V};
     ({money_laundering_status,V}, Rec) -> Rec#order_cancel_replace_request{money_laundering_status = V};
@@ -959,13 +1027,17 @@ decode_message_order_status_request(Message, #order_status_request{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_status_request{sending_time = V};
     ({order_id,V}, Rec) -> Rec#order_status_request{order_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#order_status_request{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#order_status_request{secondary_cl_ord_id = V};
     ({cl_ord_link_id,V}, Rec) -> Rec#order_status_request{cl_ord_link_id = V};
     ({ord_status_req_id,V}, Rec) -> Rec#order_status_request{ord_status_req_id = V};
     ({account,V}, Rec) -> Rec#order_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_status_request{acct_id_source = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#order_status_request{acct_id_source = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#order_status_request{side = V};
     ({K,V}, #order_status_request{fields = F} = Rec) -> Rec#order_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -977,51 +1049,55 @@ decode_message_allocation_instruction(Message, #allocation_instruction{} = Recor
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #allocation_instruction{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#allocation_instruction{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#allocation_instruction{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#allocation_instruction{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#allocation_instruction{sending_time = V};
     ({alloc_id,V}, Rec) -> Rec#allocation_instruction{alloc_id = V};
     ({alloc_trans_type,V}, Rec) -> Rec#allocation_instruction{alloc_trans_type = V};
-    ({alloc_type,V}, Rec) -> Rec#allocation_instruction{alloc_type = list_to_integer(binary_to_list(V))};
+    ({alloc_type,V}, Rec) -> Rec#allocation_instruction{alloc_type = fix:parse_num(V)};
     ({secondary_alloc_id,V}, Rec) -> Rec#allocation_instruction{secondary_alloc_id = V};
     ({ref_alloc_id,V}, Rec) -> Rec#allocation_instruction{ref_alloc_id = V};
-    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_instruction{alloc_canc_replace_reason = list_to_integer(binary_to_list(V))};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction{alloc_intermed_req_type = list_to_integer(binary_to_list(V))};
+    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_instruction{alloc_canc_replace_reason = fix:parse_num(V)};
+    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction{alloc_intermed_req_type = fix:parse_num(V)};
     ({alloc_link_id,V}, Rec) -> Rec#allocation_instruction{alloc_link_id = V};
-    ({alloc_link_type,V}, Rec) -> Rec#allocation_instruction{alloc_link_type = list_to_integer(binary_to_list(V))};
+    ({alloc_link_type,V}, Rec) -> Rec#allocation_instruction{alloc_link_type = fix:parse_num(V)};
     ({booking_ref_id,V}, Rec) -> Rec#allocation_instruction{booking_ref_id = V};
-    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_instruction{alloc_no_orders_type = list_to_integer(binary_to_list(V))};
+    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_instruction{alloc_no_orders_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#allocation_instruction{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#allocation_instruction{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#allocation_instruction{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#allocation_instruction{secondary_cl_ord_id = V};
     ({list_id,V}, Rec) -> Rec#allocation_instruction{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#allocation_instruction{order_qty = list_to_integer(binary_to_list(V))};
-    ({order_avg_px,V}, Rec) -> Rec#allocation_instruction{order_avg_px = list_to_float(binary_to_list(V))};
-    ({order_booking_qty,V}, Rec) -> Rec#allocation_instruction{order_booking_qty = list_to_integer(binary_to_list(V))};
-    ({last_qty,V}, Rec) -> Rec#allocation_instruction{last_qty = list_to_integer(binary_to_list(V))};
+    ({order_qty,V}, Rec) -> Rec#allocation_instruction{order_qty = fix:parse_num(V)};
+    ({order_avg_px,V}, Rec) -> Rec#allocation_instruction{order_avg_px = fix:parse_num(V)};
+    ({order_booking_qty,V}, Rec) -> Rec#allocation_instruction{order_booking_qty = fix:parse_num(V)};
+    ({last_qty,V}, Rec) -> Rec#allocation_instruction{last_qty = fix:parse_num(V)};
     ({exec_id,V}, Rec) -> Rec#allocation_instruction{exec_id = V};
     ({secondary_exec_id,V}, Rec) -> Rec#allocation_instruction{secondary_exec_id = V};
-    ({last_px,V}, Rec) -> Rec#allocation_instruction{last_px = list_to_float(binary_to_list(V))};
-    ({last_par_px,V}, Rec) -> Rec#allocation_instruction{last_par_px = list_to_float(binary_to_list(V))};
+    ({last_px,V}, Rec) -> Rec#allocation_instruction{last_px = fix:parse_num(V)};
+    ({last_par_px,V}, Rec) -> Rec#allocation_instruction{last_par_px = fix:parse_num(V)};
     ({last_capacity,V}, Rec) -> Rec#allocation_instruction{last_capacity = V};
     ({previously_reported,V}, Rec) -> Rec#allocation_instruction{previously_reported = V == <<"Y">>};
     ({reversal_indicator,V}, Rec) -> Rec#allocation_instruction{reversal_indicator = V == <<"Y">>};
     ({match_type,V}, Rec) -> Rec#allocation_instruction{match_type = V};
     ({side,V}, Rec) -> Rec#allocation_instruction{side = V};
-    ({quantity,V}, Rec) -> Rec#allocation_instruction{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#allocation_instruction{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#allocation_instruction{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#allocation_instruction{qty_type = fix:parse_num(V)};
     ({last_mkt,V}, Rec) -> Rec#allocation_instruction{last_mkt = V};
     ({trade_origination_date,V}, Rec) -> Rec#allocation_instruction{trade_origination_date = V};
     ({trading_session_id,V}, Rec) -> Rec#allocation_instruction{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#allocation_instruction{trading_session_sub_id = V};
-    ({price_type,V}, Rec) -> Rec#allocation_instruction{price_type = list_to_integer(binary_to_list(V))};
-    ({avg_px,V}, Rec) -> Rec#allocation_instruction{avg_px = list_to_float(binary_to_list(V))};
-    ({avg_par_px,V}, Rec) -> Rec#allocation_instruction{avg_par_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#allocation_instruction{price_type = fix:parse_num(V)};
+    ({avg_px,V}, Rec) -> Rec#allocation_instruction{avg_px = fix:parse_num(V)};
+    ({avg_par_px,V}, Rec) -> Rec#allocation_instruction{avg_par_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#allocation_instruction{currency = V};
-    ({avg_px_precision,V}, Rec) -> Rec#allocation_instruction{avg_px_precision = list_to_integer(binary_to_list(V))};
+    ({avg_px_precision,V}, Rec) -> Rec#allocation_instruction{avg_px_precision = fix:parse_num(V)};
     ({trade_date,V}, Rec) -> Rec#allocation_instruction{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#allocation_instruction{transact_time = V};
     ({settl_type,V}, Rec) -> Rec#allocation_instruction{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#allocation_instruction{settl_date = V};
-    ({booking_type,V}, Rec) -> Rec#allocation_instruction{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#allocation_instruction{booking_type = fix:parse_num(V)};
     ({gross_trade_amt,V}, Rec) -> Rec#allocation_instruction{gross_trade_amt = V};
     ({concession,V}, Rec) -> Rec#allocation_instruction{concession = V};
     ({total_takedown,V}, Rec) -> Rec#allocation_instruction{total_takedown = V};
@@ -1029,9 +1105,9 @@ decode_message_allocation_instruction(Message, #allocation_instruction{} = Recor
     ({position_effect,V}, Rec) -> Rec#allocation_instruction{position_effect = V};
     ({auto_accept_indicator,V}, Rec) -> Rec#allocation_instruction{auto_accept_indicator = V == <<"Y">>};
     ({text,V}, Rec) -> Rec#allocation_instruction{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#allocation_instruction{encoded_text = V};
-    ({num_days_interest,V}, Rec) -> Rec#allocation_instruction{num_days_interest = list_to_integer(binary_to_list(V))};
+    ({num_days_interest,V}, Rec) -> Rec#allocation_instruction{num_days_interest = fix:parse_num(V)};
     ({accrued_interest_rate,V}, Rec) -> Rec#allocation_instruction{accrued_interest_rate = V};
     ({accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{accrued_interest_amt = V};
     ({total_accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{total_accrued_interest_amt = V};
@@ -1040,21 +1116,21 @@ decode_message_allocation_instruction(Message, #allocation_instruction{} = Recor
     ({start_cash,V}, Rec) -> Rec#allocation_instruction{start_cash = V};
     ({end_cash,V}, Rec) -> Rec#allocation_instruction{end_cash = V};
     ({legal_confirm,V}, Rec) -> Rec#allocation_instruction{legal_confirm = V == <<"Y">>};
-    ({tot_no_allocs,V}, Rec) -> Rec#allocation_instruction{tot_no_allocs = list_to_integer(binary_to_list(V))};
+    ({tot_no_allocs,V}, Rec) -> Rec#allocation_instruction{tot_no_allocs = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#allocation_instruction{last_fragment = V == <<"Y">>};
     ({alloc_account,V}, Rec) -> Rec#allocation_instruction{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction{alloc_acct_id_source = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#allocation_instruction{match_status = V};
-    ({alloc_price,V}, Rec) -> Rec#allocation_instruction{alloc_price = list_to_float(binary_to_list(V))};
-    ({alloc_qty,V}, Rec) -> Rec#allocation_instruction{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_price,V}, Rec) -> Rec#allocation_instruction{alloc_price = fix:parse_num(V)};
+    ({alloc_qty,V}, Rec) -> Rec#allocation_instruction{alloc_qty = fix:parse_num(V)};
     ({individual_alloc_id,V}, Rec) -> Rec#allocation_instruction{individual_alloc_id = V};
     ({process_code,V}, Rec) -> Rec#allocation_instruction{process_code = V};
     ({notify_broker_of_credit,V}, Rec) -> Rec#allocation_instruction{notify_broker_of_credit = V == <<"Y">>};
-    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_instruction{alloc_handl_inst = list_to_integer(binary_to_list(V))};
+    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_instruction{alloc_handl_inst = fix:parse_num(V)};
     ({alloc_text,V}, Rec) -> Rec#allocation_instruction{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_alloc_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_alloc_text_len = fix:parse_num(V)};
     ({encoded_alloc_text,V}, Rec) -> Rec#allocation_instruction{encoded_alloc_text = V};
-    ({alloc_avg_px,V}, Rec) -> Rec#allocation_instruction{alloc_avg_px = list_to_float(binary_to_list(V))};
+    ({alloc_avg_px,V}, Rec) -> Rec#allocation_instruction{alloc_avg_px = fix:parse_num(V)};
     ({alloc_net_money,V}, Rec) -> Rec#allocation_instruction{alloc_net_money = V};
     ({settl_curr_amt,V}, Rec) -> Rec#allocation_instruction{settl_curr_amt = V};
     ({alloc_settl_curr_amt,V}, Rec) -> Rec#allocation_instruction{alloc_settl_curr_amt = V};
@@ -1067,10 +1143,10 @@ decode_message_allocation_instruction(Message, #allocation_instruction{} = Recor
     ({misc_fee_amt,V}, Rec) -> Rec#allocation_instruction{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#allocation_instruction{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#allocation_instruction{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#allocation_instruction{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({clearing_instruction,V}, Rec) -> Rec#allocation_instruction{clearing_instruction = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#allocation_instruction{misc_fee_basis = fix:parse_num(V)};
+    ({clearing_instruction,V}, Rec) -> Rec#allocation_instruction{clearing_instruction = fix:parse_num(V)};
     ({clearing_fee_indicator,V}, Rec) -> Rec#allocation_instruction{clearing_fee_indicator = V};
-    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_instruction{alloc_settl_inst_type = list_to_integer(binary_to_list(V))};
+    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_instruction{alloc_settl_inst_type = fix:parse_num(V)};
     ({K,V}, #allocation_instruction{fields = F} = Rec) -> Rec#allocation_instruction{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#allocation_instruction{fields = lists:reverse(F)}.
@@ -1081,12 +1157,16 @@ decode_message_list_cancel_request(Message, #list_cancel_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #list_cancel_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#list_cancel_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#list_cancel_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#list_cancel_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#list_cancel_request{sending_time = V};
     ({list_id,V}, Rec) -> Rec#list_cancel_request{list_id = V};
     ({transact_time,V}, Rec) -> Rec#list_cancel_request{transact_time = V};
     ({trade_origination_date,V}, Rec) -> Rec#list_cancel_request{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#list_cancel_request{trade_date = V};
     ({text,V}, Rec) -> Rec#list_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_cancel_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#list_cancel_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#list_cancel_request{encoded_text = V};
     ({K,V}, #list_cancel_request{fields = F} = Rec) -> Rec#list_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1098,12 +1178,16 @@ decode_message_list_execute(Message, #list_execute{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #list_execute{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#list_execute{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#list_execute{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#list_execute{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#list_execute{sending_time = V};
     ({list_id,V}, Rec) -> Rec#list_execute{list_id = V};
     ({client_bid_id,V}, Rec) -> Rec#list_execute{client_bid_id = V};
     ({bid_id,V}, Rec) -> Rec#list_execute{bid_id = V};
     ({transact_time,V}, Rec) -> Rec#list_execute{transact_time = V};
     ({text,V}, Rec) -> Rec#list_execute{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_execute{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#list_execute{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#list_execute{encoded_text = V};
     ({K,V}, #list_execute{fields = F} = Rec) -> Rec#list_execute{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1115,9 +1199,13 @@ decode_message_list_status_request(Message, #list_status_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #list_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#list_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#list_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#list_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#list_status_request{sending_time = V};
     ({list_id,V}, Rec) -> Rec#list_status_request{list_id = V};
     ({text,V}, Rec) -> Rec#list_status_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_status_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#list_status_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#list_status_request{encoded_text = V};
     ({K,V}, #list_status_request{fields = F} = Rec) -> Rec#list_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1129,28 +1217,32 @@ decode_message_list_status(Message, #list_status{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #list_status{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#list_status{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#list_status{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#list_status{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#list_status{sending_time = V};
     ({list_id,V}, Rec) -> Rec#list_status{list_id = V};
-    ({list_status_type,V}, Rec) -> Rec#list_status{list_status_type = list_to_integer(binary_to_list(V))};
-    ({no_rpts,V}, Rec) -> Rec#list_status{no_rpts = list_to_integer(binary_to_list(V))};
-    ({list_order_status,V}, Rec) -> Rec#list_status{list_order_status = list_to_integer(binary_to_list(V))};
-    ({rpt_seq,V}, Rec) -> Rec#list_status{rpt_seq = list_to_integer(binary_to_list(V))};
+    ({list_status_type,V}, Rec) -> Rec#list_status{list_status_type = fix:parse_num(V)};
+    ({no_rpts,V}, Rec) -> Rec#list_status{no_rpts = fix:parse_num(V)};
+    ({list_order_status,V}, Rec) -> Rec#list_status{list_order_status = fix:parse_num(V)};
+    ({rpt_seq,V}, Rec) -> Rec#list_status{rpt_seq = fix:parse_num(V)};
     ({list_status_text,V}, Rec) -> Rec#list_status{list_status_text = V};
-    ({encoded_list_status_text_len,V}, Rec) -> Rec#list_status{encoded_list_status_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_list_status_text_len,V}, Rec) -> Rec#list_status{encoded_list_status_text_len = fix:parse_num(V)};
     ({encoded_list_status_text,V}, Rec) -> Rec#list_status{encoded_list_status_text = V};
     ({transact_time,V}, Rec) -> Rec#list_status{transact_time = V};
-    ({tot_no_orders,V}, Rec) -> Rec#list_status{tot_no_orders = list_to_integer(binary_to_list(V))};
+    ({tot_no_orders,V}, Rec) -> Rec#list_status{tot_no_orders = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#list_status{last_fragment = V == <<"Y">>};
     ({cl_ord_id,V}, Rec) -> Rec#list_status{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#list_status{secondary_cl_ord_id = V};
-    ({cum_qty,V}, Rec) -> Rec#list_status{cum_qty = list_to_integer(binary_to_list(V))};
+    ({cum_qty,V}, Rec) -> Rec#list_status{cum_qty = fix:parse_num(V)};
     ({ord_status,V}, Rec) -> Rec#list_status{ord_status = V};
     ({working_indicator,V}, Rec) -> Rec#list_status{working_indicator = V == <<"Y">>};
-    ({leaves_qty,V}, Rec) -> Rec#list_status{leaves_qty = list_to_integer(binary_to_list(V))};
-    ({cxl_qty,V}, Rec) -> Rec#list_status{cxl_qty = list_to_integer(binary_to_list(V))};
-    ({avg_px,V}, Rec) -> Rec#list_status{avg_px = list_to_float(binary_to_list(V))};
-    ({ord_rej_reason,V}, Rec) -> Rec#list_status{ord_rej_reason = list_to_integer(binary_to_list(V))};
+    ({leaves_qty,V}, Rec) -> Rec#list_status{leaves_qty = fix:parse_num(V)};
+    ({cxl_qty,V}, Rec) -> Rec#list_status{cxl_qty = fix:parse_num(V)};
+    ({avg_px,V}, Rec) -> Rec#list_status{avg_px = fix:parse_num(V)};
+    ({ord_rej_reason,V}, Rec) -> Rec#list_status{ord_rej_reason = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#list_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_status{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#list_status{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#list_status{encoded_text = V};
     ({K,V}, #list_status{fields = F} = Rec) -> Rec#list_status{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1162,27 +1254,31 @@ decode_message_allocation_instruction_ack(Message, #allocation_instruction_ack{}
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #allocation_instruction_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#allocation_instruction_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#allocation_instruction_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#allocation_instruction_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#allocation_instruction_ack{sending_time = V};
     ({alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{alloc_id = V};
     ({secondary_alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{secondary_alloc_id = V};
     ({trade_date,V}, Rec) -> Rec#allocation_instruction_ack{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#allocation_instruction_ack{transact_time = V};
-    ({alloc_status,V}, Rec) -> Rec#allocation_instruction_ack{alloc_status = list_to_integer(binary_to_list(V))};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{alloc_rej_code = list_to_integer(binary_to_list(V))};
-    ({alloc_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_type = list_to_integer(binary_to_list(V))};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_intermed_req_type = list_to_integer(binary_to_list(V))};
+    ({alloc_status,V}, Rec) -> Rec#allocation_instruction_ack{alloc_status = fix:parse_num(V)};
+    ({alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{alloc_rej_code = fix:parse_num(V)};
+    ({alloc_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_type = fix:parse_num(V)};
+    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_intermed_req_type = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#allocation_instruction_ack{match_status = V};
-    ({product,V}, Rec) -> Rec#allocation_instruction_ack{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#allocation_instruction_ack{product = fix:parse_num(V)};
     ({security_type,V}, Rec) -> Rec#allocation_instruction_ack{security_type = V};
     ({text,V}, Rec) -> Rec#allocation_instruction_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#allocation_instruction_ack{encoded_text = V};
     ({alloc_account,V}, Rec) -> Rec#allocation_instruction_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction_ack{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
-    ({alloc_price,V}, Rec) -> Rec#allocation_instruction_ack{alloc_price = list_to_float(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction_ack{alloc_acct_id_source = fix:parse_num(V)};
+    ({alloc_price,V}, Rec) -> Rec#allocation_instruction_ack{alloc_price = fix:parse_num(V)};
     ({individual_alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{individual_alloc_id = V};
-    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{individual_alloc_rej_code = list_to_integer(binary_to_list(V))};
+    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{individual_alloc_rej_code = fix:parse_num(V)};
     ({alloc_text,V}, Rec) -> Rec#allocation_instruction_ack{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_alloc_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_alloc_text_len = fix:parse_num(V)};
     ({encoded_alloc_text,V}, Rec) -> Rec#allocation_instruction_ack{encoded_alloc_text = V};
     ({K,V}, #allocation_instruction_ack{fields = F} = Rec) -> Rec#allocation_instruction_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1194,15 +1290,19 @@ decode_message_dont_know_trade(Message, #dont_know_trade{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #dont_know_trade{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#dont_know_trade{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#dont_know_trade{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#dont_know_trade{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#dont_know_trade{sending_time = V};
     ({order_id,V}, Rec) -> Rec#dont_know_trade{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#dont_know_trade{secondary_order_id = V};
     ({exec_id,V}, Rec) -> Rec#dont_know_trade{exec_id = V};
     ({dk_reason,V}, Rec) -> Rec#dont_know_trade{dk_reason = V};
     ({side,V}, Rec) -> Rec#dont_know_trade{side = V};
-    ({last_qty,V}, Rec) -> Rec#dont_know_trade{last_qty = list_to_integer(binary_to_list(V))};
-    ({last_px,V}, Rec) -> Rec#dont_know_trade{last_px = list_to_float(binary_to_list(V))};
+    ({last_qty,V}, Rec) -> Rec#dont_know_trade{last_qty = fix:parse_num(V)};
+    ({last_px,V}, Rec) -> Rec#dont_know_trade{last_px = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#dont_know_trade{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#dont_know_trade{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#dont_know_trade{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#dont_know_trade{encoded_text = V};
     ({K,V}, #dont_know_trade{fields = F} = Rec) -> Rec#dont_know_trade{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1214,41 +1314,45 @@ decode_message_quote_request(Message, #quote_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_request{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#quote_request{quote_req_id = V};
     ({rfq_req_id,V}, Rec) -> Rec#quote_request{rfq_req_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#quote_request{cl_ord_id = V};
     ({order_capacity,V}, Rec) -> Rec#quote_request{order_capacity = V};
-    ({prev_close_px,V}, Rec) -> Rec#quote_request{prev_close_px = list_to_float(binary_to_list(V))};
-    ({quote_request_type,V}, Rec) -> Rec#quote_request{quote_request_type = list_to_integer(binary_to_list(V))};
-    ({quote_type,V}, Rec) -> Rec#quote_request{quote_type = list_to_integer(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#quote_request{prev_close_px = fix:parse_num(V)};
+    ({quote_request_type,V}, Rec) -> Rec#quote_request{quote_request_type = fix:parse_num(V)};
+    ({quote_type,V}, Rec) -> Rec#quote_request{quote_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_request{trading_session_sub_id = V};
     ({trade_origination_date,V}, Rec) -> Rec#quote_request{trade_origination_date = V};
     ({side,V}, Rec) -> Rec#quote_request{side = V};
-    ({qty_type,V}, Rec) -> Rec#quote_request{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#quote_request{qty_type = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#quote_request{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#quote_request{settl_date = V};
     ({settl_date2,V}, Rec) -> Rec#quote_request{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_request{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#quote_request{order_qty2 = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#quote_request{currency = V};
     ({account,V}, Rec) -> Rec#quote_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_request{account_type = list_to_integer(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#quote_request{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_request{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_request{account_type = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#quote_request{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#quote_request{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#quote_request{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#quote_request{leg_settl_date = V};
     ({quote_qualifier,V}, Rec) -> Rec#quote_request{quote_qualifier = V};
-    ({quote_price_type,V}, Rec) -> Rec#quote_request{quote_price_type = list_to_integer(binary_to_list(V))};
+    ({quote_price_type,V}, Rec) -> Rec#quote_request{quote_price_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#quote_request{ord_type = V};
     ({valid_until_time,V}, Rec) -> Rec#quote_request{valid_until_time = V};
     ({expire_time,V}, Rec) -> Rec#quote_request{expire_time = V};
     ({transact_time,V}, Rec) -> Rec#quote_request{transact_time = V};
-    ({price_type,V}, Rec) -> Rec#quote_request{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#quote_request{price = list_to_float(binary_to_list(V))};
-    ({price2,V}, Rec) -> Rec#quote_request{price2 = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#quote_request{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#quote_request{price = fix:parse_num(V)};
+    ({price2,V}, Rec) -> Rec#quote_request{price2 = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#quote_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#quote_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#quote_request{encoded_text = V};
     ({K,V}, #quote_request{fields = F} = Rec) -> Rec#quote_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1260,44 +1364,48 @@ decode_message_quote(Message, #quote{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#quote{quote_req_id = V};
     ({quote_id,V}, Rec) -> Rec#quote{quote_id = V};
     ({quote_resp_id,V}, Rec) -> Rec#quote{quote_resp_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote{quote_type = list_to_integer(binary_to_list(V))};
+    ({quote_type,V}, Rec) -> Rec#quote{quote_type = fix:parse_num(V)};
     ({quote_qualifier,V}, Rec) -> Rec#quote{quote_qualifier = V};
-    ({quote_response_level,V}, Rec) -> Rec#quote{quote_response_level = list_to_integer(binary_to_list(V))};
+    ({quote_response_level,V}, Rec) -> Rec#quote{quote_response_level = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote{trading_session_sub_id = V};
     ({side,V}, Rec) -> Rec#quote{side = V};
     ({settl_type,V}, Rec) -> Rec#quote{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#quote{settl_date = V};
     ({settl_date2,V}, Rec) -> Rec#quote{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#quote{order_qty2 = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#quote{currency = V};
     ({account,V}, Rec) -> Rec#quote{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote{account_type = list_to_integer(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#quote{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#quote{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote{account_type = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#quote{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#quote{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#quote{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#quote{leg_settl_date = V};
-    ({leg_price_type,V}, Rec) -> Rec#quote{leg_price_type = list_to_integer(binary_to_list(V))};
-    ({leg_bid_px,V}, Rec) -> Rec#quote{leg_bid_px = list_to_float(binary_to_list(V))};
-    ({leg_offer_px,V}, Rec) -> Rec#quote{leg_offer_px = list_to_float(binary_to_list(V))};
-    ({bid_px,V}, Rec) -> Rec#quote{bid_px = list_to_float(binary_to_list(V))};
-    ({offer_px,V}, Rec) -> Rec#quote{offer_px = list_to_float(binary_to_list(V))};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote{mkt_bid_px = list_to_float(binary_to_list(V))};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote{mkt_offer_px = list_to_float(binary_to_list(V))};
-    ({min_bid_size,V}, Rec) -> Rec#quote{min_bid_size = list_to_integer(binary_to_list(V))};
-    ({bid_size,V}, Rec) -> Rec#quote{bid_size = list_to_integer(binary_to_list(V))};
-    ({min_offer_size,V}, Rec) -> Rec#quote{min_offer_size = list_to_integer(binary_to_list(V))};
-    ({offer_size,V}, Rec) -> Rec#quote{offer_size = list_to_integer(binary_to_list(V))};
+    ({leg_price_type,V}, Rec) -> Rec#quote{leg_price_type = fix:parse_num(V)};
+    ({leg_bid_px,V}, Rec) -> Rec#quote{leg_bid_px = fix:parse_num(V)};
+    ({leg_offer_px,V}, Rec) -> Rec#quote{leg_offer_px = fix:parse_num(V)};
+    ({bid_px,V}, Rec) -> Rec#quote{bid_px = fix:parse_num(V)};
+    ({offer_px,V}, Rec) -> Rec#quote{offer_px = fix:parse_num(V)};
+    ({mkt_bid_px,V}, Rec) -> Rec#quote{mkt_bid_px = fix:parse_num(V)};
+    ({mkt_offer_px,V}, Rec) -> Rec#quote{mkt_offer_px = fix:parse_num(V)};
+    ({min_bid_size,V}, Rec) -> Rec#quote{min_bid_size = fix:parse_num(V)};
+    ({bid_size,V}, Rec) -> Rec#quote{bid_size = fix:parse_num(V)};
+    ({min_offer_size,V}, Rec) -> Rec#quote{min_offer_size = fix:parse_num(V)};
+    ({offer_size,V}, Rec) -> Rec#quote{offer_size = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#quote{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote{bid_spot_rate = list_to_float(binary_to_list(V))};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote{offer_spot_rate = list_to_float(binary_to_list(V))};
+    ({bid_spot_rate,V}, Rec) -> Rec#quote{bid_spot_rate = fix:parse_num(V)};
+    ({offer_spot_rate,V}, Rec) -> Rec#quote{offer_spot_rate = fix:parse_num(V)};
     ({bid_forward_points,V}, Rec) -> Rec#quote{bid_forward_points = V};
     ({offer_forward_points,V}, Rec) -> Rec#quote{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote{mid_px = list_to_float(binary_to_list(V))};
+    ({mid_px,V}, Rec) -> Rec#quote{mid_px = fix:parse_num(V)};
     ({bid_yield,V}, Rec) -> Rec#quote{bid_yield = V};
     ({mid_yield,V}, Rec) -> Rec#quote{mid_yield = V};
     ({offer_yield,V}, Rec) -> Rec#quote{offer_yield = V};
@@ -1310,12 +1418,12 @@ decode_message_quote(Message, #quote{} = Record) ->
     ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote{settl_curr_fx_rate_calc = V};
     ({comm_type,V}, Rec) -> Rec#quote{comm_type = V};
     ({commission,V}, Rec) -> Rec#quote{commission = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#quote{cust_order_capacity = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#quote{ex_destination = V};
     ({order_capacity,V}, Rec) -> Rec#quote{order_capacity = V};
-    ({price_type,V}, Rec) -> Rec#quote{price_type = list_to_integer(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#quote{price_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#quote{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#quote{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#quote{encoded_text = V};
     ({K,V}, #quote{fields = F} = Rec) -> Rec#quote{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1327,12 +1435,16 @@ decode_message_settlement_instructions(Message, #settlement_instructions{} = Rec
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #settlement_instructions{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#settlement_instructions{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#settlement_instructions{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#settlement_instructions{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#settlement_instructions{sending_time = V};
     ({settl_inst_msg_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_msg_id = V};
     ({settl_inst_req_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_req_id = V};
     ({settl_inst_mode,V}, Rec) -> Rec#settlement_instructions{settl_inst_mode = V};
-    ({settl_inst_req_rej_code,V}, Rec) -> Rec#settlement_instructions{settl_inst_req_rej_code = list_to_integer(binary_to_list(V))};
+    ({settl_inst_req_rej_code,V}, Rec) -> Rec#settlement_instructions{settl_inst_req_rej_code = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#settlement_instructions{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#settlement_instructions{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#settlement_instructions{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#settlement_instructions{encoded_text = V};
     ({cl_ord_id,V}, Rec) -> Rec#settlement_instructions{cl_ord_id = V};
     ({transact_time,V}, Rec) -> Rec#settlement_instructions{transact_time = V};
@@ -1340,13 +1452,13 @@ decode_message_settlement_instructions(Message, #settlement_instructions{} = Rec
     ({settl_inst_trans_type,V}, Rec) -> Rec#settlement_instructions{settl_inst_trans_type = V};
     ({settl_inst_ref_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_ref_id = V};
     ({side,V}, Rec) -> Rec#settlement_instructions{side = V};
-    ({product,V}, Rec) -> Rec#settlement_instructions{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#settlement_instructions{product = fix:parse_num(V)};
     ({security_type,V}, Rec) -> Rec#settlement_instructions{security_type = V};
     ({cfi_code,V}, Rec) -> Rec#settlement_instructions{cfi_code = V};
     ({effective_time,V}, Rec) -> Rec#settlement_instructions{effective_time = V};
     ({expire_time,V}, Rec) -> Rec#settlement_instructions{expire_time = V};
     ({last_update_time,V}, Rec) -> Rec#settlement_instructions{last_update_time = V};
-    ({payment_method,V}, Rec) -> Rec#settlement_instructions{payment_method = list_to_integer(binary_to_list(V))};
+    ({payment_method,V}, Rec) -> Rec#settlement_instructions{payment_method = fix:parse_num(V)};
     ({payment_ref,V}, Rec) -> Rec#settlement_instructions{payment_ref = V};
     ({card_holder_name,V}, Rec) -> Rec#settlement_instructions{card_holder_name = V};
     ({card_number,V}, Rec) -> Rec#settlement_instructions{card_number = V};
@@ -1365,10 +1477,14 @@ decode_message_market_data_request(Message, #market_data_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #market_data_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#market_data_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#market_data_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#market_data_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#market_data_request{sending_time = V};
     ({md_req_id,V}, Rec) -> Rec#market_data_request{md_req_id = V};
     ({subscription_request_type,V}, Rec) -> Rec#market_data_request{subscription_request_type = V};
-    ({market_depth,V}, Rec) -> Rec#market_data_request{market_depth = list_to_integer(binary_to_list(V))};
-    ({md_update_type,V}, Rec) -> Rec#market_data_request{md_update_type = list_to_integer(binary_to_list(V))};
+    ({market_depth,V}, Rec) -> Rec#market_data_request{market_depth = fix:parse_num(V)};
+    ({md_update_type,V}, Rec) -> Rec#market_data_request{md_update_type = fix:parse_num(V)};
     ({aggregated_book,V}, Rec) -> Rec#market_data_request{aggregated_book = V == <<"Y">>};
     ({open_close_settl_flag,V}, Rec) -> Rec#market_data_request{open_close_settl_flag = V};
     ({scope,V}, Rec) -> Rec#market_data_request{scope = V};
@@ -1376,8 +1492,8 @@ decode_message_market_data_request(Message, #market_data_request{} = Record) ->
     ({md_entry_type,V}, Rec) -> Rec#market_data_request{md_entry_type = V};
     ({trading_session_id,V}, Rec) -> Rec#market_data_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#market_data_request{trading_session_sub_id = V};
-    ({appl_queue_action,V}, Rec) -> Rec#market_data_request{appl_queue_action = list_to_integer(binary_to_list(V))};
-    ({appl_queue_max,V}, Rec) -> Rec#market_data_request{appl_queue_max = list_to_integer(binary_to_list(V))};
+    ({appl_queue_action,V}, Rec) -> Rec#market_data_request{appl_queue_action = fix:parse_num(V)};
+    ({appl_queue_max,V}, Rec) -> Rec#market_data_request{appl_queue_max = fix:parse_num(V)};
     ({K,V}, #market_data_request{fields = F} = Rec) -> Rec#market_data_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#market_data_request{fields = lists:reverse(F)}.
@@ -1388,14 +1504,18 @@ decode_message_market_data_snapshot_full_refresh(Message, #market_data_snapshot_
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #market_data_snapshot_full_refresh{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#market_data_snapshot_full_refresh{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{sending_time = V};
     ({md_req_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_req_id = V};
     ({financial_status,V}, Rec) -> Rec#market_data_snapshot_full_refresh{financial_status = V};
     ({corporate_action,V}, Rec) -> Rec#market_data_snapshot_full_refresh{corporate_action = V};
     ({net_chg_prev_day,V}, Rec) -> Rec#market_data_snapshot_full_refresh{net_chg_prev_day = V};
     ({md_entry_type,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_type = V};
-    ({md_entry_px,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_px = list_to_float(binary_to_list(V))};
+    ({md_entry_px,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#market_data_snapshot_full_refresh{currency = V};
-    ({md_entry_size,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_size = list_to_integer(binary_to_list(V))};
+    ({md_entry_size,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_size = fix:parse_num(V)};
     ({md_entry_date,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_date = V};
     ({md_entry_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_time = V};
     ({tick_direction,V}, Rec) -> Rec#market_data_snapshot_full_refresh{tick_direction = V};
@@ -1411,22 +1531,22 @@ decode_message_market_data_snapshot_full_refresh(Message, #market_data_snapshot_
     ({time_in_force,V}, Rec) -> Rec#market_data_snapshot_full_refresh{time_in_force = V};
     ({expire_date,V}, Rec) -> Rec#market_data_snapshot_full_refresh{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{expire_time = V};
-    ({min_qty,V}, Rec) -> Rec#market_data_snapshot_full_refresh{min_qty = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#market_data_snapshot_full_refresh{min_qty = fix:parse_num(V)};
     ({exec_inst,V}, Rec) -> Rec#market_data_snapshot_full_refresh{exec_inst = V};
-    ({seller_days,V}, Rec) -> Rec#market_data_snapshot_full_refresh{seller_days = list_to_integer(binary_to_list(V))};
+    ({seller_days,V}, Rec) -> Rec#market_data_snapshot_full_refresh{seller_days = fix:parse_num(V)};
     ({order_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{order_id = V};
     ({quote_entry_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{quote_entry_id = V};
     ({md_entry_buyer,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_buyer = V};
     ({md_entry_seller,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_seller = V};
-    ({number_of_orders,V}, Rec) -> Rec#market_data_snapshot_full_refresh{number_of_orders = list_to_integer(binary_to_list(V))};
-    ({md_entry_position_no,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_position_no = list_to_integer(binary_to_list(V))};
+    ({number_of_orders,V}, Rec) -> Rec#market_data_snapshot_full_refresh{number_of_orders = fix:parse_num(V)};
+    ({md_entry_position_no,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_position_no = fix:parse_num(V)};
     ({scope,V}, Rec) -> Rec#market_data_snapshot_full_refresh{scope = V};
     ({price_delta,V}, Rec) -> Rec#market_data_snapshot_full_refresh{price_delta = V};
     ({text,V}, Rec) -> Rec#market_data_snapshot_full_refresh{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_snapshot_full_refresh{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#market_data_snapshot_full_refresh{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#market_data_snapshot_full_refresh{encoded_text = V};
-    ({appl_queue_depth,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_depth = list_to_integer(binary_to_list(V))};
-    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_resolution = list_to_integer(binary_to_list(V))};
+    ({appl_queue_depth,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_depth = fix:parse_num(V)};
+    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_resolution = fix:parse_num(V)};
     ({K,V}, #market_data_snapshot_full_refresh{fields = F} = Rec) -> Rec#market_data_snapshot_full_refresh{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#market_data_snapshot_full_refresh{fields = lists:reverse(F)}.
@@ -1437,6 +1557,10 @@ decode_message_market_data_incremental_refresh(Message, #market_data_incremental
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #market_data_incremental_refresh{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#market_data_incremental_refresh{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#market_data_incremental_refresh{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#market_data_incremental_refresh{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#market_data_incremental_refresh{sending_time = V};
     ({md_req_id,V}, Rec) -> Rec#market_data_incremental_refresh{md_req_id = V};
     ({md_update_action,V}, Rec) -> Rec#market_data_incremental_refresh{md_update_action = V};
     ({delete_reason,V}, Rec) -> Rec#market_data_incremental_refresh{delete_reason = V};
@@ -1445,9 +1569,9 @@ decode_message_market_data_incremental_refresh(Message, #market_data_incremental
     ({md_entry_ref_id,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_ref_id = V};
     ({financial_status,V}, Rec) -> Rec#market_data_incremental_refresh{financial_status = V};
     ({corporate_action,V}, Rec) -> Rec#market_data_incremental_refresh{corporate_action = V};
-    ({md_entry_px,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_px = list_to_float(binary_to_list(V))};
+    ({md_entry_px,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#market_data_incremental_refresh{currency = V};
-    ({md_entry_size,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_size = list_to_integer(binary_to_list(V))};
+    ({md_entry_size,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_size = fix:parse_num(V)};
     ({md_entry_date,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_date = V};
     ({md_entry_time,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_time = V};
     ({tick_direction,V}, Rec) -> Rec#market_data_incremental_refresh{tick_direction = V};
@@ -1463,23 +1587,23 @@ decode_message_market_data_incremental_refresh(Message, #market_data_incremental
     ({time_in_force,V}, Rec) -> Rec#market_data_incremental_refresh{time_in_force = V};
     ({expire_date,V}, Rec) -> Rec#market_data_incremental_refresh{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#market_data_incremental_refresh{expire_time = V};
-    ({min_qty,V}, Rec) -> Rec#market_data_incremental_refresh{min_qty = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#market_data_incremental_refresh{min_qty = fix:parse_num(V)};
     ({exec_inst,V}, Rec) -> Rec#market_data_incremental_refresh{exec_inst = V};
-    ({seller_days,V}, Rec) -> Rec#market_data_incremental_refresh{seller_days = list_to_integer(binary_to_list(V))};
+    ({seller_days,V}, Rec) -> Rec#market_data_incremental_refresh{seller_days = fix:parse_num(V)};
     ({order_id,V}, Rec) -> Rec#market_data_incremental_refresh{order_id = V};
     ({quote_entry_id,V}, Rec) -> Rec#market_data_incremental_refresh{quote_entry_id = V};
     ({md_entry_buyer,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_buyer = V};
     ({md_entry_seller,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_seller = V};
-    ({number_of_orders,V}, Rec) -> Rec#market_data_incremental_refresh{number_of_orders = list_to_integer(binary_to_list(V))};
-    ({md_entry_position_no,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_position_no = list_to_integer(binary_to_list(V))};
+    ({number_of_orders,V}, Rec) -> Rec#market_data_incremental_refresh{number_of_orders = fix:parse_num(V)};
+    ({md_entry_position_no,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_position_no = fix:parse_num(V)};
     ({scope,V}, Rec) -> Rec#market_data_incremental_refresh{scope = V};
     ({price_delta,V}, Rec) -> Rec#market_data_incremental_refresh{price_delta = V};
     ({net_chg_prev_day,V}, Rec) -> Rec#market_data_incremental_refresh{net_chg_prev_day = V};
     ({text,V}, Rec) -> Rec#market_data_incremental_refresh{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_incremental_refresh{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#market_data_incremental_refresh{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#market_data_incremental_refresh{encoded_text = V};
-    ({appl_queue_depth,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_depth = list_to_integer(binary_to_list(V))};
-    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_resolution = list_to_integer(binary_to_list(V))};
+    ({appl_queue_depth,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_depth = fix:parse_num(V)};
+    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_resolution = fix:parse_num(V)};
     ({K,V}, #market_data_incremental_refresh{fields = F} = Rec) -> Rec#market_data_incremental_refresh{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#market_data_incremental_refresh{fields = lists:reverse(F)}.
@@ -1490,11 +1614,15 @@ decode_message_market_data_request_reject(Message, #market_data_request_reject{}
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #market_data_request_reject{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#market_data_request_reject{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#market_data_request_reject{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#market_data_request_reject{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#market_data_request_reject{sending_time = V};
     ({md_req_id,V}, Rec) -> Rec#market_data_request_reject{md_req_id = V};
     ({md_req_rej_reason,V}, Rec) -> Rec#market_data_request_reject{md_req_rej_reason = V};
     ({alt_md_source_id,V}, Rec) -> Rec#market_data_request_reject{alt_md_source_id = V};
     ({text,V}, Rec) -> Rec#market_data_request_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_request_reject{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#market_data_request_reject{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#market_data_request_reject{encoded_text = V};
     ({K,V}, #market_data_request_reject{fields = F} = Rec) -> Rec#market_data_request_reject{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1506,13 +1634,17 @@ decode_message_quote_cancel(Message, #quote_cancel{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_cancel{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_cancel{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_cancel{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_cancel{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_cancel{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#quote_cancel{quote_req_id = V};
     ({quote_id,V}, Rec) -> Rec#quote_cancel{quote_id = V};
-    ({quote_cancel_type,V}, Rec) -> Rec#quote_cancel{quote_cancel_type = list_to_integer(binary_to_list(V))};
-    ({quote_response_level,V}, Rec) -> Rec#quote_cancel{quote_response_level = list_to_integer(binary_to_list(V))};
+    ({quote_cancel_type,V}, Rec) -> Rec#quote_cancel{quote_cancel_type = fix:parse_num(V)};
+    ({quote_response_level,V}, Rec) -> Rec#quote_cancel{quote_response_level = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#quote_cancel{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_cancel{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_cancel{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_cancel{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_cancel{account_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote_cancel{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_cancel{trading_session_sub_id = V};
     ({K,V}, #quote_cancel{fields = F} = Rec) -> Rec#quote_cancel{fields = [{K,decode_typed_field(K,V)}|F]}
@@ -1525,11 +1657,15 @@ decode_message_quote_status_request(Message, #quote_status_request{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_status_request{sending_time = V};
     ({quote_status_req_id,V}, Rec) -> Rec#quote_status_request{quote_status_req_id = V};
     ({quote_id,V}, Rec) -> Rec#quote_status_request{quote_id = V};
     ({account,V}, Rec) -> Rec#quote_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_status_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_status_request{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_status_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_status_request{account_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote_status_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_status_request{trading_session_sub_id = V};
     ({subscription_request_type,V}, Rec) -> Rec#quote_status_request{subscription_request_type = V};
@@ -1543,32 +1679,36 @@ decode_message_mass_quote_acknowledgement(Message, #mass_quote_acknowledgement{}
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #mass_quote_acknowledgement{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#mass_quote_acknowledgement{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#mass_quote_acknowledgement{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#mass_quote_acknowledgement{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#mass_quote_acknowledgement{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_req_id = V};
     ({quote_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_id = V};
-    ({quote_status,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_status = list_to_integer(binary_to_list(V))};
-    ({quote_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_reject_reason = list_to_integer(binary_to_list(V))};
-    ({quote_response_level,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_response_level = list_to_integer(binary_to_list(V))};
-    ({quote_type,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_type = list_to_integer(binary_to_list(V))};
+    ({quote_status,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_status = fix:parse_num(V)};
+    ({quote_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_reject_reason = fix:parse_num(V)};
+    ({quote_response_level,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_response_level = fix:parse_num(V)};
+    ({quote_type,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_type = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#mass_quote_acknowledgement{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#mass_quote_acknowledgement{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#mass_quote_acknowledgement{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#mass_quote_acknowledgement{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#mass_quote_acknowledgement{account_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#mass_quote_acknowledgement{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#mass_quote_acknowledgement{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#mass_quote_acknowledgement{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#mass_quote_acknowledgement{encoded_text = V};
     ({quote_set_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_set_id = V};
-    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote_acknowledgement{tot_no_quote_entries = list_to_integer(binary_to_list(V))};
+    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote_acknowledgement{tot_no_quote_entries = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#mass_quote_acknowledgement{last_fragment = V == <<"Y">>};
     ({quote_entry_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_entry_id = V};
-    ({bid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_px = list_to_float(binary_to_list(V))};
-    ({offer_px,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_px = list_to_float(binary_to_list(V))};
-    ({bid_size,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_size = list_to_integer(binary_to_list(V))};
-    ({offer_size,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_size = list_to_integer(binary_to_list(V))};
+    ({bid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_px = fix:parse_num(V)};
+    ({offer_px,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_px = fix:parse_num(V)};
+    ({bid_size,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_size = fix:parse_num(V)};
+    ({offer_size,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_size = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#mass_quote_acknowledgement{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_spot_rate = list_to_float(binary_to_list(V))};
-    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_spot_rate = list_to_float(binary_to_list(V))};
+    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_spot_rate = fix:parse_num(V)};
+    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_spot_rate = fix:parse_num(V)};
     ({bid_forward_points,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_forward_points = V};
     ({offer_forward_points,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{mid_px = list_to_float(binary_to_list(V))};
+    ({mid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{mid_px = fix:parse_num(V)};
     ({bid_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_yield = V};
     ({mid_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{mid_yield = V};
     ({offer_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_yield = V};
@@ -1578,11 +1718,11 @@ decode_message_mass_quote_acknowledgement(Message, #mass_quote_acknowledgement{}
     ({settl_date,V}, Rec) -> Rec#mass_quote_acknowledgement{settl_date = V};
     ({ord_type,V}, Rec) -> Rec#mass_quote_acknowledgement{ord_type = V};
     ({settl_date2,V}, Rec) -> Rec#mass_quote_acknowledgement{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#mass_quote_acknowledgement{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#mass_quote_acknowledgement{order_qty2 = fix:parse_num(V)};
     ({bid_forward_points2,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_forward_points2 = V};
     ({offer_forward_points2,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_forward_points2 = V};
     ({currency,V}, Rec) -> Rec#mass_quote_acknowledgement{currency = V};
-    ({quote_entry_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_entry_reject_reason = list_to_integer(binary_to_list(V))};
+    ({quote_entry_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_entry_reject_reason = fix:parse_num(V)};
     ({K,V}, #mass_quote_acknowledgement{fields = F} = Rec) -> Rec#mass_quote_acknowledgement{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#mass_quote_acknowledgement{fields = lists:reverse(F)}.
@@ -1593,15 +1733,19 @@ decode_message_security_definition_request(Message, #security_definition_request
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_definition_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_definition_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_definition_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_definition_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_definition_request{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_definition_request{security_req_id = V};
-    ({security_request_type,V}, Rec) -> Rec#security_definition_request{security_request_type = list_to_integer(binary_to_list(V))};
+    ({security_request_type,V}, Rec) -> Rec#security_definition_request{security_request_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#security_definition_request{currency = V};
     ({text,V}, Rec) -> Rec#security_definition_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_definition_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_definition_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_definition_request{encoded_text = V};
     ({trading_session_id,V}, Rec) -> Rec#security_definition_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_definition_request{trading_session_sub_id = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_definition_request{expiration_cycle = list_to_integer(binary_to_list(V))};
+    ({expiration_cycle,V}, Rec) -> Rec#security_definition_request{expiration_cycle = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#security_definition_request{subscription_request_type = V};
     ({K,V}, #security_definition_request{fields = F} = Rec) -> Rec#security_definition_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1613,18 +1757,22 @@ decode_message_security_definition(Message, #security_definition{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_definition{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_definition{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_definition{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_definition{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_definition{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_definition{security_req_id = V};
     ({security_response_id,V}, Rec) -> Rec#security_definition{security_response_id = V};
-    ({security_response_type,V}, Rec) -> Rec#security_definition{security_response_type = list_to_integer(binary_to_list(V))};
+    ({security_response_type,V}, Rec) -> Rec#security_definition{security_response_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#security_definition{currency = V};
     ({trading_session_id,V}, Rec) -> Rec#security_definition{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_definition{trading_session_sub_id = V};
     ({text,V}, Rec) -> Rec#security_definition{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_definition{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_definition{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_definition{encoded_text = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_definition{expiration_cycle = list_to_integer(binary_to_list(V))};
-    ({round_lot,V}, Rec) -> Rec#security_definition{round_lot = list_to_integer(binary_to_list(V))};
-    ({min_trade_vol,V}, Rec) -> Rec#security_definition{min_trade_vol = list_to_integer(binary_to_list(V))};
+    ({expiration_cycle,V}, Rec) -> Rec#security_definition{expiration_cycle = fix:parse_num(V)};
+    ({round_lot,V}, Rec) -> Rec#security_definition{round_lot = fix:parse_num(V)};
+    ({min_trade_vol,V}, Rec) -> Rec#security_definition{min_trade_vol = fix:parse_num(V)};
     ({K,V}, #security_definition{fields = F} = Rec) -> Rec#security_definition{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#security_definition{fields = lists:reverse(F)}.
@@ -1635,6 +1783,10 @@ decode_message_security_status_request(Message, #security_status_request{} = Rec
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_status_request{sending_time = V};
     ({security_status_req_id,V}, Rec) -> Rec#security_status_request{security_status_req_id = V};
     ({currency,V}, Rec) -> Rec#security_status_request{currency = V};
     ({subscription_request_type,V}, Rec) -> Rec#security_status_request{subscription_request_type = V};
@@ -1650,26 +1802,30 @@ decode_message_security_status(Message, #security_status{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_status{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_status{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_status{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_status{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_status{sending_time = V};
     ({security_status_req_id,V}, Rec) -> Rec#security_status{security_status_req_id = V};
     ({currency,V}, Rec) -> Rec#security_status{currency = V};
     ({trading_session_id,V}, Rec) -> Rec#security_status{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_status{trading_session_sub_id = V};
     ({unsolicited_indicator,V}, Rec) -> Rec#security_status{unsolicited_indicator = V == <<"Y">>};
-    ({security_trading_status,V}, Rec) -> Rec#security_status{security_trading_status = list_to_integer(binary_to_list(V))};
+    ({security_trading_status,V}, Rec) -> Rec#security_status{security_trading_status = fix:parse_num(V)};
     ({financial_status,V}, Rec) -> Rec#security_status{financial_status = V};
     ({corporate_action,V}, Rec) -> Rec#security_status{corporate_action = V};
     ({halt_reason_char,V}, Rec) -> Rec#security_status{halt_reason_char = V};
     ({in_view_of_common,V}, Rec) -> Rec#security_status{in_view_of_common = V == <<"Y">>};
     ({due_to_related,V}, Rec) -> Rec#security_status{due_to_related = V == <<"Y">>};
-    ({buy_volume,V}, Rec) -> Rec#security_status{buy_volume = list_to_integer(binary_to_list(V))};
-    ({sell_volume,V}, Rec) -> Rec#security_status{sell_volume = list_to_integer(binary_to_list(V))};
-    ({high_px,V}, Rec) -> Rec#security_status{high_px = list_to_float(binary_to_list(V))};
-    ({low_px,V}, Rec) -> Rec#security_status{low_px = list_to_float(binary_to_list(V))};
-    ({last_px,V}, Rec) -> Rec#security_status{last_px = list_to_float(binary_to_list(V))};
+    ({buy_volume,V}, Rec) -> Rec#security_status{buy_volume = fix:parse_num(V)};
+    ({sell_volume,V}, Rec) -> Rec#security_status{sell_volume = fix:parse_num(V)};
+    ({high_px,V}, Rec) -> Rec#security_status{high_px = fix:parse_num(V)};
+    ({low_px,V}, Rec) -> Rec#security_status{low_px = fix:parse_num(V)};
+    ({last_px,V}, Rec) -> Rec#security_status{last_px = fix:parse_num(V)};
     ({transact_time,V}, Rec) -> Rec#security_status{transact_time = V};
-    ({adjustment,V}, Rec) -> Rec#security_status{adjustment = list_to_integer(binary_to_list(V))};
+    ({adjustment,V}, Rec) -> Rec#security_status{adjustment = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#security_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_status{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_status{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_status{encoded_text = V};
     ({K,V}, #security_status{fields = F} = Rec) -> Rec#security_status{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1681,11 +1837,15 @@ decode_message_trading_session_status_request(Message, #trading_session_status_r
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trading_session_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trading_session_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trading_session_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trading_session_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trading_session_status_request{sending_time = V};
     ({trad_ses_req_id,V}, Rec) -> Rec#trading_session_status_request{trad_ses_req_id = V};
     ({trading_session_id,V}, Rec) -> Rec#trading_session_status_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#trading_session_status_request{trading_session_sub_id = V};
-    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status_request{trad_ses_method = list_to_integer(binary_to_list(V))};
-    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status_request{trad_ses_mode = list_to_integer(binary_to_list(V))};
+    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status_request{trad_ses_method = fix:parse_num(V)};
+    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status_request{trad_ses_mode = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#trading_session_status_request{subscription_request_type = V};
     ({K,V}, #trading_session_status_request{fields = F} = Rec) -> Rec#trading_session_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1697,22 +1857,26 @@ decode_message_trading_session_status(Message, #trading_session_status{} = Recor
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trading_session_status{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trading_session_status{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trading_session_status{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trading_session_status{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trading_session_status{sending_time = V};
     ({trad_ses_req_id,V}, Rec) -> Rec#trading_session_status{trad_ses_req_id = V};
     ({trading_session_id,V}, Rec) -> Rec#trading_session_status{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#trading_session_status{trading_session_sub_id = V};
-    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status{trad_ses_method = list_to_integer(binary_to_list(V))};
-    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status{trad_ses_mode = list_to_integer(binary_to_list(V))};
+    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status{trad_ses_method = fix:parse_num(V)};
+    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status{trad_ses_mode = fix:parse_num(V)};
     ({unsolicited_indicator,V}, Rec) -> Rec#trading_session_status{unsolicited_indicator = V == <<"Y">>};
-    ({trad_ses_status,V}, Rec) -> Rec#trading_session_status{trad_ses_status = list_to_integer(binary_to_list(V))};
-    ({trad_ses_status_rej_reason,V}, Rec) -> Rec#trading_session_status{trad_ses_status_rej_reason = list_to_integer(binary_to_list(V))};
+    ({trad_ses_status,V}, Rec) -> Rec#trading_session_status{trad_ses_status = fix:parse_num(V)};
+    ({trad_ses_status_rej_reason,V}, Rec) -> Rec#trading_session_status{trad_ses_status_rej_reason = fix:parse_num(V)};
     ({trad_ses_start_time,V}, Rec) -> Rec#trading_session_status{trad_ses_start_time = V};
     ({trad_ses_open_time,V}, Rec) -> Rec#trading_session_status{trad_ses_open_time = V};
     ({trad_ses_pre_close_time,V}, Rec) -> Rec#trading_session_status{trad_ses_pre_close_time = V};
     ({trad_ses_close_time,V}, Rec) -> Rec#trading_session_status{trad_ses_close_time = V};
     ({trad_ses_end_time,V}, Rec) -> Rec#trading_session_status{trad_ses_end_time = V};
-    ({total_volume_traded,V}, Rec) -> Rec#trading_session_status{total_volume_traded = list_to_integer(binary_to_list(V))};
+    ({total_volume_traded,V}, Rec) -> Rec#trading_session_status{total_volume_traded = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#trading_session_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trading_session_status{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#trading_session_status{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#trading_session_status{encoded_text = V};
     ({K,V}, #trading_session_status{fields = F} = Rec) -> Rec#trading_session_status{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1724,30 +1888,34 @@ decode_message_mass_quote(Message, #mass_quote{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #mass_quote{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#mass_quote{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#mass_quote{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#mass_quote{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#mass_quote{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#mass_quote{quote_req_id = V};
     ({quote_id,V}, Rec) -> Rec#mass_quote{quote_id = V};
-    ({quote_type,V}, Rec) -> Rec#mass_quote{quote_type = list_to_integer(binary_to_list(V))};
-    ({quote_response_level,V}, Rec) -> Rec#mass_quote{quote_response_level = list_to_integer(binary_to_list(V))};
+    ({quote_type,V}, Rec) -> Rec#mass_quote{quote_type = fix:parse_num(V)};
+    ({quote_response_level,V}, Rec) -> Rec#mass_quote{quote_response_level = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#mass_quote{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#mass_quote{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#mass_quote{account_type = list_to_integer(binary_to_list(V))};
-    ({def_bid_size,V}, Rec) -> Rec#mass_quote{def_bid_size = list_to_integer(binary_to_list(V))};
-    ({def_offer_size,V}, Rec) -> Rec#mass_quote{def_offer_size = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#mass_quote{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#mass_quote{account_type = fix:parse_num(V)};
+    ({def_bid_size,V}, Rec) -> Rec#mass_quote{def_bid_size = fix:parse_num(V)};
+    ({def_offer_size,V}, Rec) -> Rec#mass_quote{def_offer_size = fix:parse_num(V)};
     ({quote_set_id,V}, Rec) -> Rec#mass_quote{quote_set_id = V};
     ({quote_set_valid_until_time,V}, Rec) -> Rec#mass_quote{quote_set_valid_until_time = V};
-    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote{tot_no_quote_entries = list_to_integer(binary_to_list(V))};
+    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote{tot_no_quote_entries = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#mass_quote{last_fragment = V == <<"Y">>};
     ({quote_entry_id,V}, Rec) -> Rec#mass_quote{quote_entry_id = V};
-    ({bid_px,V}, Rec) -> Rec#mass_quote{bid_px = list_to_float(binary_to_list(V))};
-    ({offer_px,V}, Rec) -> Rec#mass_quote{offer_px = list_to_float(binary_to_list(V))};
-    ({bid_size,V}, Rec) -> Rec#mass_quote{bid_size = list_to_integer(binary_to_list(V))};
-    ({offer_size,V}, Rec) -> Rec#mass_quote{offer_size = list_to_integer(binary_to_list(V))};
+    ({bid_px,V}, Rec) -> Rec#mass_quote{bid_px = fix:parse_num(V)};
+    ({offer_px,V}, Rec) -> Rec#mass_quote{offer_px = fix:parse_num(V)};
+    ({bid_size,V}, Rec) -> Rec#mass_quote{bid_size = fix:parse_num(V)};
+    ({offer_size,V}, Rec) -> Rec#mass_quote{offer_size = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#mass_quote{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote{bid_spot_rate = list_to_float(binary_to_list(V))};
-    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote{offer_spot_rate = list_to_float(binary_to_list(V))};
+    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote{bid_spot_rate = fix:parse_num(V)};
+    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote{offer_spot_rate = fix:parse_num(V)};
     ({bid_forward_points,V}, Rec) -> Rec#mass_quote{bid_forward_points = V};
     ({offer_forward_points,V}, Rec) -> Rec#mass_quote{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#mass_quote{mid_px = list_to_float(binary_to_list(V))};
+    ({mid_px,V}, Rec) -> Rec#mass_quote{mid_px = fix:parse_num(V)};
     ({bid_yield,V}, Rec) -> Rec#mass_quote{bid_yield = V};
     ({mid_yield,V}, Rec) -> Rec#mass_quote{mid_yield = V};
     ({offer_yield,V}, Rec) -> Rec#mass_quote{offer_yield = V};
@@ -1757,7 +1925,7 @@ decode_message_mass_quote(Message, #mass_quote{} = Record) ->
     ({settl_date,V}, Rec) -> Rec#mass_quote{settl_date = V};
     ({ord_type,V}, Rec) -> Rec#mass_quote{ord_type = V};
     ({settl_date2,V}, Rec) -> Rec#mass_quote{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#mass_quote{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#mass_quote{order_qty2 = fix:parse_num(V)};
     ({bid_forward_points2,V}, Rec) -> Rec#mass_quote{bid_forward_points2 = V};
     ({offer_forward_points2,V}, Rec) -> Rec#mass_quote{offer_forward_points2 = V};
     ({currency,V}, Rec) -> Rec#mass_quote{currency = V};
@@ -1771,12 +1939,16 @@ decode_message_business_message_reject(Message, #business_message_reject{} = Rec
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #business_message_reject{fields = F} = lists:foldl(fun
-    ({ref_seq_num,V}, Rec) -> Rec#business_message_reject{ref_seq_num = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#business_message_reject{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#business_message_reject{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#business_message_reject{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#business_message_reject{sending_time = V};
+    ({ref_seq_num,V}, Rec) -> Rec#business_message_reject{ref_seq_num = fix:parse_num(V)};
     ({ref_msg_type,V}, Rec) -> Rec#business_message_reject{ref_msg_type = V};
     ({business_reject_ref_id,V}, Rec) -> Rec#business_message_reject{business_reject_ref_id = V};
-    ({business_reject_reason,V}, Rec) -> Rec#business_message_reject{business_reject_reason = list_to_integer(binary_to_list(V))};
+    ({business_reject_reason,V}, Rec) -> Rec#business_message_reject{business_reject_reason = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#business_message_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#business_message_reject{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#business_message_reject{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#business_message_reject{encoded_text = V};
     ({K,V}, #business_message_reject{fields = F} = Rec) -> Rec#business_message_reject{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1788,21 +1960,25 @@ decode_message_bid_request(Message, #bid_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #bid_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#bid_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#bid_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#bid_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#bid_request{sending_time = V};
     ({bid_id,V}, Rec) -> Rec#bid_request{bid_id = V};
     ({client_bid_id,V}, Rec) -> Rec#bid_request{client_bid_id = V};
     ({bid_request_trans_type,V}, Rec) -> Rec#bid_request{bid_request_trans_type = V};
     ({list_name,V}, Rec) -> Rec#bid_request{list_name = V};
-    ({tot_no_related_sym,V}, Rec) -> Rec#bid_request{tot_no_related_sym = list_to_integer(binary_to_list(V))};
-    ({bid_type,V}, Rec) -> Rec#bid_request{bid_type = list_to_integer(binary_to_list(V))};
-    ({num_tickets,V}, Rec) -> Rec#bid_request{num_tickets = list_to_integer(binary_to_list(V))};
+    ({tot_no_related_sym,V}, Rec) -> Rec#bid_request{tot_no_related_sym = fix:parse_num(V)};
+    ({bid_type,V}, Rec) -> Rec#bid_request{bid_type = fix:parse_num(V)};
+    ({num_tickets,V}, Rec) -> Rec#bid_request{num_tickets = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#bid_request{currency = V};
     ({side_value1,V}, Rec) -> Rec#bid_request{side_value1 = V};
     ({side_value2,V}, Rec) -> Rec#bid_request{side_value2 = V};
-    ({bid_descriptor_type,V}, Rec) -> Rec#bid_request{bid_descriptor_type = list_to_integer(binary_to_list(V))};
+    ({bid_descriptor_type,V}, Rec) -> Rec#bid_request{bid_descriptor_type = fix:parse_num(V)};
     ({bid_descriptor,V}, Rec) -> Rec#bid_request{bid_descriptor = V};
-    ({side_value_ind,V}, Rec) -> Rec#bid_request{side_value_ind = list_to_integer(binary_to_list(V))};
+    ({side_value_ind,V}, Rec) -> Rec#bid_request{side_value_ind = fix:parse_num(V)};
     ({liquidity_value,V}, Rec) -> Rec#bid_request{liquidity_value = V};
-    ({liquidity_num_securities,V}, Rec) -> Rec#bid_request{liquidity_num_securities = list_to_integer(binary_to_list(V))};
+    ({liquidity_num_securities,V}, Rec) -> Rec#bid_request{liquidity_num_securities = fix:parse_num(V)};
     ({liquidity_pct_low,V}, Rec) -> Rec#bid_request{liquidity_pct_low = V};
     ({liquidity_pct_high,V}, Rec) -> Rec#bid_request{liquidity_pct_high = V};
     ({efp_tracking_error,V}, Rec) -> Rec#bid_request{efp_tracking_error = V};
@@ -1813,27 +1989,27 @@ decode_message_bid_request(Message, #bid_request{} = Record) ->
     ({side,V}, Rec) -> Rec#bid_request{side = V};
     ({trading_session_id,V}, Rec) -> Rec#bid_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#bid_request{trading_session_sub_id = V};
-    ({net_gross_ind,V}, Rec) -> Rec#bid_request{net_gross_ind = list_to_integer(binary_to_list(V))};
+    ({net_gross_ind,V}, Rec) -> Rec#bid_request{net_gross_ind = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#bid_request{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#bid_request{settl_date = V};
     ({account,V}, Rec) -> Rec#bid_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#bid_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({liquidity_ind_type,V}, Rec) -> Rec#bid_request{liquidity_ind_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#bid_request{acct_id_source = fix:parse_num(V)};
+    ({liquidity_ind_type,V}, Rec) -> Rec#bid_request{liquidity_ind_type = fix:parse_num(V)};
     ({wt_average_liquidity,V}, Rec) -> Rec#bid_request{wt_average_liquidity = V};
     ({exchange_for_physical,V}, Rec) -> Rec#bid_request{exchange_for_physical = V == <<"Y">>};
     ({out_main_cntry_u_index,V}, Rec) -> Rec#bid_request{out_main_cntry_u_index = V};
     ({cross_percent,V}, Rec) -> Rec#bid_request{cross_percent = V};
-    ({prog_rpt_reqs,V}, Rec) -> Rec#bid_request{prog_rpt_reqs = list_to_integer(binary_to_list(V))};
-    ({prog_period_interval,V}, Rec) -> Rec#bid_request{prog_period_interval = list_to_integer(binary_to_list(V))};
-    ({inc_tax_ind,V}, Rec) -> Rec#bid_request{inc_tax_ind = list_to_integer(binary_to_list(V))};
+    ({prog_rpt_reqs,V}, Rec) -> Rec#bid_request{prog_rpt_reqs = fix:parse_num(V)};
+    ({prog_period_interval,V}, Rec) -> Rec#bid_request{prog_period_interval = fix:parse_num(V)};
+    ({inc_tax_ind,V}, Rec) -> Rec#bid_request{inc_tax_ind = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#bid_request{forex_req = V == <<"Y">>};
-    ({num_bidders,V}, Rec) -> Rec#bid_request{num_bidders = list_to_integer(binary_to_list(V))};
+    ({num_bidders,V}, Rec) -> Rec#bid_request{num_bidders = fix:parse_num(V)};
     ({trade_date,V}, Rec) -> Rec#bid_request{trade_date = V};
     ({bid_trade_type,V}, Rec) -> Rec#bid_request{bid_trade_type = V};
     ({basis_px_type,V}, Rec) -> Rec#bid_request{basis_px_type = V};
     ({strike_time,V}, Rec) -> Rec#bid_request{strike_time = V};
     ({text,V}, Rec) -> Rec#bid_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#bid_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#bid_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#bid_request{encoded_text = V};
     ({K,V}, #bid_request{fields = F} = Rec) -> Rec#bid_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1845,21 +2021,25 @@ decode_message_bid_response(Message, #bid_response{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #bid_response{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#bid_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#bid_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#bid_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#bid_response{sending_time = V};
     ({bid_id,V}, Rec) -> Rec#bid_response{bid_id = V};
     ({client_bid_id,V}, Rec) -> Rec#bid_response{client_bid_id = V};
     ({list_id,V}, Rec) -> Rec#bid_response{list_id = V};
     ({country,V}, Rec) -> Rec#bid_response{country = V};
     ({side,V}, Rec) -> Rec#bid_response{side = V};
-    ({price,V}, Rec) -> Rec#bid_response{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#bid_response{price_type = list_to_integer(binary_to_list(V))};
+    ({price,V}, Rec) -> Rec#bid_response{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#bid_response{price_type = fix:parse_num(V)};
     ({fair_value,V}, Rec) -> Rec#bid_response{fair_value = V};
-    ({net_gross_ind,V}, Rec) -> Rec#bid_response{net_gross_ind = list_to_integer(binary_to_list(V))};
+    ({net_gross_ind,V}, Rec) -> Rec#bid_response{net_gross_ind = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#bid_response{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#bid_response{settl_date = V};
     ({trading_session_id,V}, Rec) -> Rec#bid_response{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#bid_response{trading_session_sub_id = V};
     ({text,V}, Rec) -> Rec#bid_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#bid_response{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#bid_response{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#bid_response{encoded_text = V};
     ({K,V}, #bid_response{fields = F} = Rec) -> Rec#bid_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1871,17 +2051,21 @@ decode_message_list_strike_price(Message, #list_strike_price{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #list_strike_price{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#list_strike_price{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#list_strike_price{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#list_strike_price{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#list_strike_price{sending_time = V};
     ({list_id,V}, Rec) -> Rec#list_strike_price{list_id = V};
-    ({tot_no_strikes,V}, Rec) -> Rec#list_strike_price{tot_no_strikes = list_to_integer(binary_to_list(V))};
+    ({tot_no_strikes,V}, Rec) -> Rec#list_strike_price{tot_no_strikes = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#list_strike_price{last_fragment = V == <<"Y">>};
-    ({prev_close_px,V}, Rec) -> Rec#list_strike_price{prev_close_px = list_to_float(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#list_strike_price{prev_close_px = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#list_strike_price{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#list_strike_price{secondary_cl_ord_id = V};
     ({side,V}, Rec) -> Rec#list_strike_price{side = V};
-    ({price,V}, Rec) -> Rec#list_strike_price{price = list_to_float(binary_to_list(V))};
+    ({price,V}, Rec) -> Rec#list_strike_price{price = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#list_strike_price{currency = V};
     ({text,V}, Rec) -> Rec#list_strike_price{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_strike_price{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#list_strike_price{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#list_strike_price{encoded_text = V};
     ({K,V}, #list_strike_price{fields = F} = Rec) -> Rec#list_strike_price{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1893,23 +2077,27 @@ decode_message_registration_instructions(Message, #registration_instructions{} =
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #registration_instructions{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#registration_instructions{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#registration_instructions{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#registration_instructions{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#registration_instructions{sending_time = V};
     ({regist_id,V}, Rec) -> Rec#registration_instructions{regist_id = V};
     ({regist_trans_type,V}, Rec) -> Rec#registration_instructions{regist_trans_type = V};
     ({regist_ref_id,V}, Rec) -> Rec#registration_instructions{regist_ref_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#registration_instructions{cl_ord_id = V};
     ({account,V}, Rec) -> Rec#registration_instructions{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#registration_instructions{acct_id_source = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#registration_instructions{acct_id_source = fix:parse_num(V)};
     ({regist_acct_type,V}, Rec) -> Rec#registration_instructions{regist_acct_type = V};
-    ({tax_advantage_type,V}, Rec) -> Rec#registration_instructions{tax_advantage_type = list_to_integer(binary_to_list(V))};
+    ({tax_advantage_type,V}, Rec) -> Rec#registration_instructions{tax_advantage_type = fix:parse_num(V)};
     ({ownership_type,V}, Rec) -> Rec#registration_instructions{ownership_type = V};
     ({regist_dtls,V}, Rec) -> Rec#registration_instructions{regist_dtls = V};
     ({regist_email,V}, Rec) -> Rec#registration_instructions{regist_email = V};
     ({mailing_dtls,V}, Rec) -> Rec#registration_instructions{mailing_dtls = V};
     ({mailing_inst,V}, Rec) -> Rec#registration_instructions{mailing_inst = V};
-    ({owner_type,V}, Rec) -> Rec#registration_instructions{owner_type = list_to_integer(binary_to_list(V))};
+    ({owner_type,V}, Rec) -> Rec#registration_instructions{owner_type = fix:parse_num(V)};
     ({date_of_birth,V}, Rec) -> Rec#registration_instructions{date_of_birth = V};
     ({investor_country_of_residence,V}, Rec) -> Rec#registration_instructions{investor_country_of_residence = V};
-    ({distrib_payment_method,V}, Rec) -> Rec#registration_instructions{distrib_payment_method = list_to_integer(binary_to_list(V))};
+    ({distrib_payment_method,V}, Rec) -> Rec#registration_instructions{distrib_payment_method = fix:parse_num(V)};
     ({distrib_percentage,V}, Rec) -> Rec#registration_instructions{distrib_percentage = V};
     ({cash_distrib_curr,V}, Rec) -> Rec#registration_instructions{cash_distrib_curr = V};
     ({cash_distrib_agent_name,V}, Rec) -> Rec#registration_instructions{cash_distrib_agent_name = V};
@@ -1927,14 +2115,18 @@ decode_message_registration_instructions_response(Message, #registration_instruc
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #registration_instructions_response{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#registration_instructions_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#registration_instructions_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#registration_instructions_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#registration_instructions_response{sending_time = V};
     ({regist_id,V}, Rec) -> Rec#registration_instructions_response{regist_id = V};
     ({regist_trans_type,V}, Rec) -> Rec#registration_instructions_response{regist_trans_type = V};
     ({regist_ref_id,V}, Rec) -> Rec#registration_instructions_response{regist_ref_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#registration_instructions_response{cl_ord_id = V};
     ({account,V}, Rec) -> Rec#registration_instructions_response{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#registration_instructions_response{acct_id_source = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#registration_instructions_response{acct_id_source = fix:parse_num(V)};
     ({regist_status,V}, Rec) -> Rec#registration_instructions_response{regist_status = V};
-    ({regist_rej_reason_code,V}, Rec) -> Rec#registration_instructions_response{regist_rej_reason_code = list_to_integer(binary_to_list(V))};
+    ({regist_rej_reason_code,V}, Rec) -> Rec#registration_instructions_response{regist_rej_reason_code = fix:parse_num(V)};
     ({regist_rej_reason_text,V}, Rec) -> Rec#registration_instructions_response{regist_rej_reason_text = V};
     ({K,V}, #registration_instructions_response{fields = F} = Rec) -> Rec#registration_instructions_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1946,6 +2138,10 @@ decode_message_order_mass_cancel_request(Message, #order_mass_cancel_request{} =
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_mass_cancel_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_mass_cancel_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_mass_cancel_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_mass_cancel_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_mass_cancel_request{sending_time = V};
     ({cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_request{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_request{secondary_cl_ord_id = V};
     ({mass_cancel_request_type,V}, Rec) -> Rec#order_mass_cancel_request{mass_cancel_request_type = V};
@@ -1954,7 +2150,7 @@ decode_message_order_mass_cancel_request(Message, #order_mass_cancel_request{} =
     ({side,V}, Rec) -> Rec#order_mass_cancel_request{side = V};
     ({transact_time,V}, Rec) -> Rec#order_mass_cancel_request{transact_time = V};
     ({text,V}, Rec) -> Rec#order_mass_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#order_mass_cancel_request{encoded_text = V};
     ({K,V}, #order_mass_cancel_request{fields = F} = Rec) -> Rec#order_mass_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1966,6 +2162,10 @@ decode_message_order_mass_cancel_report(Message, #order_mass_cancel_report{} = R
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_mass_cancel_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_mass_cancel_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_mass_cancel_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_mass_cancel_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_mass_cancel_report{sending_time = V};
     ({cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{secondary_cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#order_mass_cancel_report{order_id = V};
@@ -1973,7 +2173,7 @@ decode_message_order_mass_cancel_report(Message, #order_mass_cancel_report{} = R
     ({mass_cancel_request_type,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_request_type = V};
     ({mass_cancel_response,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_response = V};
     ({mass_cancel_reject_reason,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_reject_reason = V};
-    ({total_affected_orders,V}, Rec) -> Rec#order_mass_cancel_report{total_affected_orders = list_to_integer(binary_to_list(V))};
+    ({total_affected_orders,V}, Rec) -> Rec#order_mass_cancel_report{total_affected_orders = fix:parse_num(V)};
     ({orig_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{orig_cl_ord_id = V};
     ({affected_order_id,V}, Rec) -> Rec#order_mass_cancel_report{affected_order_id = V};
     ({affected_secondary_order_id,V}, Rec) -> Rec#order_mass_cancel_report{affected_secondary_order_id = V};
@@ -1982,7 +2182,7 @@ decode_message_order_mass_cancel_report(Message, #order_mass_cancel_report{} = R
     ({side,V}, Rec) -> Rec#order_mass_cancel_report{side = V};
     ({transact_time,V}, Rec) -> Rec#order_mass_cancel_report{transact_time = V};
     ({text,V}, Rec) -> Rec#order_mass_cancel_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#order_mass_cancel_report{encoded_text = V};
     ({K,V}, #order_mass_cancel_report{fields = F} = Rec) -> Rec#order_mass_cancel_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -1994,9 +2194,13 @@ decode_message_new_order_cross(Message, #new_order_cross{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #new_order_cross{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#new_order_cross{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#new_order_cross{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#new_order_cross{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#new_order_cross{sending_time = V};
     ({cross_id,V}, Rec) -> Rec#new_order_cross{cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#new_order_cross{cross_type = list_to_integer(binary_to_list(V))};
-    ({cross_prioritization,V}, Rec) -> Rec#new_order_cross{cross_prioritization = list_to_integer(binary_to_list(V))};
+    ({cross_type,V}, Rec) -> Rec#new_order_cross{cross_type = fix:parse_num(V)};
+    ({cross_prioritization,V}, Rec) -> Rec#new_order_cross{cross_prioritization = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#new_order_cross{side = V};
     ({cl_ord_id,V}, Rec) -> Rec#new_order_cross{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_cross{secondary_cl_ord_id = V};
@@ -2004,29 +2208,29 @@ decode_message_new_order_cross(Message, #new_order_cross{} = Record) ->
     ({trade_origination_date,V}, Rec) -> Rec#new_order_cross{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#new_order_cross{trade_date = V};
     ({account,V}, Rec) -> Rec#new_order_cross{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_cross{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#new_order_cross{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#new_order_cross{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#new_order_cross{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#new_order_cross{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#new_order_cross{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#new_order_cross{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#new_order_cross{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#new_order_cross{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_cross{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_cross{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#new_order_cross{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#new_order_cross{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_cross{alloc_qty = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#new_order_cross{qty_type = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#new_order_cross{alloc_qty = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#new_order_cross{qty_type = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#new_order_cross{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#new_order_cross{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_cross{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#new_order_cross{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#new_order_cross{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#new_order_cross{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_cross{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#new_order_cross{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#new_order_cross{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_cross{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#new_order_cross{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#new_order_cross{encoded_text = V};
     ({position_effect,V}, Rec) -> Rec#new_order_cross{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_cross{covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_cross{covered_or_uncovered = fix:parse_num(V)};
     ({cash_margin,V}, Rec) -> Rec#new_order_cross{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_cross{clearing_fee_indicator = V};
     ({solicited_flag,V}, Rec) -> Rec#new_order_cross{solicited_flag = V == <<"Y">>};
@@ -2035,19 +2239,19 @@ decode_message_new_order_cross(Message, #new_order_cross{} = Record) ->
     ({settl_date,V}, Rec) -> Rec#new_order_cross{settl_date = V};
     ({handl_inst,V}, Rec) -> Rec#new_order_cross{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#new_order_cross{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_cross{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#new_order_cross{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#new_order_cross{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#new_order_cross{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#new_order_cross{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#new_order_cross{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#new_order_cross{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#new_order_cross{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_cross{prev_close_px = list_to_float(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#new_order_cross{prev_close_px = fix:parse_num(V)};
     ({locate_reqd,V}, Rec) -> Rec#new_order_cross{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#new_order_cross{transact_time = V};
     ({ord_type,V}, Rec) -> Rec#new_order_cross{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_cross{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#new_order_cross{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#new_order_cross{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#new_order_cross{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#new_order_cross{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#new_order_cross{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#new_order_cross{currency = V};
     ({compliance_id,V}, Rec) -> Rec#new_order_cross{compliance_id = V};
     ({ioi_id,V}, Rec) -> Rec#new_order_cross{ioi_id = V};
@@ -2056,9 +2260,9 @@ decode_message_new_order_cross(Message, #new_order_cross{} = Record) ->
     ({effective_time,V}, Rec) -> Rec#new_order_cross{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#new_order_cross{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#new_order_cross{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_cross{gt_booking_inst = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#new_order_cross{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#new_order_cross{target_strategy = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#new_order_cross{gt_booking_inst = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#new_order_cross{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#new_order_cross{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#new_order_cross{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#new_order_cross{participation_rate = V};
     ({cancellation_rights,V}, Rec) -> Rec#new_order_cross{cancellation_rights = V};
@@ -2075,11 +2279,15 @@ decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_r
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #cross_order_cancel_replace_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#cross_order_cancel_replace_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{sending_time = V};
     ({order_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_id = V};
     ({cross_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_id = V};
     ({orig_cross_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_type = list_to_integer(binary_to_list(V))};
-    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_prioritization = list_to_integer(binary_to_list(V))};
+    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_type = fix:parse_num(V)};
+    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_prioritization = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#cross_order_cancel_replace_request{side = V};
     ({orig_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{orig_cl_ord_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{cl_ord_id = V};
@@ -2089,29 +2297,29 @@ decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_r
     ({trade_origination_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{trade_date = V};
     ({account,V}, Rec) -> Rec#cross_order_cancel_replace_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#cross_order_cancel_replace_request{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#cross_order_cancel_replace_request{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_qty = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{qty_type = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_qty = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{qty_type = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#cross_order_cancel_replace_request{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#cross_order_cancel_replace_request{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#cross_order_cancel_replace_request{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#cross_order_cancel_replace_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_replace_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_replace_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#cross_order_cancel_replace_request{encoded_text = V};
     ({position_effect,V}, Rec) -> Rec#cross_order_cancel_replace_request{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#cross_order_cancel_replace_request{covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#cross_order_cancel_replace_request{covered_or_uncovered = fix:parse_num(V)};
     ({cash_margin,V}, Rec) -> Rec#cross_order_cancel_replace_request{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#cross_order_cancel_replace_request{clearing_fee_indicator = V};
     ({solicited_flag,V}, Rec) -> Rec#cross_order_cancel_replace_request{solicited_flag = V == <<"Y">>};
@@ -2120,19 +2328,19 @@ decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_r
     ({settl_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{settl_date = V};
     ({handl_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#cross_order_cancel_replace_request{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#cross_order_cancel_replace_request{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{prev_close_px = list_to_float(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{prev_close_px = fix:parse_num(V)};
     ({locate_reqd,V}, Rec) -> Rec#cross_order_cancel_replace_request{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{transact_time = V};
     ({ord_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#cross_order_cancel_replace_request{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#cross_order_cancel_replace_request{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{currency = V};
     ({compliance_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{compliance_id = V};
     ({ioi_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{ioi_id = V};
@@ -2141,9 +2349,9 @@ decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_r
     ({effective_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{gt_booking_inst = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_strategy = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{gt_booking_inst = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#cross_order_cancel_replace_request{participation_rate = V};
     ({cancellation_rights,V}, Rec) -> Rec#cross_order_cancel_replace_request{cancellation_rights = V};
@@ -2160,11 +2368,15 @@ decode_message_cross_order_cancel_request(Message, #cross_order_cancel_request{}
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #cross_order_cancel_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#cross_order_cancel_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#cross_order_cancel_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#cross_order_cancel_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#cross_order_cancel_request{sending_time = V};
     ({order_id,V}, Rec) -> Rec#cross_order_cancel_request{order_id = V};
     ({cross_id,V}, Rec) -> Rec#cross_order_cancel_request{cross_id = V};
     ({orig_cross_id,V}, Rec) -> Rec#cross_order_cancel_request{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_request{cross_type = list_to_integer(binary_to_list(V))};
-    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_request{cross_prioritization = list_to_integer(binary_to_list(V))};
+    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_request{cross_type = fix:parse_num(V)};
+    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_request{cross_prioritization = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#cross_order_cancel_request{side = V};
     ({orig_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_request{orig_cl_ord_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_request{cl_ord_id = V};
@@ -2175,7 +2387,7 @@ decode_message_cross_order_cancel_request(Message, #cross_order_cancel_request{}
     ({trade_date,V}, Rec) -> Rec#cross_order_cancel_request{trade_date = V};
     ({compliance_id,V}, Rec) -> Rec#cross_order_cancel_request{compliance_id = V};
     ({text,V}, Rec) -> Rec#cross_order_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#cross_order_cancel_request{encoded_text = V};
     ({transact_time,V}, Rec) -> Rec#cross_order_cancel_request{transact_time = V};
     ({K,V}, #cross_order_cancel_request{fields = F} = Rec) -> Rec#cross_order_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
@@ -2188,13 +2400,17 @@ decode_message_security_type_request(Message, #security_type_request{} = Record)
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_type_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_type_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_type_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_type_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_type_request{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_type_request{security_req_id = V};
     ({text,V}, Rec) -> Rec#security_type_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_type_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_type_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_type_request{encoded_text = V};
     ({trading_session_id,V}, Rec) -> Rec#security_type_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_type_request{trading_session_sub_id = V};
-    ({product,V}, Rec) -> Rec#security_type_request{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#security_type_request{product = fix:parse_num(V)};
     ({security_type,V}, Rec) -> Rec#security_type_request{security_type = V};
     ({security_sub_type,V}, Rec) -> Rec#security_type_request{security_sub_type = V};
     ({K,V}, #security_type_request{fields = F} = Rec) -> Rec#security_type_request{fields = [{K,decode_typed_field(K,V)}|F]}
@@ -2207,17 +2423,21 @@ decode_message_security_types(Message, #security_types{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_types{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_types{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_types{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_types{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_types{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_types{security_req_id = V};
     ({security_response_id,V}, Rec) -> Rec#security_types{security_response_id = V};
-    ({security_response_type,V}, Rec) -> Rec#security_types{security_response_type = list_to_integer(binary_to_list(V))};
-    ({tot_no_security_types,V}, Rec) -> Rec#security_types{tot_no_security_types = list_to_integer(binary_to_list(V))};
+    ({security_response_type,V}, Rec) -> Rec#security_types{security_response_type = fix:parse_num(V)};
+    ({tot_no_security_types,V}, Rec) -> Rec#security_types{tot_no_security_types = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#security_types{last_fragment = V == <<"Y">>};
     ({security_type,V}, Rec) -> Rec#security_types{security_type = V};
     ({security_sub_type,V}, Rec) -> Rec#security_types{security_sub_type = V};
-    ({product,V}, Rec) -> Rec#security_types{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#security_types{product = fix:parse_num(V)};
     ({cfi_code,V}, Rec) -> Rec#security_types{cfi_code = V};
     ({text,V}, Rec) -> Rec#security_types{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_types{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_types{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_types{encoded_text = V};
     ({trading_session_id,V}, Rec) -> Rec#security_types{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_types{trading_session_sub_id = V};
@@ -2232,11 +2452,15 @@ decode_message_security_list_request(Message, #security_list_request{} = Record)
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_list_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_list_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_list_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_list_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_list_request{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_list_request{security_req_id = V};
-    ({security_list_request_type,V}, Rec) -> Rec#security_list_request{security_list_request_type = list_to_integer(binary_to_list(V))};
+    ({security_list_request_type,V}, Rec) -> Rec#security_list_request{security_list_request_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#security_list_request{currency = V};
     ({text,V}, Rec) -> Rec#security_list_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_list_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_list_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_list_request{encoded_text = V};
     ({trading_session_id,V}, Rec) -> Rec#security_list_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_list_request{trading_session_sub_id = V};
@@ -2251,21 +2475,25 @@ decode_message_security_list(Message, #security_list{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #security_list{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#security_list{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#security_list{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#security_list{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#security_list{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#security_list{security_req_id = V};
     ({security_response_id,V}, Rec) -> Rec#security_list{security_response_id = V};
-    ({security_request_result,V}, Rec) -> Rec#security_list{security_request_result = list_to_integer(binary_to_list(V))};
-    ({tot_no_related_sym,V}, Rec) -> Rec#security_list{tot_no_related_sym = list_to_integer(binary_to_list(V))};
+    ({security_request_result,V}, Rec) -> Rec#security_list{security_request_result = fix:parse_num(V)};
+    ({tot_no_related_sym,V}, Rec) -> Rec#security_list{tot_no_related_sym = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#security_list{last_fragment = V == <<"Y">>};
     ({currency,V}, Rec) -> Rec#security_list{currency = V};
-    ({leg_swap_type,V}, Rec) -> Rec#security_list{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({leg_swap_type,V}, Rec) -> Rec#security_list{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#security_list{leg_settl_type = V};
-    ({round_lot,V}, Rec) -> Rec#security_list{round_lot = list_to_integer(binary_to_list(V))};
-    ({min_trade_vol,V}, Rec) -> Rec#security_list{min_trade_vol = list_to_integer(binary_to_list(V))};
+    ({round_lot,V}, Rec) -> Rec#security_list{round_lot = fix:parse_num(V)};
+    ({min_trade_vol,V}, Rec) -> Rec#security_list{min_trade_vol = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#security_list{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#security_list{trading_session_sub_id = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_list{expiration_cycle = list_to_integer(binary_to_list(V))};
+    ({expiration_cycle,V}, Rec) -> Rec#security_list{expiration_cycle = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#security_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_list{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#security_list{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#security_list{encoded_text = V};
     ({K,V}, #security_list{fields = F} = Rec) -> Rec#security_list{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2277,12 +2505,16 @@ decode_message_derivative_security_list_request(Message, #derivative_security_li
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #derivative_security_list_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#derivative_security_list_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#derivative_security_list_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#derivative_security_list_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#derivative_security_list_request{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#derivative_security_list_request{security_req_id = V};
-    ({security_list_request_type,V}, Rec) -> Rec#derivative_security_list_request{security_list_request_type = list_to_integer(binary_to_list(V))};
+    ({security_list_request_type,V}, Rec) -> Rec#derivative_security_list_request{security_list_request_type = fix:parse_num(V)};
     ({security_sub_type,V}, Rec) -> Rec#derivative_security_list_request{security_sub_type = V};
     ({currency,V}, Rec) -> Rec#derivative_security_list_request{currency = V};
     ({text,V}, Rec) -> Rec#derivative_security_list_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#derivative_security_list_request{encoded_text = V};
     ({trading_session_id,V}, Rec) -> Rec#derivative_security_list_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#derivative_security_list_request{trading_session_sub_id = V};
@@ -2297,17 +2529,21 @@ decode_message_derivative_security_list(Message, #derivative_security_list{} = R
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #derivative_security_list{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#derivative_security_list{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#derivative_security_list{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#derivative_security_list{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#derivative_security_list{sending_time = V};
     ({security_req_id,V}, Rec) -> Rec#derivative_security_list{security_req_id = V};
     ({security_response_id,V}, Rec) -> Rec#derivative_security_list{security_response_id = V};
-    ({security_request_result,V}, Rec) -> Rec#derivative_security_list{security_request_result = list_to_integer(binary_to_list(V))};
-    ({tot_no_related_sym,V}, Rec) -> Rec#derivative_security_list{tot_no_related_sym = list_to_integer(binary_to_list(V))};
+    ({security_request_result,V}, Rec) -> Rec#derivative_security_list{security_request_result = fix:parse_num(V)};
+    ({tot_no_related_sym,V}, Rec) -> Rec#derivative_security_list{tot_no_related_sym = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#derivative_security_list{last_fragment = V == <<"Y">>};
     ({currency,V}, Rec) -> Rec#derivative_security_list{currency = V};
-    ({expiration_cycle,V}, Rec) -> Rec#derivative_security_list{expiration_cycle = list_to_integer(binary_to_list(V))};
+    ({expiration_cycle,V}, Rec) -> Rec#derivative_security_list{expiration_cycle = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#derivative_security_list{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#derivative_security_list{trading_session_sub_id = V};
     ({text,V}, Rec) -> Rec#derivative_security_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#derivative_security_list{encoded_text = V};
     ({K,V}, #derivative_security_list{fields = F} = Rec) -> Rec#derivative_security_list{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2319,57 +2555,61 @@ decode_message_new_order_multileg(Message, #new_order_multileg{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #new_order_multileg{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#new_order_multileg{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#new_order_multileg{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#new_order_multileg{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#new_order_multileg{sending_time = V};
     ({cl_ord_id,V}, Rec) -> Rec#new_order_multileg{cl_ord_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_multileg{secondary_cl_ord_id = V};
     ({cl_ord_link_id,V}, Rec) -> Rec#new_order_multileg{cl_ord_link_id = V};
     ({trade_origination_date,V}, Rec) -> Rec#new_order_multileg{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#new_order_multileg{trade_date = V};
     ({account,V}, Rec) -> Rec#new_order_multileg{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_multileg{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#new_order_multileg{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#new_order_multileg{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#new_order_multileg{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#new_order_multileg{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#new_order_multileg{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#new_order_multileg{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#new_order_multileg{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#new_order_multileg{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_multileg{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_multileg{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#new_order_multileg{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#new_order_multileg{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_multileg{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#new_order_multileg{alloc_qty = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#new_order_multileg{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#new_order_multileg{settl_date = V};
     ({cash_margin,V}, Rec) -> Rec#new_order_multileg{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_multileg{clearing_fee_indicator = V};
     ({handl_inst,V}, Rec) -> Rec#new_order_multileg{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#new_order_multileg{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_multileg{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#new_order_multileg{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#new_order_multileg{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#new_order_multileg{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#new_order_multileg{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#new_order_multileg{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#new_order_multileg{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#new_order_multileg{process_code = V};
     ({side,V}, Rec) -> Rec#new_order_multileg{side = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_multileg{prev_close_px = list_to_float(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#new_order_multileg{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#new_order_multileg{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#new_order_multileg{prev_close_px = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#new_order_multileg{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#new_order_multileg{leg_swap_type = fix:parse_num(V)};
     ({leg_alloc_account,V}, Rec) -> Rec#new_order_multileg{leg_alloc_account = V};
     ({leg_individual_alloc_id,V}, Rec) -> Rec#new_order_multileg{leg_individual_alloc_id = V};
-    ({leg_alloc_qty,V}, Rec) -> Rec#new_order_multileg{leg_alloc_qty = list_to_integer(binary_to_list(V))};
+    ({leg_alloc_qty,V}, Rec) -> Rec#new_order_multileg{leg_alloc_qty = fix:parse_num(V)};
     ({leg_alloc_acct_id_source,V}, Rec) -> Rec#new_order_multileg{leg_alloc_acct_id_source = V};
     ({leg_settl_currency,V}, Rec) -> Rec#new_order_multileg{leg_settl_currency = V};
     ({leg_position_effect,V}, Rec) -> Rec#new_order_multileg{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{leg_covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({leg_covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{leg_covered_or_uncovered = fix:parse_num(V)};
     ({leg_ref_id,V}, Rec) -> Rec#new_order_multileg{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#new_order_multileg{leg_price = list_to_float(binary_to_list(V))};
+    ({leg_price,V}, Rec) -> Rec#new_order_multileg{leg_price = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#new_order_multileg{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#new_order_multileg{leg_settl_date = V};
     ({locate_reqd,V}, Rec) -> Rec#new_order_multileg{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#new_order_multileg{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_multileg{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#new_order_multileg{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#new_order_multileg{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_multileg{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#new_order_multileg{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#new_order_multileg{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#new_order_multileg{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#new_order_multileg{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#new_order_multileg{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#new_order_multileg{currency = V};
     ({compliance_id,V}, Rec) -> Rec#new_order_multileg{compliance_id = V};
     ({solicited_flag,V}, Rec) -> Rec#new_order_multileg{solicited_flag = V == <<"Y">>};
@@ -2379,27 +2619,27 @@ decode_message_new_order_multileg(Message, #new_order_multileg{} = Record) ->
     ({effective_time,V}, Rec) -> Rec#new_order_multileg{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#new_order_multileg{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#new_order_multileg{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_multileg{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#new_order_multileg{gt_booking_inst = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#new_order_multileg{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#new_order_multileg{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_multileg{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#new_order_multileg{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#new_order_multileg{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#new_order_multileg{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_multileg{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#new_order_multileg{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#new_order_multileg{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_multileg{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#new_order_multileg{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#new_order_multileg{encoded_text = V};
     ({position_effect,V}, Rec) -> Rec#new_order_multileg{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{covered_or_uncovered = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#new_order_multileg{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#new_order_multileg{target_strategy = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{covered_or_uncovered = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#new_order_multileg{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#new_order_multileg{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#new_order_multileg{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#new_order_multileg{participation_rate = V};
     ({cancellation_rights,V}, Rec) -> Rec#new_order_multileg{cancellation_rights = V};
     ({money_laundering_status,V}, Rec) -> Rec#new_order_multileg{money_laundering_status = V};
     ({regist_id,V}, Rec) -> Rec#new_order_multileg{regist_id = V};
     ({designation,V}, Rec) -> Rec#new_order_multileg{designation = V};
-    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#new_order_multileg{multi_leg_rpt_type_req = list_to_integer(binary_to_list(V))};
+    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#new_order_multileg{multi_leg_rpt_type_req = fix:parse_num(V)};
     ({K,V}, #new_order_multileg{fields = F} = Rec) -> Rec#new_order_multileg{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#new_order_multileg{fields = lists:reverse(F)}.
@@ -2410,6 +2650,10 @@ decode_message_multileg_order_cancel_replace(Message, #multileg_order_cancel_rep
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #multileg_order_cancel_replace{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#multileg_order_cancel_replace{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#multileg_order_cancel_replace{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#multileg_order_cancel_replace{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#multileg_order_cancel_replace{sending_time = V};
     ({order_id,V}, Rec) -> Rec#multileg_order_cancel_replace{order_id = V};
     ({orig_cl_ord_id,V}, Rec) -> Rec#multileg_order_cancel_replace{orig_cl_ord_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#multileg_order_cancel_replace{cl_ord_id = V};
@@ -2419,51 +2663,51 @@ decode_message_multileg_order_cancel_replace(Message, #multileg_order_cancel_rep
     ({trade_origination_date,V}, Rec) -> Rec#multileg_order_cancel_replace{trade_origination_date = V};
     ({trade_date,V}, Rec) -> Rec#multileg_order_cancel_replace{trade_date = V};
     ({account,V}, Rec) -> Rec#multileg_order_cancel_replace{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#multileg_order_cancel_replace{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#multileg_order_cancel_replace{account_type = fix:parse_num(V)};
     ({day_booking_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{day_booking_inst = V};
     ({booking_unit,V}, Rec) -> Rec#multileg_order_cancel_replace{booking_unit = V};
     ({prealloc_method,V}, Rec) -> Rec#multileg_order_cancel_replace{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_qty = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_date = V};
     ({cash_margin,V}, Rec) -> Rec#multileg_order_cancel_replace{cash_margin = V};
     ({clearing_fee_indicator,V}, Rec) -> Rec#multileg_order_cancel_replace{clearing_fee_indicator = V};
     ({handl_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{handl_inst = V};
     ({exec_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{min_qty = list_to_integer(binary_to_list(V))};
-    ({max_floor,V}, Rec) -> Rec#multileg_order_cancel_replace{max_floor = list_to_integer(binary_to_list(V))};
+    ({min_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{min_qty = fix:parse_num(V)};
+    ({max_floor,V}, Rec) -> Rec#multileg_order_cancel_replace{max_floor = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#multileg_order_cancel_replace{ex_destination = V};
     ({trading_session_id,V}, Rec) -> Rec#multileg_order_cancel_replace{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#multileg_order_cancel_replace{trading_session_sub_id = V};
     ({process_code,V}, Rec) -> Rec#multileg_order_cancel_replace{process_code = V};
     ({side,V}, Rec) -> Rec#multileg_order_cancel_replace{side = V};
-    ({prev_close_px,V}, Rec) -> Rec#multileg_order_cancel_replace{prev_close_px = list_to_float(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#multileg_order_cancel_replace{prev_close_px = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_swap_type = fix:parse_num(V)};
     ({leg_alloc_account,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_account = V};
     ({leg_individual_alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_individual_alloc_id = V};
-    ({leg_alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_qty = list_to_integer(binary_to_list(V))};
+    ({leg_alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_qty = fix:parse_num(V)};
     ({leg_alloc_acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_acct_id_source = V};
     ({leg_settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_currency = V};
     ({leg_position_effect,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({leg_covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_covered_or_uncovered = fix:parse_num(V)};
     ({leg_ref_id,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_price = list_to_float(binary_to_list(V))};
+    ({leg_price,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_price = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_date = V};
     ({locate_reqd,V}, Rec) -> Rec#multileg_order_cancel_replace{locate_reqd = V == <<"Y">>};
     ({transact_time,V}, Rec) -> Rec#multileg_order_cancel_replace{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#multileg_order_cancel_replace{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#multileg_order_cancel_replace{qty_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#multileg_order_cancel_replace{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#multileg_order_cancel_replace{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#multileg_order_cancel_replace{price = list_to_float(binary_to_list(V))};
-    ({stop_px,V}, Rec) -> Rec#multileg_order_cancel_replace{stop_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#multileg_order_cancel_replace{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#multileg_order_cancel_replace{price = fix:parse_num(V)};
+    ({stop_px,V}, Rec) -> Rec#multileg_order_cancel_replace{stop_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#multileg_order_cancel_replace{currency = V};
     ({compliance_id,V}, Rec) -> Rec#multileg_order_cancel_replace{compliance_id = V};
     ({solicited_flag,V}, Rec) -> Rec#multileg_order_cancel_replace{solicited_flag = V == <<"Y">>};
@@ -2473,27 +2717,27 @@ decode_message_multileg_order_cancel_replace(Message, #multileg_order_cancel_rep
     ({effective_time,V}, Rec) -> Rec#multileg_order_cancel_replace{effective_time = V};
     ({expire_date,V}, Rec) -> Rec#multileg_order_cancel_replace{expire_date = V};
     ({expire_time,V}, Rec) -> Rec#multileg_order_cancel_replace{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{gt_booking_inst = list_to_integer(binary_to_list(V))};
+    ({gt_booking_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{gt_booking_inst = fix:parse_num(V)};
     ({order_capacity,V}, Rec) -> Rec#multileg_order_cancel_replace{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#multileg_order_cancel_replace{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#multileg_order_cancel_replace{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#multileg_order_cancel_replace{cust_order_capacity = fix:parse_num(V)};
     ({forex_req,V}, Rec) -> Rec#multileg_order_cancel_replace{forex_req = V == <<"Y">>};
     ({settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#multileg_order_cancel_replace{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#multileg_order_cancel_replace{booking_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#multileg_order_cancel_replace{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#multileg_order_cancel_replace{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#multileg_order_cancel_replace{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#multileg_order_cancel_replace{encoded_text = V};
     ({position_effect,V}, Rec) -> Rec#multileg_order_cancel_replace{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{covered_or_uncovered = list_to_integer(binary_to_list(V))};
-    ({max_show,V}, Rec) -> Rec#multileg_order_cancel_replace{max_show = list_to_integer(binary_to_list(V))};
-    ({target_strategy,V}, Rec) -> Rec#multileg_order_cancel_replace{target_strategy = list_to_integer(binary_to_list(V))};
+    ({covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{covered_or_uncovered = fix:parse_num(V)};
+    ({max_show,V}, Rec) -> Rec#multileg_order_cancel_replace{max_show = fix:parse_num(V)};
+    ({target_strategy,V}, Rec) -> Rec#multileg_order_cancel_replace{target_strategy = fix:parse_num(V)};
     ({target_strategy_parameters,V}, Rec) -> Rec#multileg_order_cancel_replace{target_strategy_parameters = V};
     ({participation_rate,V}, Rec) -> Rec#multileg_order_cancel_replace{participation_rate = V};
     ({cancellation_rights,V}, Rec) -> Rec#multileg_order_cancel_replace{cancellation_rights = V};
     ({money_laundering_status,V}, Rec) -> Rec#multileg_order_cancel_replace{money_laundering_status = V};
     ({regist_id,V}, Rec) -> Rec#multileg_order_cancel_replace{regist_id = V};
     ({designation,V}, Rec) -> Rec#multileg_order_cancel_replace{designation = V};
-    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#multileg_order_cancel_replace{multi_leg_rpt_type_req = list_to_integer(binary_to_list(V))};
+    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#multileg_order_cancel_replace{multi_leg_rpt_type_req = fix:parse_num(V)};
     ({K,V}, #multileg_order_cancel_replace{fields = F} = Rec) -> Rec#multileg_order_cancel_replace{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#multileg_order_cancel_replace{fields = lists:reverse(F)}.
@@ -2504,8 +2748,12 @@ decode_message_trade_capture_report_request(Message, #trade_capture_report_reque
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trade_capture_report_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trade_capture_report_request{sending_time = V};
     ({trade_request_id,V}, Rec) -> Rec#trade_capture_report_request{trade_request_id = V};
-    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request{trade_request_type = list_to_integer(binary_to_list(V))};
+    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request{trade_request_type = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_request{subscription_request_type = V};
     ({trade_report_id,V}, Rec) -> Rec#trade_capture_report_request{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#trade_capture_report_request{secondary_trade_report_id = V};
@@ -2514,10 +2762,10 @@ decode_message_trade_capture_report_request(Message, #trade_capture_report_reque
     ({order_id,V}, Rec) -> Rec#trade_capture_report_request{order_id = V};
     ({cl_ord_id,V}, Rec) -> Rec#trade_capture_report_request{cl_ord_id = V};
     ({match_status,V}, Rec) -> Rec#trade_capture_report_request{match_status = V};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report_request{trd_type = list_to_integer(binary_to_list(V))};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_request{trd_sub_type = list_to_integer(binary_to_list(V))};
+    ({trd_type,V}, Rec) -> Rec#trade_capture_report_request{trd_type = fix:parse_num(V)};
+    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_request{trd_sub_type = fix:parse_num(V)};
     ({transfer_reason,V}, Rec) -> Rec#trade_capture_report_request{transfer_reason = V};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_request{secondary_trd_type = list_to_integer(binary_to_list(V))};
+    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_request{secondary_trd_type = fix:parse_num(V)};
     ({trade_link_id,V}, Rec) -> Rec#trade_capture_report_request{trade_link_id = V};
     ({trd_match_id,V}, Rec) -> Rec#trade_capture_report_request{trd_match_id = V};
     ({trade_date,V}, Rec) -> Rec#trade_capture_report_request{trade_date = V};
@@ -2530,10 +2778,10 @@ decode_message_trade_capture_report_request(Message, #trade_capture_report_reque
     ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report_request{multi_leg_reporting_type = V};
     ({trade_input_source,V}, Rec) -> Rec#trade_capture_report_request{trade_input_source = V};
     ({trade_input_device,V}, Rec) -> Rec#trade_capture_report_request{trade_input_device = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#trade_capture_report_request{response_destination = V};
     ({text,V}, Rec) -> Rec#trade_capture_report_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#trade_capture_report_request{encoded_text = V};
     ({K,V}, #trade_capture_report_request{fields = F} = Rec) -> Rec#trade_capture_report_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2545,16 +2793,20 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trade_capture_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trade_capture_report{sending_time = V};
     ({trade_report_id,V}, Rec) -> Rec#trade_capture_report{trade_report_id = V};
-    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report{trade_report_trans_type = list_to_integer(binary_to_list(V))};
-    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report{trade_report_type = list_to_integer(binary_to_list(V))};
+    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report{trade_report_trans_type = fix:parse_num(V)};
+    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report{trade_report_type = fix:parse_num(V)};
     ({trade_request_id,V}, Rec) -> Rec#trade_capture_report{trade_request_id = V};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report{trd_type = list_to_integer(binary_to_list(V))};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report{trd_sub_type = list_to_integer(binary_to_list(V))};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report{secondary_trd_type = list_to_integer(binary_to_list(V))};
+    ({trd_type,V}, Rec) -> Rec#trade_capture_report{trd_type = fix:parse_num(V)};
+    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report{trd_sub_type = fix:parse_num(V)};
+    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report{secondary_trd_type = fix:parse_num(V)};
     ({transfer_reason,V}, Rec) -> Rec#trade_capture_report{transfer_reason = V};
     ({exec_type,V}, Rec) -> Rec#trade_capture_report{exec_type = V};
-    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report{tot_num_trade_reports = list_to_integer(binary_to_list(V))};
+    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report{tot_num_trade_reports = fix:parse_num(V)};
     ({last_rpt_requested,V}, Rec) -> Rec#trade_capture_report{last_rpt_requested = V == <<"Y">>};
     ({unsolicited_indicator,V}, Rec) -> Rec#trade_capture_report{unsolicited_indicator = V == <<"Y">>};
     ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report{subscription_request_type = V};
@@ -2566,33 +2818,33 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     ({exec_id,V}, Rec) -> Rec#trade_capture_report{exec_id = V};
     ({ord_status,V}, Rec) -> Rec#trade_capture_report{ord_status = V};
     ({secondary_exec_id,V}, Rec) -> Rec#trade_capture_report{secondary_exec_id = V};
-    ({exec_restatement_reason,V}, Rec) -> Rec#trade_capture_report{exec_restatement_reason = list_to_integer(binary_to_list(V))};
+    ({exec_restatement_reason,V}, Rec) -> Rec#trade_capture_report{exec_restatement_reason = fix:parse_num(V)};
     ({previously_reported,V}, Rec) -> Rec#trade_capture_report{previously_reported = V == <<"Y">>};
-    ({price_type,V}, Rec) -> Rec#trade_capture_report{price_type = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#trade_capture_report{qty_type = list_to_integer(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#trade_capture_report{price_type = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#trade_capture_report{qty_type = fix:parse_num(V)};
     ({underlying_trading_session_id,V}, Rec) -> Rec#trade_capture_report{underlying_trading_session_id = V};
     ({underlying_trading_session_sub_id,V}, Rec) -> Rec#trade_capture_report{underlying_trading_session_sub_id = V};
-    ({last_qty,V}, Rec) -> Rec#trade_capture_report{last_qty = list_to_integer(binary_to_list(V))};
-    ({last_px,V}, Rec) -> Rec#trade_capture_report{last_px = list_to_float(binary_to_list(V))};
-    ({last_par_px,V}, Rec) -> Rec#trade_capture_report{last_par_px = list_to_float(binary_to_list(V))};
-    ({last_spot_rate,V}, Rec) -> Rec#trade_capture_report{last_spot_rate = list_to_float(binary_to_list(V))};
+    ({last_qty,V}, Rec) -> Rec#trade_capture_report{last_qty = fix:parse_num(V)};
+    ({last_px,V}, Rec) -> Rec#trade_capture_report{last_px = fix:parse_num(V)};
+    ({last_par_px,V}, Rec) -> Rec#trade_capture_report{last_par_px = fix:parse_num(V)};
+    ({last_spot_rate,V}, Rec) -> Rec#trade_capture_report{last_spot_rate = fix:parse_num(V)};
     ({last_forward_points,V}, Rec) -> Rec#trade_capture_report{last_forward_points = V};
     ({last_mkt,V}, Rec) -> Rec#trade_capture_report{last_mkt = V};
     ({trade_date,V}, Rec) -> Rec#trade_capture_report{trade_date = V};
     ({clearing_business_date,V}, Rec) -> Rec#trade_capture_report{clearing_business_date = V};
-    ({avg_px,V}, Rec) -> Rec#trade_capture_report{avg_px = list_to_float(binary_to_list(V))};
-    ({avg_px_indicator,V}, Rec) -> Rec#trade_capture_report{avg_px_indicator = list_to_integer(binary_to_list(V))};
+    ({avg_px,V}, Rec) -> Rec#trade_capture_report{avg_px = fix:parse_num(V)};
+    ({avg_px_indicator,V}, Rec) -> Rec#trade_capture_report{avg_px_indicator = fix:parse_num(V)};
     ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report{multi_leg_reporting_type = V};
     ({trade_leg_ref_id,V}, Rec) -> Rec#trade_capture_report{trade_leg_ref_id = V};
-    ({leg_qty,V}, Rec) -> Rec#trade_capture_report{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({leg_qty,V}, Rec) -> Rec#trade_capture_report{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report{leg_swap_type = fix:parse_num(V)};
     ({leg_position_effect,V}, Rec) -> Rec#trade_capture_report{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report{leg_covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report{leg_covered_or_uncovered = fix:parse_num(V)};
     ({leg_ref_id,V}, Rec) -> Rec#trade_capture_report{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#trade_capture_report{leg_price = list_to_float(binary_to_list(V))};
+    ({leg_price,V}, Rec) -> Rec#trade_capture_report{leg_price = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#trade_capture_report{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#trade_capture_report{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report{leg_last_px = list_to_float(binary_to_list(V))};
+    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report{leg_last_px = fix:parse_num(V)};
     ({transact_time,V}, Rec) -> Rec#trade_capture_report{transact_time = V};
     ({settl_type,V}, Rec) -> Rec#trade_capture_report{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#trade_capture_report{settl_date = V};
@@ -2605,11 +2857,11 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     ({secondary_cl_ord_id,V}, Rec) -> Rec#trade_capture_report{secondary_cl_ord_id = V};
     ({list_id,V}, Rec) -> Rec#trade_capture_report{list_id = V};
     ({account,V}, Rec) -> Rec#trade_capture_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#trade_capture_report{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#trade_capture_report{account_type = fix:parse_num(V)};
     ({process_code,V}, Rec) -> Rec#trade_capture_report{process_code = V};
     ({odd_lot,V}, Rec) -> Rec#trade_capture_report{odd_lot = V == <<"Y">>};
-    ({clearing_instruction,V}, Rec) -> Rec#trade_capture_report{clearing_instruction = list_to_integer(binary_to_list(V))};
+    ({clearing_instruction,V}, Rec) -> Rec#trade_capture_report{clearing_instruction = fix:parse_num(V)};
     ({clearing_fee_indicator,V}, Rec) -> Rec#trade_capture_report{clearing_fee_indicator = V};
     ({trade_input_source,V}, Rec) -> Rec#trade_capture_report{trade_input_source = V};
     ({trade_input_device,V}, Rec) -> Rec#trade_capture_report{trade_input_device = V};
@@ -2619,7 +2871,7 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     ({solicited_flag,V}, Rec) -> Rec#trade_capture_report{solicited_flag = V == <<"Y">>};
     ({order_capacity,V}, Rec) -> Rec#trade_capture_report{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#trade_capture_report{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report{cust_order_capacity = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#trade_capture_report{ord_type = V};
     ({exec_inst,V}, Rec) -> Rec#trade_capture_report{exec_inst = V};
     ({trans_bkd_time,V}, Rec) -> Rec#trade_capture_report{trans_bkd_time = V};
@@ -2627,7 +2879,7 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     ({trading_session_sub_id,V}, Rec) -> Rec#trade_capture_report{trading_session_sub_id = V};
     ({time_bracket,V}, Rec) -> Rec#trade_capture_report{time_bracket = V};
     ({gross_trade_amt,V}, Rec) -> Rec#trade_capture_report{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#trade_capture_report{num_days_interest = list_to_integer(binary_to_list(V))};
+    ({num_days_interest,V}, Rec) -> Rec#trade_capture_report{num_days_interest = fix:parse_num(V)};
     ({ex_date,V}, Rec) -> Rec#trade_capture_report{ex_date = V};
     ({accrued_interest_rate,V}, Rec) -> Rec#trade_capture_report{accrued_interest_rate = V};
     ({accrued_interest_amt,V}, Rec) -> Rec#trade_capture_report{accrued_interest_amt = V};
@@ -2644,28 +2896,28 @@ decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -
     ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#trade_capture_report{settl_curr_fx_rate_calc = V};
     ({position_effect,V}, Rec) -> Rec#trade_capture_report{position_effect = V};
     ({text,V}, Rec) -> Rec#trade_capture_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#trade_capture_report{encoded_text = V};
-    ({side_multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report{side_multi_leg_reporting_type = list_to_integer(binary_to_list(V))};
-    ({cont_amt_type,V}, Rec) -> Rec#trade_capture_report{cont_amt_type = list_to_integer(binary_to_list(V))};
+    ({side_multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report{side_multi_leg_reporting_type = fix:parse_num(V)};
+    ({cont_amt_type,V}, Rec) -> Rec#trade_capture_report{cont_amt_type = fix:parse_num(V)};
     ({cont_amt_value,V}, Rec) -> Rec#trade_capture_report{cont_amt_value = V};
     ({cont_amt_curr,V}, Rec) -> Rec#trade_capture_report{cont_amt_curr = V};
     ({misc_fee_amt,V}, Rec) -> Rec#trade_capture_report{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#trade_capture_report{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#trade_capture_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#trade_capture_report{misc_fee_basis = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#trade_capture_report{misc_fee_basis = fix:parse_num(V)};
     ({exchange_rule,V}, Rec) -> Rec#trade_capture_report{exchange_rule = V};
-    ({trade_alloc_indicator,V}, Rec) -> Rec#trade_capture_report{trade_alloc_indicator = list_to_integer(binary_to_list(V))};
+    ({trade_alloc_indicator,V}, Rec) -> Rec#trade_capture_report{trade_alloc_indicator = fix:parse_num(V)};
     ({prealloc_method,V}, Rec) -> Rec#trade_capture_report{prealloc_method = V};
     ({alloc_id,V}, Rec) -> Rec#trade_capture_report{alloc_id = V};
     ({alloc_account,V}, Rec) -> Rec#trade_capture_report{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#trade_capture_report{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#trade_capture_report{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report{alloc_qty = fix:parse_num(V)};
     ({copy_msg_indicator,V}, Rec) -> Rec#trade_capture_report{copy_msg_indicator = V == <<"Y">>};
     ({publish_trd_indicator,V}, Rec) -> Rec#trade_capture_report{publish_trd_indicator = V == <<"Y">>};
-    ({short_sale_reason,V}, Rec) -> Rec#trade_capture_report{short_sale_reason = list_to_integer(binary_to_list(V))};
+    ({short_sale_reason,V}, Rec) -> Rec#trade_capture_report{short_sale_reason = fix:parse_num(V)};
     ({K,V}, #trade_capture_report{fields = F} = Rec) -> Rec#trade_capture_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#trade_capture_report{fields = lists:reverse(F)}.
@@ -2676,10 +2928,14 @@ decode_message_order_mass_status_request(Message, #order_mass_status_request{} =
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #order_mass_status_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#order_mass_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#order_mass_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#order_mass_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#order_mass_status_request{sending_time = V};
     ({mass_status_req_id,V}, Rec) -> Rec#order_mass_status_request{mass_status_req_id = V};
-    ({mass_status_req_type,V}, Rec) -> Rec#order_mass_status_request{mass_status_req_type = list_to_integer(binary_to_list(V))};
+    ({mass_status_req_type,V}, Rec) -> Rec#order_mass_status_request{mass_status_req_type = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#order_mass_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_mass_status_request{acct_id_source = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#order_mass_status_request{acct_id_source = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#order_mass_status_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#order_mass_status_request{trading_session_sub_id = V};
     ({side,V}, Rec) -> Rec#order_mass_status_request{side = V};
@@ -2693,39 +2949,43 @@ decode_message_quote_request_reject(Message, #quote_request_reject{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_request_reject{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_request_reject{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_request_reject{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_request_reject{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_request_reject{sending_time = V};
     ({quote_req_id,V}, Rec) -> Rec#quote_request_reject{quote_req_id = V};
     ({rfq_req_id,V}, Rec) -> Rec#quote_request_reject{rfq_req_id = V};
-    ({quote_request_reject_reason,V}, Rec) -> Rec#quote_request_reject{quote_request_reject_reason = list_to_integer(binary_to_list(V))};
-    ({prev_close_px,V}, Rec) -> Rec#quote_request_reject{prev_close_px = list_to_float(binary_to_list(V))};
-    ({quote_request_type,V}, Rec) -> Rec#quote_request_reject{quote_request_type = list_to_integer(binary_to_list(V))};
-    ({quote_type,V}, Rec) -> Rec#quote_request_reject{quote_type = list_to_integer(binary_to_list(V))};
+    ({quote_request_reject_reason,V}, Rec) -> Rec#quote_request_reject{quote_request_reject_reason = fix:parse_num(V)};
+    ({prev_close_px,V}, Rec) -> Rec#quote_request_reject{prev_close_px = fix:parse_num(V)};
+    ({quote_request_type,V}, Rec) -> Rec#quote_request_reject{quote_request_type = fix:parse_num(V)};
+    ({quote_type,V}, Rec) -> Rec#quote_request_reject{quote_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote_request_reject{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_request_reject{trading_session_sub_id = V};
     ({trade_origination_date,V}, Rec) -> Rec#quote_request_reject{trade_origination_date = V};
     ({side,V}, Rec) -> Rec#quote_request_reject{side = V};
-    ({qty_type,V}, Rec) -> Rec#quote_request_reject{qty_type = list_to_integer(binary_to_list(V))};
+    ({qty_type,V}, Rec) -> Rec#quote_request_reject{qty_type = fix:parse_num(V)};
     ({settl_type,V}, Rec) -> Rec#quote_request_reject{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#quote_request_reject{settl_date = V};
     ({settl_date2,V}, Rec) -> Rec#quote_request_reject{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_request_reject{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#quote_request_reject{order_qty2 = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#quote_request_reject{currency = V};
     ({account,V}, Rec) -> Rec#quote_request_reject{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_request_reject{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_request_reject{account_type = list_to_integer(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#quote_request_reject{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_request_reject{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_request_reject{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_request_reject{account_type = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#quote_request_reject{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#quote_request_reject{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#quote_request_reject{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#quote_request_reject{leg_settl_date = V};
     ({quote_qualifier,V}, Rec) -> Rec#quote_request_reject{quote_qualifier = V};
-    ({quote_price_type,V}, Rec) -> Rec#quote_request_reject{quote_price_type = list_to_integer(binary_to_list(V))};
+    ({quote_price_type,V}, Rec) -> Rec#quote_request_reject{quote_price_type = fix:parse_num(V)};
     ({ord_type,V}, Rec) -> Rec#quote_request_reject{ord_type = V};
     ({expire_time,V}, Rec) -> Rec#quote_request_reject{expire_time = V};
     ({transact_time,V}, Rec) -> Rec#quote_request_reject{transact_time = V};
-    ({price_type,V}, Rec) -> Rec#quote_request_reject{price_type = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#quote_request_reject{price = list_to_float(binary_to_list(V))};
-    ({price2,V}, Rec) -> Rec#quote_request_reject{price2 = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#quote_request_reject{price_type = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#quote_request_reject{price = fix:parse_num(V)};
+    ({price2,V}, Rec) -> Rec#quote_request_reject{price2 = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#quote_request_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_request_reject{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#quote_request_reject{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#quote_request_reject{encoded_text = V};
     ({K,V}, #quote_request_reject{fields = F} = Rec) -> Rec#quote_request_reject{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2737,10 +2997,14 @@ decode_message_rfq_request(Message, #rfq_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #rfq_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#rfq_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#rfq_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#rfq_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#rfq_request{sending_time = V};
     ({rfq_req_id,V}, Rec) -> Rec#rfq_request{rfq_req_id = V};
-    ({prev_close_px,V}, Rec) -> Rec#rfq_request{prev_close_px = list_to_float(binary_to_list(V))};
-    ({quote_request_type,V}, Rec) -> Rec#rfq_request{quote_request_type = list_to_integer(binary_to_list(V))};
-    ({quote_type,V}, Rec) -> Rec#rfq_request{quote_type = list_to_integer(binary_to_list(V))};
+    ({prev_close_px,V}, Rec) -> Rec#rfq_request{prev_close_px = fix:parse_num(V)};
+    ({quote_request_type,V}, Rec) -> Rec#rfq_request{quote_request_type = fix:parse_num(V)};
+    ({quote_type,V}, Rec) -> Rec#rfq_request{quote_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#rfq_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#rfq_request{trading_session_sub_id = V};
     ({subscription_request_type,V}, Rec) -> Rec#rfq_request{subscription_request_type = V};
@@ -2754,44 +3018,48 @@ decode_message_quote_status_report(Message, #quote_status_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_status_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_status_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_status_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_status_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_status_report{sending_time = V};
     ({quote_status_req_id,V}, Rec) -> Rec#quote_status_report{quote_status_req_id = V};
     ({quote_req_id,V}, Rec) -> Rec#quote_status_report{quote_req_id = V};
     ({quote_id,V}, Rec) -> Rec#quote_status_report{quote_id = V};
     ({quote_resp_id,V}, Rec) -> Rec#quote_status_report{quote_resp_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote_status_report{quote_type = list_to_integer(binary_to_list(V))};
+    ({quote_type,V}, Rec) -> Rec#quote_status_report{quote_type = fix:parse_num(V)};
     ({trading_session_id,V}, Rec) -> Rec#quote_status_report{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_status_report{trading_session_sub_id = V};
     ({side,V}, Rec) -> Rec#quote_status_report{side = V};
     ({settl_type,V}, Rec) -> Rec#quote_status_report{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#quote_status_report{settl_date = V};
     ({settl_date2,V}, Rec) -> Rec#quote_status_report{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_status_report{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#quote_status_report{order_qty2 = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#quote_status_report{currency = V};
     ({account,V}, Rec) -> Rec#quote_status_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_status_report{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_status_report{account_type = list_to_integer(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#quote_status_report{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_status_report{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_status_report{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_status_report{account_type = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#quote_status_report{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#quote_status_report{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#quote_status_report{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#quote_status_report{leg_settl_date = V};
     ({quote_qualifier,V}, Rec) -> Rec#quote_status_report{quote_qualifier = V};
     ({expire_time,V}, Rec) -> Rec#quote_status_report{expire_time = V};
-    ({price,V}, Rec) -> Rec#quote_status_report{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#quote_status_report{price_type = list_to_integer(binary_to_list(V))};
-    ({bid_px,V}, Rec) -> Rec#quote_status_report{bid_px = list_to_float(binary_to_list(V))};
-    ({offer_px,V}, Rec) -> Rec#quote_status_report{offer_px = list_to_float(binary_to_list(V))};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote_status_report{mkt_bid_px = list_to_float(binary_to_list(V))};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote_status_report{mkt_offer_px = list_to_float(binary_to_list(V))};
-    ({min_bid_size,V}, Rec) -> Rec#quote_status_report{min_bid_size = list_to_integer(binary_to_list(V))};
-    ({bid_size,V}, Rec) -> Rec#quote_status_report{bid_size = list_to_integer(binary_to_list(V))};
-    ({min_offer_size,V}, Rec) -> Rec#quote_status_report{min_offer_size = list_to_integer(binary_to_list(V))};
-    ({offer_size,V}, Rec) -> Rec#quote_status_report{offer_size = list_to_integer(binary_to_list(V))};
+    ({price,V}, Rec) -> Rec#quote_status_report{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#quote_status_report{price_type = fix:parse_num(V)};
+    ({bid_px,V}, Rec) -> Rec#quote_status_report{bid_px = fix:parse_num(V)};
+    ({offer_px,V}, Rec) -> Rec#quote_status_report{offer_px = fix:parse_num(V)};
+    ({mkt_bid_px,V}, Rec) -> Rec#quote_status_report{mkt_bid_px = fix:parse_num(V)};
+    ({mkt_offer_px,V}, Rec) -> Rec#quote_status_report{mkt_offer_px = fix:parse_num(V)};
+    ({min_bid_size,V}, Rec) -> Rec#quote_status_report{min_bid_size = fix:parse_num(V)};
+    ({bid_size,V}, Rec) -> Rec#quote_status_report{bid_size = fix:parse_num(V)};
+    ({min_offer_size,V}, Rec) -> Rec#quote_status_report{min_offer_size = fix:parse_num(V)};
+    ({offer_size,V}, Rec) -> Rec#quote_status_report{offer_size = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#quote_status_report{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote_status_report{bid_spot_rate = list_to_float(binary_to_list(V))};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote_status_report{offer_spot_rate = list_to_float(binary_to_list(V))};
+    ({bid_spot_rate,V}, Rec) -> Rec#quote_status_report{bid_spot_rate = fix:parse_num(V)};
+    ({offer_spot_rate,V}, Rec) -> Rec#quote_status_report{offer_spot_rate = fix:parse_num(V)};
     ({bid_forward_points,V}, Rec) -> Rec#quote_status_report{bid_forward_points = V};
     ({offer_forward_points,V}, Rec) -> Rec#quote_status_report{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote_status_report{mid_px = list_to_float(binary_to_list(V))};
+    ({mid_px,V}, Rec) -> Rec#quote_status_report{mid_px = fix:parse_num(V)};
     ({bid_yield,V}, Rec) -> Rec#quote_status_report{bid_yield = V};
     ({mid_yield,V}, Rec) -> Rec#quote_status_report{mid_yield = V};
     ({offer_yield,V}, Rec) -> Rec#quote_status_report{offer_yield = V};
@@ -2804,11 +3072,11 @@ decode_message_quote_status_report(Message, #quote_status_report{} = Record) ->
     ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote_status_report{settl_curr_fx_rate_calc = V};
     ({comm_type,V}, Rec) -> Rec#quote_status_report{comm_type = V};
     ({commission,V}, Rec) -> Rec#quote_status_report{commission = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote_status_report{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#quote_status_report{cust_order_capacity = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#quote_status_report{ex_destination = V};
-    ({quote_status,V}, Rec) -> Rec#quote_status_report{quote_status = list_to_integer(binary_to_list(V))};
+    ({quote_status,V}, Rec) -> Rec#quote_status_report{quote_status = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#quote_status_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_status_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#quote_status_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#quote_status_report{encoded_text = V};
     ({K,V}, #quote_status_report{fields = F} = Rec) -> Rec#quote_status_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2820,13 +3088,17 @@ decode_message_quote_response(Message, #quote_response{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #quote_response{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#quote_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#quote_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#quote_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#quote_response{sending_time = V};
     ({quote_resp_id,V}, Rec) -> Rec#quote_response{quote_resp_id = V};
     ({quote_id,V}, Rec) -> Rec#quote_response{quote_id = V};
-    ({quote_resp_type,V}, Rec) -> Rec#quote_response{quote_resp_type = list_to_integer(binary_to_list(V))};
+    ({quote_resp_type,V}, Rec) -> Rec#quote_response{quote_resp_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#quote_response{cl_ord_id = V};
     ({order_capacity,V}, Rec) -> Rec#quote_response{order_capacity = V};
     ({ioi_id,V}, Rec) -> Rec#quote_response{ioi_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote_response{quote_type = list_to_integer(binary_to_list(V))};
+    ({quote_type,V}, Rec) -> Rec#quote_response{quote_type = fix:parse_num(V)};
     ({quote_qualifier,V}, Rec) -> Rec#quote_response{quote_qualifier = V};
     ({trading_session_id,V}, Rec) -> Rec#quote_response{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#quote_response{trading_session_sub_id = V};
@@ -2834,32 +3106,32 @@ decode_message_quote_response(Message, #quote_response{} = Record) ->
     ({settl_type,V}, Rec) -> Rec#quote_response{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#quote_response{settl_date = V};
     ({settl_date2,V}, Rec) -> Rec#quote_response{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_response{order_qty2 = list_to_integer(binary_to_list(V))};
+    ({order_qty2,V}, Rec) -> Rec#quote_response{order_qty2 = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#quote_response{currency = V};
     ({account,V}, Rec) -> Rec#quote_response{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_response{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#quote_response{account_type = list_to_integer(binary_to_list(V))};
-    ({leg_qty,V}, Rec) -> Rec#quote_response{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_response{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#quote_response{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#quote_response{account_type = fix:parse_num(V)};
+    ({leg_qty,V}, Rec) -> Rec#quote_response{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#quote_response{leg_swap_type = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#quote_response{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#quote_response{leg_settl_date = V};
-    ({leg_price_type,V}, Rec) -> Rec#quote_response{leg_price_type = list_to_integer(binary_to_list(V))};
-    ({leg_bid_px,V}, Rec) -> Rec#quote_response{leg_bid_px = list_to_float(binary_to_list(V))};
-    ({leg_offer_px,V}, Rec) -> Rec#quote_response{leg_offer_px = list_to_float(binary_to_list(V))};
-    ({bid_px,V}, Rec) -> Rec#quote_response{bid_px = list_to_float(binary_to_list(V))};
-    ({offer_px,V}, Rec) -> Rec#quote_response{offer_px = list_to_float(binary_to_list(V))};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote_response{mkt_bid_px = list_to_float(binary_to_list(V))};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote_response{mkt_offer_px = list_to_float(binary_to_list(V))};
-    ({min_bid_size,V}, Rec) -> Rec#quote_response{min_bid_size = list_to_integer(binary_to_list(V))};
-    ({bid_size,V}, Rec) -> Rec#quote_response{bid_size = list_to_integer(binary_to_list(V))};
-    ({min_offer_size,V}, Rec) -> Rec#quote_response{min_offer_size = list_to_integer(binary_to_list(V))};
-    ({offer_size,V}, Rec) -> Rec#quote_response{offer_size = list_to_integer(binary_to_list(V))};
+    ({leg_price_type,V}, Rec) -> Rec#quote_response{leg_price_type = fix:parse_num(V)};
+    ({leg_bid_px,V}, Rec) -> Rec#quote_response{leg_bid_px = fix:parse_num(V)};
+    ({leg_offer_px,V}, Rec) -> Rec#quote_response{leg_offer_px = fix:parse_num(V)};
+    ({bid_px,V}, Rec) -> Rec#quote_response{bid_px = fix:parse_num(V)};
+    ({offer_px,V}, Rec) -> Rec#quote_response{offer_px = fix:parse_num(V)};
+    ({mkt_bid_px,V}, Rec) -> Rec#quote_response{mkt_bid_px = fix:parse_num(V)};
+    ({mkt_offer_px,V}, Rec) -> Rec#quote_response{mkt_offer_px = fix:parse_num(V)};
+    ({min_bid_size,V}, Rec) -> Rec#quote_response{min_bid_size = fix:parse_num(V)};
+    ({bid_size,V}, Rec) -> Rec#quote_response{bid_size = fix:parse_num(V)};
+    ({min_offer_size,V}, Rec) -> Rec#quote_response{min_offer_size = fix:parse_num(V)};
+    ({offer_size,V}, Rec) -> Rec#quote_response{offer_size = fix:parse_num(V)};
     ({valid_until_time,V}, Rec) -> Rec#quote_response{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote_response{bid_spot_rate = list_to_float(binary_to_list(V))};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote_response{offer_spot_rate = list_to_float(binary_to_list(V))};
+    ({bid_spot_rate,V}, Rec) -> Rec#quote_response{bid_spot_rate = fix:parse_num(V)};
+    ({offer_spot_rate,V}, Rec) -> Rec#quote_response{offer_spot_rate = fix:parse_num(V)};
     ({bid_forward_points,V}, Rec) -> Rec#quote_response{bid_forward_points = V};
     ({offer_forward_points,V}, Rec) -> Rec#quote_response{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote_response{mid_px = list_to_float(binary_to_list(V))};
+    ({mid_px,V}, Rec) -> Rec#quote_response{mid_px = fix:parse_num(V)};
     ({bid_yield,V}, Rec) -> Rec#quote_response{bid_yield = V};
     ({mid_yield,V}, Rec) -> Rec#quote_response{mid_yield = V};
     ({offer_yield,V}, Rec) -> Rec#quote_response{offer_yield = V};
@@ -2872,13 +3144,13 @@ decode_message_quote_response(Message, #quote_response{} = Record) ->
     ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote_response{settl_curr_fx_rate_calc = V};
     ({commission,V}, Rec) -> Rec#quote_response{commission = V};
     ({comm_type,V}, Rec) -> Rec#quote_response{comm_type = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote_response{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#quote_response{cust_order_capacity = fix:parse_num(V)};
     ({ex_destination,V}, Rec) -> Rec#quote_response{ex_destination = V};
     ({text,V}, Rec) -> Rec#quote_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_response{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#quote_response{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#quote_response{encoded_text = V};
-    ({price,V}, Rec) -> Rec#quote_response{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#quote_response{price_type = list_to_integer(binary_to_list(V))};
+    ({price,V}, Rec) -> Rec#quote_response{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#quote_response{price_type = fix:parse_num(V)};
     ({K,V}, #quote_response{fields = F} = Rec) -> Rec#quote_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#quote_response{fields = lists:reverse(F)}.
@@ -2889,49 +3161,53 @@ decode_message_confirmation(Message, #confirmation{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #confirmation{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#confirmation{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#confirmation{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#confirmation{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#confirmation{sending_time = V};
     ({confirm_id,V}, Rec) -> Rec#confirmation{confirm_id = V};
     ({confirm_ref_id,V}, Rec) -> Rec#confirmation{confirm_ref_id = V};
     ({confirm_req_id,V}, Rec) -> Rec#confirmation{confirm_req_id = V};
-    ({confirm_trans_type,V}, Rec) -> Rec#confirmation{confirm_trans_type = list_to_integer(binary_to_list(V))};
-    ({confirm_type,V}, Rec) -> Rec#confirmation{confirm_type = list_to_integer(binary_to_list(V))};
+    ({confirm_trans_type,V}, Rec) -> Rec#confirmation{confirm_trans_type = fix:parse_num(V)};
+    ({confirm_type,V}, Rec) -> Rec#confirmation{confirm_type = fix:parse_num(V)};
     ({copy_msg_indicator,V}, Rec) -> Rec#confirmation{copy_msg_indicator = V == <<"Y">>};
     ({legal_confirm,V}, Rec) -> Rec#confirmation{legal_confirm = V == <<"Y">>};
-    ({confirm_status,V}, Rec) -> Rec#confirmation{confirm_status = list_to_integer(binary_to_list(V))};
+    ({confirm_status,V}, Rec) -> Rec#confirmation{confirm_status = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#confirmation{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#confirmation{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#confirmation{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#confirmation{secondary_cl_ord_id = V};
     ({list_id,V}, Rec) -> Rec#confirmation{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#confirmation{order_qty = list_to_integer(binary_to_list(V))};
-    ({order_avg_px,V}, Rec) -> Rec#confirmation{order_avg_px = list_to_float(binary_to_list(V))};
-    ({order_booking_qty,V}, Rec) -> Rec#confirmation{order_booking_qty = list_to_integer(binary_to_list(V))};
+    ({order_qty,V}, Rec) -> Rec#confirmation{order_qty = fix:parse_num(V)};
+    ({order_avg_px,V}, Rec) -> Rec#confirmation{order_avg_px = fix:parse_num(V)};
+    ({order_booking_qty,V}, Rec) -> Rec#confirmation{order_booking_qty = fix:parse_num(V)};
     ({alloc_id,V}, Rec) -> Rec#confirmation{alloc_id = V};
     ({secondary_alloc_id,V}, Rec) -> Rec#confirmation{secondary_alloc_id = V};
     ({individual_alloc_id,V}, Rec) -> Rec#confirmation{individual_alloc_id = V};
     ({transact_time,V}, Rec) -> Rec#confirmation{transact_time = V};
     ({trade_date,V}, Rec) -> Rec#confirmation{trade_date = V};
-    ({alloc_qty,V}, Rec) -> Rec#confirmation{alloc_qty = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#confirmation{qty_type = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#confirmation{alloc_qty = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#confirmation{qty_type = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#confirmation{side = V};
     ({currency,V}, Rec) -> Rec#confirmation{currency = V};
     ({last_mkt,V}, Rec) -> Rec#confirmation{last_mkt = V};
     ({order_capacity,V}, Rec) -> Rec#confirmation{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#confirmation{order_restrictions = V};
-    ({order_capacity_qty,V}, Rec) -> Rec#confirmation{order_capacity_qty = list_to_integer(binary_to_list(V))};
+    ({order_capacity_qty,V}, Rec) -> Rec#confirmation{order_capacity_qty = fix:parse_num(V)};
     ({alloc_account,V}, Rec) -> Rec#confirmation{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
-    ({alloc_account_type,V}, Rec) -> Rec#confirmation{alloc_account_type = list_to_integer(binary_to_list(V))};
-    ({avg_px,V}, Rec) -> Rec#confirmation{avg_px = list_to_float(binary_to_list(V))};
-    ({avg_px_precision,V}, Rec) -> Rec#confirmation{avg_px_precision = list_to_integer(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#confirmation{price_type = list_to_integer(binary_to_list(V))};
-    ({avg_par_px,V}, Rec) -> Rec#confirmation{avg_par_px = list_to_float(binary_to_list(V))};
-    ({reported_px,V}, Rec) -> Rec#confirmation{reported_px = list_to_float(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation{alloc_acct_id_source = fix:parse_num(V)};
+    ({alloc_account_type,V}, Rec) -> Rec#confirmation{alloc_account_type = fix:parse_num(V)};
+    ({avg_px,V}, Rec) -> Rec#confirmation{avg_px = fix:parse_num(V)};
+    ({avg_px_precision,V}, Rec) -> Rec#confirmation{avg_px_precision = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#confirmation{price_type = fix:parse_num(V)};
+    ({avg_par_px,V}, Rec) -> Rec#confirmation{avg_par_px = fix:parse_num(V)};
+    ({reported_px,V}, Rec) -> Rec#confirmation{reported_px = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#confirmation{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#confirmation{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#confirmation{encoded_text = V};
     ({process_code,V}, Rec) -> Rec#confirmation{process_code = V};
     ({gross_trade_amt,V}, Rec) -> Rec#confirmation{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#confirmation{num_days_interest = list_to_integer(binary_to_list(V))};
+    ({num_days_interest,V}, Rec) -> Rec#confirmation{num_days_interest = fix:parse_num(V)};
     ({ex_date,V}, Rec) -> Rec#confirmation{ex_date = V};
     ({accrued_interest_rate,V}, Rec) -> Rec#confirmation{accrued_interest_rate = V};
     ({accrued_interest_amt,V}, Rec) -> Rec#confirmation{accrued_interest_amt = V};
@@ -2953,7 +3229,7 @@ decode_message_confirmation(Message, #confirmation{} = Record) ->
     ({misc_fee_amt,V}, Rec) -> Rec#confirmation{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#confirmation{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#confirmation{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#confirmation{misc_fee_basis = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#confirmation{misc_fee_basis = fix:parse_num(V)};
     ({K,V}, #confirmation{fields = F} = Rec) -> Rec#confirmation{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#confirmation{fields = lists:reverse(F)}.
@@ -2964,27 +3240,31 @@ decode_message_position_maintenance_request(Message, #position_maintenance_reque
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #position_maintenance_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#position_maintenance_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#position_maintenance_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#position_maintenance_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#position_maintenance_request{sending_time = V};
     ({pos_req_id,V}, Rec) -> Rec#position_maintenance_request{pos_req_id = V};
-    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_request{pos_trans_type = list_to_integer(binary_to_list(V))};
-    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_request{pos_maint_action = list_to_integer(binary_to_list(V))};
+    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_request{pos_trans_type = fix:parse_num(V)};
+    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_request{pos_maint_action = fix:parse_num(V)};
     ({orig_pos_req_ref_id,V}, Rec) -> Rec#position_maintenance_request{orig_pos_req_ref_id = V};
     ({pos_maint_rpt_ref_id,V}, Rec) -> Rec#position_maintenance_request{pos_maint_rpt_ref_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#position_maintenance_request{clearing_business_date = V};
     ({settl_sess_id,V}, Rec) -> Rec#position_maintenance_request{settl_sess_id = V};
     ({settl_sess_sub_id,V}, Rec) -> Rec#position_maintenance_request{settl_sess_sub_id = V};
     ({account,V}, Rec) -> Rec#position_maintenance_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_request{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#position_maintenance_request{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_request{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#position_maintenance_request{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#position_maintenance_request{currency = V};
     ({trading_session_id,V}, Rec) -> Rec#position_maintenance_request{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#position_maintenance_request{trading_session_sub_id = V};
     ({transact_time,V}, Rec) -> Rec#position_maintenance_request{transact_time = V};
-    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_request{adjustment_type = list_to_integer(binary_to_list(V))};
+    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_request{adjustment_type = fix:parse_num(V)};
     ({contrary_instruction_indicator,V}, Rec) -> Rec#position_maintenance_request{contrary_instruction_indicator = V == <<"Y">>};
     ({prior_spread_indicator,V}, Rec) -> Rec#position_maintenance_request{prior_spread_indicator = V == <<"Y">>};
     ({threshold_amount,V}, Rec) -> Rec#position_maintenance_request{threshold_amount = V};
     ({text,V}, Rec) -> Rec#position_maintenance_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#position_maintenance_request{encoded_text = V};
     ({K,V}, #position_maintenance_request{fields = F} = Rec) -> Rec#position_maintenance_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -2996,27 +3276,31 @@ decode_message_position_maintenance_report(Message, #position_maintenance_report
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #position_maintenance_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#position_maintenance_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#position_maintenance_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#position_maintenance_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#position_maintenance_report{sending_time = V};
     ({pos_maint_rpt_id,V}, Rec) -> Rec#position_maintenance_report{pos_maint_rpt_id = V};
-    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_report{pos_trans_type = list_to_integer(binary_to_list(V))};
+    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_report{pos_trans_type = fix:parse_num(V)};
     ({pos_req_id,V}, Rec) -> Rec#position_maintenance_report{pos_req_id = V};
-    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_report{pos_maint_action = list_to_integer(binary_to_list(V))};
+    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_report{pos_maint_action = fix:parse_num(V)};
     ({orig_pos_req_ref_id,V}, Rec) -> Rec#position_maintenance_report{orig_pos_req_ref_id = V};
-    ({pos_maint_status,V}, Rec) -> Rec#position_maintenance_report{pos_maint_status = list_to_integer(binary_to_list(V))};
-    ({pos_maint_result,V}, Rec) -> Rec#position_maintenance_report{pos_maint_result = list_to_integer(binary_to_list(V))};
+    ({pos_maint_status,V}, Rec) -> Rec#position_maintenance_report{pos_maint_status = fix:parse_num(V)};
+    ({pos_maint_result,V}, Rec) -> Rec#position_maintenance_report{pos_maint_result = fix:parse_num(V)};
     ({clearing_business_date,V}, Rec) -> Rec#position_maintenance_report{clearing_business_date = V};
     ({settl_sess_id,V}, Rec) -> Rec#position_maintenance_report{settl_sess_id = V};
     ({settl_sess_sub_id,V}, Rec) -> Rec#position_maintenance_report{settl_sess_sub_id = V};
     ({account,V}, Rec) -> Rec#position_maintenance_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_report{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#position_maintenance_report{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_report{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#position_maintenance_report{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#position_maintenance_report{currency = V};
     ({trading_session_id,V}, Rec) -> Rec#position_maintenance_report{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#position_maintenance_report{trading_session_sub_id = V};
     ({transact_time,V}, Rec) -> Rec#position_maintenance_report{transact_time = V};
-    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_report{adjustment_type = list_to_integer(binary_to_list(V))};
+    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_report{adjustment_type = fix:parse_num(V)};
     ({threshold_amount,V}, Rec) -> Rec#position_maintenance_report{threshold_amount = V};
     ({text,V}, Rec) -> Rec#position_maintenance_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#position_maintenance_report{encoded_text = V};
     ({K,V}, #position_maintenance_report{fields = F} = Rec) -> Rec#position_maintenance_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3028,13 +3312,17 @@ decode_message_request_for_positions(Message, #request_for_positions{} = Record)
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #request_for_positions{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#request_for_positions{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#request_for_positions{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#request_for_positions{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#request_for_positions{sending_time = V};
     ({pos_req_id,V}, Rec) -> Rec#request_for_positions{pos_req_id = V};
-    ({pos_req_type,V}, Rec) -> Rec#request_for_positions{pos_req_type = list_to_integer(binary_to_list(V))};
+    ({pos_req_type,V}, Rec) -> Rec#request_for_positions{pos_req_type = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#request_for_positions{match_status = V};
     ({subscription_request_type,V}, Rec) -> Rec#request_for_positions{subscription_request_type = V};
     ({account,V}, Rec) -> Rec#request_for_positions{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#request_for_positions{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#request_for_positions{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#request_for_positions{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#request_for_positions{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#request_for_positions{currency = V};
     ({clearing_business_date,V}, Rec) -> Rec#request_for_positions{clearing_business_date = V};
     ({settl_sess_id,V}, Rec) -> Rec#request_for_positions{settl_sess_id = V};
@@ -3042,10 +3330,10 @@ decode_message_request_for_positions(Message, #request_for_positions{} = Record)
     ({trading_session_id,V}, Rec) -> Rec#request_for_positions{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#request_for_positions{trading_session_sub_id = V};
     ({transact_time,V}, Rec) -> Rec#request_for_positions{transact_time = V};
-    ({response_transport_type,V}, Rec) -> Rec#request_for_positions{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#request_for_positions{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#request_for_positions{response_destination = V};
     ({text,V}, Rec) -> Rec#request_for_positions{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#request_for_positions{encoded_text = V};
     ({K,V}, #request_for_positions{fields = F} = Rec) -> Rec#request_for_positions{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3057,20 +3345,24 @@ decode_message_request_for_positions_ack(Message, #request_for_positions_ack{} =
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #request_for_positions_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#request_for_positions_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#request_for_positions_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#request_for_positions_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#request_for_positions_ack{sending_time = V};
     ({pos_maint_rpt_id,V}, Rec) -> Rec#request_for_positions_ack{pos_maint_rpt_id = V};
     ({pos_req_id,V}, Rec) -> Rec#request_for_positions_ack{pos_req_id = V};
-    ({total_num_pos_reports,V}, Rec) -> Rec#request_for_positions_ack{total_num_pos_reports = list_to_integer(binary_to_list(V))};
+    ({total_num_pos_reports,V}, Rec) -> Rec#request_for_positions_ack{total_num_pos_reports = fix:parse_num(V)};
     ({unsolicited_indicator,V}, Rec) -> Rec#request_for_positions_ack{unsolicited_indicator = V == <<"Y">>};
-    ({pos_req_result,V}, Rec) -> Rec#request_for_positions_ack{pos_req_result = list_to_integer(binary_to_list(V))};
-    ({pos_req_status,V}, Rec) -> Rec#request_for_positions_ack{pos_req_status = list_to_integer(binary_to_list(V))};
+    ({pos_req_result,V}, Rec) -> Rec#request_for_positions_ack{pos_req_result = fix:parse_num(V)};
+    ({pos_req_status,V}, Rec) -> Rec#request_for_positions_ack{pos_req_status = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#request_for_positions_ack{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#request_for_positions_ack{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#request_for_positions_ack{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#request_for_positions_ack{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#request_for_positions_ack{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#request_for_positions_ack{currency = V};
-    ({response_transport_type,V}, Rec) -> Rec#request_for_positions_ack{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#request_for_positions_ack{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#request_for_positions_ack{response_destination = V};
     ({text,V}, Rec) -> Rec#request_for_positions_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#request_for_positions_ack{encoded_text = V};
     ({K,V}, #request_for_positions_ack{fields = F} = Rec) -> Rec#request_for_positions_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3082,29 +3374,33 @@ decode_message_position_report(Message, #position_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #position_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#position_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#position_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#position_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#position_report{sending_time = V};
     ({pos_maint_rpt_id,V}, Rec) -> Rec#position_report{pos_maint_rpt_id = V};
     ({pos_req_id,V}, Rec) -> Rec#position_report{pos_req_id = V};
-    ({pos_req_type,V}, Rec) -> Rec#position_report{pos_req_type = list_to_integer(binary_to_list(V))};
+    ({pos_req_type,V}, Rec) -> Rec#position_report{pos_req_type = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#position_report{subscription_request_type = V};
-    ({total_num_pos_reports,V}, Rec) -> Rec#position_report{total_num_pos_reports = list_to_integer(binary_to_list(V))};
+    ({total_num_pos_reports,V}, Rec) -> Rec#position_report{total_num_pos_reports = fix:parse_num(V)};
     ({unsolicited_indicator,V}, Rec) -> Rec#position_report{unsolicited_indicator = V == <<"Y">>};
-    ({pos_req_result,V}, Rec) -> Rec#position_report{pos_req_result = list_to_integer(binary_to_list(V))};
+    ({pos_req_result,V}, Rec) -> Rec#position_report{pos_req_result = fix:parse_num(V)};
     ({clearing_business_date,V}, Rec) -> Rec#position_report{clearing_business_date = V};
     ({settl_sess_id,V}, Rec) -> Rec#position_report{settl_sess_id = V};
     ({settl_sess_sub_id,V}, Rec) -> Rec#position_report{settl_sess_sub_id = V};
     ({account,V}, Rec) -> Rec#position_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_report{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#position_report{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#position_report{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#position_report{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#position_report{currency = V};
-    ({settl_price,V}, Rec) -> Rec#position_report{settl_price = list_to_float(binary_to_list(V))};
-    ({settl_price_type,V}, Rec) -> Rec#position_report{settl_price_type = list_to_integer(binary_to_list(V))};
-    ({prior_settl_price,V}, Rec) -> Rec#position_report{prior_settl_price = list_to_float(binary_to_list(V))};
-    ({underlying_settl_price,V}, Rec) -> Rec#position_report{underlying_settl_price = list_to_float(binary_to_list(V))};
-    ({underlying_settl_price_type,V}, Rec) -> Rec#position_report{underlying_settl_price_type = list_to_integer(binary_to_list(V))};
+    ({settl_price,V}, Rec) -> Rec#position_report{settl_price = fix:parse_num(V)};
+    ({settl_price_type,V}, Rec) -> Rec#position_report{settl_price_type = fix:parse_num(V)};
+    ({prior_settl_price,V}, Rec) -> Rec#position_report{prior_settl_price = fix:parse_num(V)};
+    ({underlying_settl_price,V}, Rec) -> Rec#position_report{underlying_settl_price = fix:parse_num(V)};
+    ({underlying_settl_price_type,V}, Rec) -> Rec#position_report{underlying_settl_price_type = fix:parse_num(V)};
     ({regist_status,V}, Rec) -> Rec#position_report{regist_status = V};
     ({delivery_date,V}, Rec) -> Rec#position_report{delivery_date = V};
     ({text,V}, Rec) -> Rec#position_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#position_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#position_report{encoded_text = V};
     ({K,V}, #position_report{fields = F} = Rec) -> Rec#position_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3116,17 +3412,21 @@ decode_message_trade_capture_report_request_ack(Message, #trade_capture_report_r
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trade_capture_report_request_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_request_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_request_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_request_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trade_capture_report_request_ack{sending_time = V};
     ({trade_request_id,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_id = V};
-    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_type = list_to_integer(binary_to_list(V))};
+    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_type = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_request_ack{subscription_request_type = V};
-    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report_request_ack{tot_num_trade_reports = list_to_integer(binary_to_list(V))};
-    ({trade_request_result,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_result = list_to_integer(binary_to_list(V))};
-    ({trade_request_status,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_status = list_to_integer(binary_to_list(V))};
+    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report_request_ack{tot_num_trade_reports = fix:parse_num(V)};
+    ({trade_request_result,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_result = fix:parse_num(V)};
+    ({trade_request_status,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_status = fix:parse_num(V)};
     ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report_request_ack{multi_leg_reporting_type = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request_ack{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request_ack{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#trade_capture_report_request_ack{response_destination = V};
     ({text,V}, Rec) -> Rec#trade_capture_report_request_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#trade_capture_report_request_ack{encoded_text = V};
     ({K,V}, #trade_capture_report_request_ack{fields = F} = Rec) -> Rec#trade_capture_report_request_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3138,18 +3438,22 @@ decode_message_trade_capture_report_ack(Message, #trade_capture_report_ack{} = R
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #trade_capture_report_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#trade_capture_report_ack{sending_time = V};
     ({trade_report_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_id = V};
-    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_trans_type = list_to_integer(binary_to_list(V))};
-    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_type = list_to_integer(binary_to_list(V))};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_type = list_to_integer(binary_to_list(V))};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_sub_type = list_to_integer(binary_to_list(V))};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trd_type = list_to_integer(binary_to_list(V))};
+    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_trans_type = fix:parse_num(V)};
+    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_type = fix:parse_num(V)};
+    ({trd_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_type = fix:parse_num(V)};
+    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_sub_type = fix:parse_num(V)};
+    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trd_type = fix:parse_num(V)};
     ({transfer_reason,V}, Rec) -> Rec#trade_capture_report_ack{transfer_reason = V};
     ({exec_type,V}, Rec) -> Rec#trade_capture_report_ack{exec_type = V};
     ({trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_ref_id = V};
     ({secondary_trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trade_report_ref_id = V};
-    ({trd_rpt_status,V}, Rec) -> Rec#trade_capture_report_ack{trd_rpt_status = list_to_integer(binary_to_list(V))};
-    ({trade_report_reject_reason,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_reject_reason = list_to_integer(binary_to_list(V))};
+    ({trd_rpt_status,V}, Rec) -> Rec#trade_capture_report_ack{trd_rpt_status = fix:parse_num(V)};
+    ({trade_report_reject_reason,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_reject_reason = fix:parse_num(V)};
     ({secondary_trade_report_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trade_report_id = V};
     ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_ack{subscription_request_type = V};
     ({trade_link_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_link_id = V};
@@ -3157,34 +3461,34 @@ decode_message_trade_capture_report_ack(Message, #trade_capture_report_ack{} = R
     ({exec_id,V}, Rec) -> Rec#trade_capture_report_ack{exec_id = V};
     ({secondary_exec_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_exec_id = V};
     ({transact_time,V}, Rec) -> Rec#trade_capture_report_ack{transact_time = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_ack{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_ack{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#trade_capture_report_ack{response_destination = V};
     ({text,V}, Rec) -> Rec#trade_capture_report_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#trade_capture_report_ack{encoded_text = V};
-    ({leg_qty,V}, Rec) -> Rec#trade_capture_report_ack{leg_qty = list_to_integer(binary_to_list(V))};
-    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report_ack{leg_swap_type = list_to_integer(binary_to_list(V))};
+    ({leg_qty,V}, Rec) -> Rec#trade_capture_report_ack{leg_qty = fix:parse_num(V)};
+    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report_ack{leg_swap_type = fix:parse_num(V)};
     ({leg_position_effect,V}, Rec) -> Rec#trade_capture_report_ack{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report_ack{leg_covered_or_uncovered = list_to_integer(binary_to_list(V))};
+    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report_ack{leg_covered_or_uncovered = fix:parse_num(V)};
     ({leg_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#trade_capture_report_ack{leg_price = list_to_float(binary_to_list(V))};
+    ({leg_price,V}, Rec) -> Rec#trade_capture_report_ack{leg_price = fix:parse_num(V)};
     ({leg_settl_type,V}, Rec) -> Rec#trade_capture_report_ack{leg_settl_type = V};
     ({leg_settl_date,V}, Rec) -> Rec#trade_capture_report_ack{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report_ack{leg_last_px = list_to_float(binary_to_list(V))};
+    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report_ack{leg_last_px = fix:parse_num(V)};
     ({clearing_fee_indicator,V}, Rec) -> Rec#trade_capture_report_ack{clearing_fee_indicator = V};
     ({order_capacity,V}, Rec) -> Rec#trade_capture_report_ack{order_capacity = V};
     ({order_restrictions,V}, Rec) -> Rec#trade_capture_report_ack{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report_ack{cust_order_capacity = list_to_integer(binary_to_list(V))};
+    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report_ack{cust_order_capacity = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#trade_capture_report_ack{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{acct_id_source = list_to_integer(binary_to_list(V))};
-    ({account_type,V}, Rec) -> Rec#trade_capture_report_ack{account_type = list_to_integer(binary_to_list(V))};
+    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{acct_id_source = fix:parse_num(V)};
+    ({account_type,V}, Rec) -> Rec#trade_capture_report_ack{account_type = fix:parse_num(V)};
     ({position_effect,V}, Rec) -> Rec#trade_capture_report_ack{position_effect = V};
     ({prealloc_method,V}, Rec) -> Rec#trade_capture_report_ack{prealloc_method = V};
     ({alloc_account,V}, Rec) -> Rec#trade_capture_report_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{alloc_acct_id_source = fix:parse_num(V)};
     ({alloc_settl_currency,V}, Rec) -> Rec#trade_capture_report_ack{alloc_settl_currency = V};
     ({individual_alloc_id,V}, Rec) -> Rec#trade_capture_report_ack{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report_ack{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report_ack{alloc_qty = fix:parse_num(V)};
     ({K,V}, #trade_capture_report_ack{fields = F} = Rec) -> Rec#trade_capture_report_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#trade_capture_report_ack{fields = lists:reverse(F)}.
@@ -3195,55 +3499,59 @@ decode_message_allocation_report(Message, #allocation_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #allocation_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#allocation_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#allocation_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#allocation_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#allocation_report{sending_time = V};
     ({alloc_report_id,V}, Rec) -> Rec#allocation_report{alloc_report_id = V};
     ({alloc_id,V}, Rec) -> Rec#allocation_report{alloc_id = V};
     ({alloc_trans_type,V}, Rec) -> Rec#allocation_report{alloc_trans_type = V};
     ({alloc_report_ref_id,V}, Rec) -> Rec#allocation_report{alloc_report_ref_id = V};
-    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_report{alloc_canc_replace_reason = list_to_integer(binary_to_list(V))};
+    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_report{alloc_canc_replace_reason = fix:parse_num(V)};
     ({secondary_alloc_id,V}, Rec) -> Rec#allocation_report{secondary_alloc_id = V};
-    ({alloc_report_type,V}, Rec) -> Rec#allocation_report{alloc_report_type = list_to_integer(binary_to_list(V))};
-    ({alloc_status,V}, Rec) -> Rec#allocation_report{alloc_status = list_to_integer(binary_to_list(V))};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report{alloc_rej_code = list_to_integer(binary_to_list(V))};
+    ({alloc_report_type,V}, Rec) -> Rec#allocation_report{alloc_report_type = fix:parse_num(V)};
+    ({alloc_status,V}, Rec) -> Rec#allocation_report{alloc_status = fix:parse_num(V)};
+    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report{alloc_rej_code = fix:parse_num(V)};
     ({ref_alloc_id,V}, Rec) -> Rec#allocation_report{ref_alloc_id = V};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report{alloc_intermed_req_type = list_to_integer(binary_to_list(V))};
+    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report{alloc_intermed_req_type = fix:parse_num(V)};
     ({alloc_link_id,V}, Rec) -> Rec#allocation_report{alloc_link_id = V};
-    ({alloc_link_type,V}, Rec) -> Rec#allocation_report{alloc_link_type = list_to_integer(binary_to_list(V))};
+    ({alloc_link_type,V}, Rec) -> Rec#allocation_report{alloc_link_type = fix:parse_num(V)};
     ({booking_ref_id,V}, Rec) -> Rec#allocation_report{booking_ref_id = V};
-    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_report{alloc_no_orders_type = list_to_integer(binary_to_list(V))};
+    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_report{alloc_no_orders_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#allocation_report{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#allocation_report{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#allocation_report{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#allocation_report{secondary_cl_ord_id = V};
     ({list_id,V}, Rec) -> Rec#allocation_report{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#allocation_report{order_qty = list_to_integer(binary_to_list(V))};
-    ({order_avg_px,V}, Rec) -> Rec#allocation_report{order_avg_px = list_to_float(binary_to_list(V))};
-    ({order_booking_qty,V}, Rec) -> Rec#allocation_report{order_booking_qty = list_to_integer(binary_to_list(V))};
-    ({last_qty,V}, Rec) -> Rec#allocation_report{last_qty = list_to_integer(binary_to_list(V))};
+    ({order_qty,V}, Rec) -> Rec#allocation_report{order_qty = fix:parse_num(V)};
+    ({order_avg_px,V}, Rec) -> Rec#allocation_report{order_avg_px = fix:parse_num(V)};
+    ({order_booking_qty,V}, Rec) -> Rec#allocation_report{order_booking_qty = fix:parse_num(V)};
+    ({last_qty,V}, Rec) -> Rec#allocation_report{last_qty = fix:parse_num(V)};
     ({exec_id,V}, Rec) -> Rec#allocation_report{exec_id = V};
     ({secondary_exec_id,V}, Rec) -> Rec#allocation_report{secondary_exec_id = V};
-    ({last_px,V}, Rec) -> Rec#allocation_report{last_px = list_to_float(binary_to_list(V))};
-    ({last_par_px,V}, Rec) -> Rec#allocation_report{last_par_px = list_to_float(binary_to_list(V))};
+    ({last_px,V}, Rec) -> Rec#allocation_report{last_px = fix:parse_num(V)};
+    ({last_par_px,V}, Rec) -> Rec#allocation_report{last_par_px = fix:parse_num(V)};
     ({last_capacity,V}, Rec) -> Rec#allocation_report{last_capacity = V};
     ({previously_reported,V}, Rec) -> Rec#allocation_report{previously_reported = V == <<"Y">>};
     ({reversal_indicator,V}, Rec) -> Rec#allocation_report{reversal_indicator = V == <<"Y">>};
     ({match_type,V}, Rec) -> Rec#allocation_report{match_type = V};
     ({side,V}, Rec) -> Rec#allocation_report{side = V};
-    ({quantity,V}, Rec) -> Rec#allocation_report{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#allocation_report{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#allocation_report{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#allocation_report{qty_type = fix:parse_num(V)};
     ({last_mkt,V}, Rec) -> Rec#allocation_report{last_mkt = V};
     ({trade_origination_date,V}, Rec) -> Rec#allocation_report{trade_origination_date = V};
     ({trading_session_id,V}, Rec) -> Rec#allocation_report{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#allocation_report{trading_session_sub_id = V};
-    ({price_type,V}, Rec) -> Rec#allocation_report{price_type = list_to_integer(binary_to_list(V))};
-    ({avg_px,V}, Rec) -> Rec#allocation_report{avg_px = list_to_float(binary_to_list(V))};
-    ({avg_par_px,V}, Rec) -> Rec#allocation_report{avg_par_px = list_to_float(binary_to_list(V))};
+    ({price_type,V}, Rec) -> Rec#allocation_report{price_type = fix:parse_num(V)};
+    ({avg_px,V}, Rec) -> Rec#allocation_report{avg_px = fix:parse_num(V)};
+    ({avg_par_px,V}, Rec) -> Rec#allocation_report{avg_par_px = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#allocation_report{currency = V};
-    ({avg_px_precision,V}, Rec) -> Rec#allocation_report{avg_px_precision = list_to_integer(binary_to_list(V))};
+    ({avg_px_precision,V}, Rec) -> Rec#allocation_report{avg_px_precision = fix:parse_num(V)};
     ({trade_date,V}, Rec) -> Rec#allocation_report{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#allocation_report{transact_time = V};
     ({settl_type,V}, Rec) -> Rec#allocation_report{settl_type = V};
     ({settl_date,V}, Rec) -> Rec#allocation_report{settl_date = V};
-    ({booking_type,V}, Rec) -> Rec#allocation_report{booking_type = list_to_integer(binary_to_list(V))};
+    ({booking_type,V}, Rec) -> Rec#allocation_report{booking_type = fix:parse_num(V)};
     ({gross_trade_amt,V}, Rec) -> Rec#allocation_report{gross_trade_amt = V};
     ({concession,V}, Rec) -> Rec#allocation_report{concession = V};
     ({total_takedown,V}, Rec) -> Rec#allocation_report{total_takedown = V};
@@ -3251,9 +3559,9 @@ decode_message_allocation_report(Message, #allocation_report{} = Record) ->
     ({position_effect,V}, Rec) -> Rec#allocation_report{position_effect = V};
     ({auto_accept_indicator,V}, Rec) -> Rec#allocation_report{auto_accept_indicator = V == <<"Y">>};
     ({text,V}, Rec) -> Rec#allocation_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#allocation_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#allocation_report{encoded_text = V};
-    ({num_days_interest,V}, Rec) -> Rec#allocation_report{num_days_interest = list_to_integer(binary_to_list(V))};
+    ({num_days_interest,V}, Rec) -> Rec#allocation_report{num_days_interest = fix:parse_num(V)};
     ({accrued_interest_rate,V}, Rec) -> Rec#allocation_report{accrued_interest_rate = V};
     ({accrued_interest_amt,V}, Rec) -> Rec#allocation_report{accrued_interest_amt = V};
     ({total_accrued_interest_amt,V}, Rec) -> Rec#allocation_report{total_accrued_interest_amt = V};
@@ -3262,21 +3570,21 @@ decode_message_allocation_report(Message, #allocation_report{} = Record) ->
     ({start_cash,V}, Rec) -> Rec#allocation_report{start_cash = V};
     ({end_cash,V}, Rec) -> Rec#allocation_report{end_cash = V};
     ({legal_confirm,V}, Rec) -> Rec#allocation_report{legal_confirm = V == <<"Y">>};
-    ({tot_no_allocs,V}, Rec) -> Rec#allocation_report{tot_no_allocs = list_to_integer(binary_to_list(V))};
+    ({tot_no_allocs,V}, Rec) -> Rec#allocation_report{tot_no_allocs = fix:parse_num(V)};
     ({last_fragment,V}, Rec) -> Rec#allocation_report{last_fragment = V == <<"Y">>};
     ({alloc_account,V}, Rec) -> Rec#allocation_report{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report{alloc_acct_id_source = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#allocation_report{match_status = V};
-    ({alloc_price,V}, Rec) -> Rec#allocation_report{alloc_price = list_to_float(binary_to_list(V))};
-    ({alloc_qty,V}, Rec) -> Rec#allocation_report{alloc_qty = list_to_integer(binary_to_list(V))};
+    ({alloc_price,V}, Rec) -> Rec#allocation_report{alloc_price = fix:parse_num(V)};
+    ({alloc_qty,V}, Rec) -> Rec#allocation_report{alloc_qty = fix:parse_num(V)};
     ({individual_alloc_id,V}, Rec) -> Rec#allocation_report{individual_alloc_id = V};
     ({process_code,V}, Rec) -> Rec#allocation_report{process_code = V};
     ({notify_broker_of_credit,V}, Rec) -> Rec#allocation_report{notify_broker_of_credit = V == <<"Y">>};
-    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_report{alloc_handl_inst = list_to_integer(binary_to_list(V))};
+    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_report{alloc_handl_inst = fix:parse_num(V)};
     ({alloc_text,V}, Rec) -> Rec#allocation_report{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report{encoded_alloc_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report{encoded_alloc_text_len = fix:parse_num(V)};
     ({encoded_alloc_text,V}, Rec) -> Rec#allocation_report{encoded_alloc_text = V};
-    ({alloc_avg_px,V}, Rec) -> Rec#allocation_report{alloc_avg_px = list_to_float(binary_to_list(V))};
+    ({alloc_avg_px,V}, Rec) -> Rec#allocation_report{alloc_avg_px = fix:parse_num(V)};
     ({alloc_net_money,V}, Rec) -> Rec#allocation_report{alloc_net_money = V};
     ({settl_curr_amt,V}, Rec) -> Rec#allocation_report{settl_curr_amt = V};
     ({alloc_settl_curr_amt,V}, Rec) -> Rec#allocation_report{alloc_settl_curr_amt = V};
@@ -3289,10 +3597,10 @@ decode_message_allocation_report(Message, #allocation_report{} = Record) ->
     ({misc_fee_amt,V}, Rec) -> Rec#allocation_report{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#allocation_report{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#allocation_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#allocation_report{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({clearing_instruction,V}, Rec) -> Rec#allocation_report{clearing_instruction = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#allocation_report{misc_fee_basis = fix:parse_num(V)};
+    ({clearing_instruction,V}, Rec) -> Rec#allocation_report{clearing_instruction = fix:parse_num(V)};
     ({clearing_fee_indicator,V}, Rec) -> Rec#allocation_report{clearing_fee_indicator = V};
-    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_report{alloc_settl_inst_type = list_to_integer(binary_to_list(V))};
+    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_report{alloc_settl_inst_type = fix:parse_num(V)};
     ({K,V}, #allocation_report{fields = F} = Rec) -> Rec#allocation_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
   Record1#allocation_report{fields = lists:reverse(F)}.
@@ -3303,28 +3611,32 @@ decode_message_allocation_report_ack(Message, #allocation_report_ack{} = Record)
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #allocation_report_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#allocation_report_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#allocation_report_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#allocation_report_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#allocation_report_ack{sending_time = V};
     ({alloc_report_id,V}, Rec) -> Rec#allocation_report_ack{alloc_report_id = V};
     ({alloc_id,V}, Rec) -> Rec#allocation_report_ack{alloc_id = V};
     ({secondary_alloc_id,V}, Rec) -> Rec#allocation_report_ack{secondary_alloc_id = V};
     ({trade_date,V}, Rec) -> Rec#allocation_report_ack{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#allocation_report_ack{transact_time = V};
-    ({alloc_status,V}, Rec) -> Rec#allocation_report_ack{alloc_status = list_to_integer(binary_to_list(V))};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{alloc_rej_code = list_to_integer(binary_to_list(V))};
-    ({alloc_report_type,V}, Rec) -> Rec#allocation_report_ack{alloc_report_type = list_to_integer(binary_to_list(V))};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report_ack{alloc_intermed_req_type = list_to_integer(binary_to_list(V))};
+    ({alloc_status,V}, Rec) -> Rec#allocation_report_ack{alloc_status = fix:parse_num(V)};
+    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{alloc_rej_code = fix:parse_num(V)};
+    ({alloc_report_type,V}, Rec) -> Rec#allocation_report_ack{alloc_report_type = fix:parse_num(V)};
+    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report_ack{alloc_intermed_req_type = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#allocation_report_ack{match_status = V};
-    ({product,V}, Rec) -> Rec#allocation_report_ack{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#allocation_report_ack{product = fix:parse_num(V)};
     ({security_type,V}, Rec) -> Rec#allocation_report_ack{security_type = V};
     ({text,V}, Rec) -> Rec#allocation_report_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#allocation_report_ack{encoded_text = V};
     ({alloc_account,V}, Rec) -> Rec#allocation_report_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report_ack{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
-    ({alloc_price,V}, Rec) -> Rec#allocation_report_ack{alloc_price = list_to_float(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report_ack{alloc_acct_id_source = fix:parse_num(V)};
+    ({alloc_price,V}, Rec) -> Rec#allocation_report_ack{alloc_price = fix:parse_num(V)};
     ({individual_alloc_id,V}, Rec) -> Rec#allocation_report_ack{individual_alloc_id = V};
-    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{individual_alloc_rej_code = list_to_integer(binary_to_list(V))};
+    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{individual_alloc_rej_code = fix:parse_num(V)};
     ({alloc_text,V}, Rec) -> Rec#allocation_report_ack{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_alloc_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_alloc_text_len = fix:parse_num(V)};
     ({encoded_alloc_text,V}, Rec) -> Rec#allocation_report_ack{encoded_alloc_text = V};
     ({K,V}, #allocation_report_ack{fields = F} = Rec) -> Rec#allocation_report_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3336,14 +3648,18 @@ decode_message_confirmation_ack(Message, #confirmation_ack{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #confirmation_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#confirmation_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#confirmation_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#confirmation_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#confirmation_ack{sending_time = V};
     ({confirm_id,V}, Rec) -> Rec#confirmation_ack{confirm_id = V};
     ({trade_date,V}, Rec) -> Rec#confirmation_ack{trade_date = V};
     ({transact_time,V}, Rec) -> Rec#confirmation_ack{transact_time = V};
-    ({affirm_status,V}, Rec) -> Rec#confirmation_ack{affirm_status = list_to_integer(binary_to_list(V))};
-    ({confirm_rej_reason,V}, Rec) -> Rec#confirmation_ack{confirm_rej_reason = list_to_integer(binary_to_list(V))};
+    ({affirm_status,V}, Rec) -> Rec#confirmation_ack{affirm_status = fix:parse_num(V)};
+    ({confirm_rej_reason,V}, Rec) -> Rec#confirmation_ack{confirm_rej_reason = fix:parse_num(V)};
     ({match_status,V}, Rec) -> Rec#confirmation_ack{match_status = V};
     ({text,V}, Rec) -> Rec#confirmation_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#confirmation_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#confirmation_ack{encoded_text = V};
     ({K,V}, #confirmation_ack{fields = F} = Rec) -> Rec#confirmation_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3355,18 +3671,22 @@ decode_message_settlement_instruction_request(Message, #settlement_instruction_r
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #settlement_instruction_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#settlement_instruction_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#settlement_instruction_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#settlement_instruction_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#settlement_instruction_request{sending_time = V};
     ({settl_inst_req_id,V}, Rec) -> Rec#settlement_instruction_request{settl_inst_req_id = V};
     ({transact_time,V}, Rec) -> Rec#settlement_instruction_request{transact_time = V};
     ({alloc_account,V}, Rec) -> Rec#settlement_instruction_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#settlement_instruction_request{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#settlement_instruction_request{alloc_acct_id_source = fix:parse_num(V)};
     ({side,V}, Rec) -> Rec#settlement_instruction_request{side = V};
-    ({product,V}, Rec) -> Rec#settlement_instruction_request{product = list_to_integer(binary_to_list(V))};
+    ({product,V}, Rec) -> Rec#settlement_instruction_request{product = fix:parse_num(V)};
     ({security_type,V}, Rec) -> Rec#settlement_instruction_request{security_type = V};
     ({cfi_code,V}, Rec) -> Rec#settlement_instruction_request{cfi_code = V};
     ({effective_time,V}, Rec) -> Rec#settlement_instruction_request{effective_time = V};
     ({expire_time,V}, Rec) -> Rec#settlement_instruction_request{expire_time = V};
     ({last_update_time,V}, Rec) -> Rec#settlement_instruction_request{last_update_time = V};
-    ({stand_inst_db_type,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_type = list_to_integer(binary_to_list(V))};
+    ({stand_inst_db_type,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_type = fix:parse_num(V)};
     ({stand_inst_db_name,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_name = V};
     ({stand_inst_db_id,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_id = V};
     ({K,V}, #settlement_instruction_request{fields = F} = Rec) -> Rec#settlement_instruction_request{fields = [{K,decode_typed_field(K,V)}|F]}
@@ -3379,26 +3699,30 @@ decode_message_assignment_report(Message, #assignment_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #assignment_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#assignment_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#assignment_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#assignment_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#assignment_report{sending_time = V};
     ({asgn_rpt_id,V}, Rec) -> Rec#assignment_report{asgn_rpt_id = V};
-    ({tot_num_assignment_reports,V}, Rec) -> Rec#assignment_report{tot_num_assignment_reports = list_to_integer(binary_to_list(V))};
+    ({tot_num_assignment_reports,V}, Rec) -> Rec#assignment_report{tot_num_assignment_reports = fix:parse_num(V)};
     ({last_rpt_requested,V}, Rec) -> Rec#assignment_report{last_rpt_requested = V == <<"Y">>};
     ({account,V}, Rec) -> Rec#assignment_report{account = V};
-    ({account_type,V}, Rec) -> Rec#assignment_report{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#assignment_report{account_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#assignment_report{currency = V};
     ({threshold_amount,V}, Rec) -> Rec#assignment_report{threshold_amount = V};
-    ({settl_price,V}, Rec) -> Rec#assignment_report{settl_price = list_to_float(binary_to_list(V))};
-    ({settl_price_type,V}, Rec) -> Rec#assignment_report{settl_price_type = list_to_integer(binary_to_list(V))};
-    ({underlying_settl_price,V}, Rec) -> Rec#assignment_report{underlying_settl_price = list_to_float(binary_to_list(V))};
+    ({settl_price,V}, Rec) -> Rec#assignment_report{settl_price = fix:parse_num(V)};
+    ({settl_price_type,V}, Rec) -> Rec#assignment_report{settl_price_type = fix:parse_num(V)};
+    ({underlying_settl_price,V}, Rec) -> Rec#assignment_report{underlying_settl_price = fix:parse_num(V)};
     ({expire_date,V}, Rec) -> Rec#assignment_report{expire_date = V};
     ({assignment_method,V}, Rec) -> Rec#assignment_report{assignment_method = V};
-    ({assignment_unit,V}, Rec) -> Rec#assignment_report{assignment_unit = list_to_integer(binary_to_list(V))};
+    ({assignment_unit,V}, Rec) -> Rec#assignment_report{assignment_unit = fix:parse_num(V)};
     ({open_interest,V}, Rec) -> Rec#assignment_report{open_interest = V};
     ({exercise_method,V}, Rec) -> Rec#assignment_report{exercise_method = V};
     ({settl_sess_id,V}, Rec) -> Rec#assignment_report{settl_sess_id = V};
     ({settl_sess_sub_id,V}, Rec) -> Rec#assignment_report{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#assignment_report{clearing_business_date = V};
     ({text,V}, Rec) -> Rec#assignment_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#assignment_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#assignment_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#assignment_report{encoded_text = V};
     ({K,V}, #assignment_report{fields = F} = Rec) -> Rec#assignment_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3410,12 +3734,16 @@ decode_message_collateral_request(Message, #collateral_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_request{sending_time = V};
     ({coll_req_id,V}, Rec) -> Rec#collateral_request{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_request{coll_asgn_reason = list_to_integer(binary_to_list(V))};
+    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_request{coll_asgn_reason = fix:parse_num(V)};
     ({transact_time,V}, Rec) -> Rec#collateral_request{transact_time = V};
     ({expire_time,V}, Rec) -> Rec#collateral_request{expire_time = V};
     ({account,V}, Rec) -> Rec#collateral_request{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_request{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_request{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_request{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_request{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_request{secondary_order_id = V};
@@ -3424,10 +3752,10 @@ decode_message_collateral_request(Message, #collateral_request{} = Record) ->
     ({trade_report_id,V}, Rec) -> Rec#collateral_request{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_request{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_request{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_request{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_request{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_request{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_request{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_request{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_request{coll_action = list_to_integer(binary_to_list(V))};
+    ({coll_action,V}, Rec) -> Rec#collateral_request{coll_action = fix:parse_num(V)};
     ({margin_excess,V}, Rec) -> Rec#collateral_request{margin_excess = V};
     ({total_net_value,V}, Rec) -> Rec#collateral_request{total_net_value = V};
     ({cash_outstanding,V}, Rec) -> Rec#collateral_request{cash_outstanding = V};
@@ -3435,9 +3763,9 @@ decode_message_collateral_request(Message, #collateral_request{} = Record) ->
     ({misc_fee_amt,V}, Rec) -> Rec#collateral_request{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#collateral_request{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#collateral_request{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_request{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#collateral_request{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#collateral_request{price_type = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#collateral_request{misc_fee_basis = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#collateral_request{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#collateral_request{price_type = fix:parse_num(V)};
     ({accrued_interest_amt,V}, Rec) -> Rec#collateral_request{accrued_interest_amt = V};
     ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_request{end_accrued_interest_amt = V};
     ({start_cash,V}, Rec) -> Rec#collateral_request{start_cash = V};
@@ -3448,7 +3776,7 @@ decode_message_collateral_request(Message, #collateral_request{} = Record) ->
     ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_request{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#collateral_request{clearing_business_date = V};
     ({text,V}, Rec) -> Rec#collateral_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_request{encoded_text = V};
     ({K,V}, #collateral_request{fields = F} = Rec) -> Rec#collateral_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3460,15 +3788,19 @@ decode_message_collateral_assignment(Message, #collateral_assignment{} = Record)
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_assignment{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_assignment{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_assignment{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_assignment{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_assignment{sending_time = V};
     ({coll_asgn_id,V}, Rec) -> Rec#collateral_assignment{coll_asgn_id = V};
     ({coll_req_id,V}, Rec) -> Rec#collateral_assignment{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_assignment{coll_asgn_reason = list_to_integer(binary_to_list(V))};
-    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_assignment{coll_asgn_trans_type = list_to_integer(binary_to_list(V))};
+    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_assignment{coll_asgn_reason = fix:parse_num(V)};
+    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_assignment{coll_asgn_trans_type = fix:parse_num(V)};
     ({coll_asgn_ref_id,V}, Rec) -> Rec#collateral_assignment{coll_asgn_ref_id = V};
     ({transact_time,V}, Rec) -> Rec#collateral_assignment{transact_time = V};
     ({expire_time,V}, Rec) -> Rec#collateral_assignment{expire_time = V};
     ({account,V}, Rec) -> Rec#collateral_assignment{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_assignment{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_assignment{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_assignment{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_assignment{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_assignment{secondary_order_id = V};
@@ -3477,10 +3809,10 @@ decode_message_collateral_assignment(Message, #collateral_assignment{} = Record)
     ({trade_report_id,V}, Rec) -> Rec#collateral_assignment{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_assignment{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_assignment{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_assignment{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_assignment{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_assignment{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_assignment{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_assignment{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_assignment{coll_action = list_to_integer(binary_to_list(V))};
+    ({coll_action,V}, Rec) -> Rec#collateral_assignment{coll_action = fix:parse_num(V)};
     ({margin_excess,V}, Rec) -> Rec#collateral_assignment{margin_excess = V};
     ({total_net_value,V}, Rec) -> Rec#collateral_assignment{total_net_value = V};
     ({cash_outstanding,V}, Rec) -> Rec#collateral_assignment{cash_outstanding = V};
@@ -3488,9 +3820,9 @@ decode_message_collateral_assignment(Message, #collateral_assignment{} = Record)
     ({misc_fee_amt,V}, Rec) -> Rec#collateral_assignment{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#collateral_assignment{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#collateral_assignment{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_assignment{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#collateral_assignment{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#collateral_assignment{price_type = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#collateral_assignment{misc_fee_basis = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#collateral_assignment{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#collateral_assignment{price_type = fix:parse_num(V)};
     ({accrued_interest_amt,V}, Rec) -> Rec#collateral_assignment{accrued_interest_amt = V};
     ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_assignment{end_accrued_interest_amt = V};
     ({start_cash,V}, Rec) -> Rec#collateral_assignment{start_cash = V};
@@ -3501,7 +3833,7 @@ decode_message_collateral_assignment(Message, #collateral_assignment{} = Record)
     ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_assignment{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#collateral_assignment{clearing_business_date = V};
     ({text,V}, Rec) -> Rec#collateral_assignment{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_assignment{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_assignment{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_assignment{encoded_text = V};
     ({K,V}, #collateral_assignment{fields = F} = Rec) -> Rec#collateral_assignment{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3513,16 +3845,20 @@ decode_message_collateral_response(Message, #collateral_response{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_response{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_response{sending_time = V};
     ({coll_resp_id,V}, Rec) -> Rec#collateral_response{coll_resp_id = V};
     ({coll_asgn_id,V}, Rec) -> Rec#collateral_response{coll_asgn_id = V};
     ({coll_req_id,V}, Rec) -> Rec#collateral_response{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reason = list_to_integer(binary_to_list(V))};
-    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_response{coll_asgn_trans_type = list_to_integer(binary_to_list(V))};
-    ({coll_asgn_resp_type,V}, Rec) -> Rec#collateral_response{coll_asgn_resp_type = list_to_integer(binary_to_list(V))};
-    ({coll_asgn_reject_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reject_reason = list_to_integer(binary_to_list(V))};
+    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reason = fix:parse_num(V)};
+    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_response{coll_asgn_trans_type = fix:parse_num(V)};
+    ({coll_asgn_resp_type,V}, Rec) -> Rec#collateral_response{coll_asgn_resp_type = fix:parse_num(V)};
+    ({coll_asgn_reject_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reject_reason = fix:parse_num(V)};
     ({transact_time,V}, Rec) -> Rec#collateral_response{transact_time = V};
     ({account,V}, Rec) -> Rec#collateral_response{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_response{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_response{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_response{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_response{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_response{secondary_order_id = V};
@@ -3531,10 +3867,10 @@ decode_message_collateral_response(Message, #collateral_response{} = Record) ->
     ({trade_report_id,V}, Rec) -> Rec#collateral_response{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_response{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_response{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_response{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_response{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_response{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_response{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_response{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_response{coll_action = list_to_integer(binary_to_list(V))};
+    ({coll_action,V}, Rec) -> Rec#collateral_response{coll_action = fix:parse_num(V)};
     ({margin_excess,V}, Rec) -> Rec#collateral_response{margin_excess = V};
     ({total_net_value,V}, Rec) -> Rec#collateral_response{total_net_value = V};
     ({cash_outstanding,V}, Rec) -> Rec#collateral_response{cash_outstanding = V};
@@ -3542,15 +3878,15 @@ decode_message_collateral_response(Message, #collateral_response{} = Record) ->
     ({misc_fee_amt,V}, Rec) -> Rec#collateral_response{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#collateral_response{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#collateral_response{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_response{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#collateral_response{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#collateral_response{price_type = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#collateral_response{misc_fee_basis = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#collateral_response{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#collateral_response{price_type = fix:parse_num(V)};
     ({accrued_interest_amt,V}, Rec) -> Rec#collateral_response{accrued_interest_amt = V};
     ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_response{end_accrued_interest_amt = V};
     ({start_cash,V}, Rec) -> Rec#collateral_response{start_cash = V};
     ({end_cash,V}, Rec) -> Rec#collateral_response{end_cash = V};
     ({text,V}, Rec) -> Rec#collateral_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_response{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_response{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_response{encoded_text = V};
     ({K,V}, #collateral_response{fields = F} = Rec) -> Rec#collateral_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3562,13 +3898,17 @@ decode_message_collateral_report(Message, #collateral_report{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_report{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_report{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_report{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_report{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_report{sending_time = V};
     ({coll_rpt_id,V}, Rec) -> Rec#collateral_report{coll_rpt_id = V};
     ({coll_inquiry_id,V}, Rec) -> Rec#collateral_report{coll_inquiry_id = V};
-    ({coll_status,V}, Rec) -> Rec#collateral_report{coll_status = list_to_integer(binary_to_list(V))};
-    ({tot_num_reports,V}, Rec) -> Rec#collateral_report{tot_num_reports = list_to_integer(binary_to_list(V))};
+    ({coll_status,V}, Rec) -> Rec#collateral_report{coll_status = fix:parse_num(V)};
+    ({tot_num_reports,V}, Rec) -> Rec#collateral_report{tot_num_reports = fix:parse_num(V)};
     ({last_rpt_requested,V}, Rec) -> Rec#collateral_report{last_rpt_requested = V == <<"Y">>};
     ({account,V}, Rec) -> Rec#collateral_report{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_report{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_report{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_report{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_report{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_report{secondary_order_id = V};
@@ -3577,8 +3917,8 @@ decode_message_collateral_report(Message, #collateral_report{} = Record) ->
     ({trade_report_id,V}, Rec) -> Rec#collateral_report{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_report{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_report{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_report{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_report{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_report{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_report{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_report{currency = V};
     ({margin_excess,V}, Rec) -> Rec#collateral_report{margin_excess = V};
     ({total_net_value,V}, Rec) -> Rec#collateral_report{total_net_value = V};
@@ -3587,9 +3927,9 @@ decode_message_collateral_report(Message, #collateral_report{} = Record) ->
     ({misc_fee_amt,V}, Rec) -> Rec#collateral_report{misc_fee_amt = V};
     ({misc_fee_curr,V}, Rec) -> Rec#collateral_report{misc_fee_curr = V};
     ({misc_fee_type,V}, Rec) -> Rec#collateral_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_report{misc_fee_basis = list_to_integer(binary_to_list(V))};
-    ({price,V}, Rec) -> Rec#collateral_report{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#collateral_report{price_type = list_to_integer(binary_to_list(V))};
+    ({misc_fee_basis,V}, Rec) -> Rec#collateral_report{misc_fee_basis = fix:parse_num(V)};
+    ({price,V}, Rec) -> Rec#collateral_report{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#collateral_report{price_type = fix:parse_num(V)};
     ({accrued_interest_amt,V}, Rec) -> Rec#collateral_report{accrued_interest_amt = V};
     ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_report{end_accrued_interest_amt = V};
     ({start_cash,V}, Rec) -> Rec#collateral_report{start_cash = V};
@@ -3600,7 +3940,7 @@ decode_message_collateral_report(Message, #collateral_report{} = Record) ->
     ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_report{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#collateral_report{clearing_business_date = V};
     ({text,V}, Rec) -> Rec#collateral_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_report{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_report{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_report{encoded_text = V};
     ({K,V}, #collateral_report{fields = F} = Rec) -> Rec#collateral_report{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3612,13 +3952,17 @@ decode_message_collateral_inquiry(Message, #collateral_inquiry{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_inquiry{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_inquiry{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_inquiry{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_inquiry{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_inquiry{sending_time = V};
     ({coll_inquiry_id,V}, Rec) -> Rec#collateral_inquiry{coll_inquiry_id = V};
-    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry{coll_inquiry_qualifier = list_to_integer(binary_to_list(V))};
+    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry{coll_inquiry_qualifier = fix:parse_num(V)};
     ({subscription_request_type,V}, Rec) -> Rec#collateral_inquiry{subscription_request_type = V};
-    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#collateral_inquiry{response_destination = V};
     ({account,V}, Rec) -> Rec#collateral_inquiry{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_inquiry{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_inquiry{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_inquiry{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_inquiry{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_inquiry{secondary_order_id = V};
@@ -3627,15 +3971,15 @@ decode_message_collateral_inquiry(Message, #collateral_inquiry{} = Record) ->
     ({trade_report_id,V}, Rec) -> Rec#collateral_inquiry{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_inquiry{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_inquiry{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_inquiry{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_inquiry{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_inquiry{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_inquiry{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_inquiry{currency = V};
     ({margin_excess,V}, Rec) -> Rec#collateral_inquiry{margin_excess = V};
     ({total_net_value,V}, Rec) -> Rec#collateral_inquiry{total_net_value = V};
     ({cash_outstanding,V}, Rec) -> Rec#collateral_inquiry{cash_outstanding = V};
     ({side,V}, Rec) -> Rec#collateral_inquiry{side = V};
-    ({price,V}, Rec) -> Rec#collateral_inquiry{price = list_to_float(binary_to_list(V))};
-    ({price_type,V}, Rec) -> Rec#collateral_inquiry{price_type = list_to_integer(binary_to_list(V))};
+    ({price,V}, Rec) -> Rec#collateral_inquiry{price = fix:parse_num(V)};
+    ({price_type,V}, Rec) -> Rec#collateral_inquiry{price_type = fix:parse_num(V)};
     ({accrued_interest_amt,V}, Rec) -> Rec#collateral_inquiry{accrued_interest_amt = V};
     ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_inquiry{end_accrued_interest_amt = V};
     ({start_cash,V}, Rec) -> Rec#collateral_inquiry{start_cash = V};
@@ -3646,7 +3990,7 @@ decode_message_collateral_inquiry(Message, #collateral_inquiry{} = Record) ->
     ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_inquiry{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#collateral_inquiry{clearing_business_date = V};
     ({text,V}, Rec) -> Rec#collateral_inquiry{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_inquiry{encoded_text = V};
     ({K,V}, #collateral_inquiry{fields = F} = Rec) -> Rec#collateral_inquiry{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3658,7 +4002,11 @@ decode_message_network_counterparty_system_status_request(Message, #network_coun
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #network_counterparty_system_status_request{fields = F} = lists:foldl(fun
-    ({network_request_type,V}, Rec) -> Rec#network_counterparty_system_status_request{network_request_type = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#network_counterparty_system_status_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#network_counterparty_system_status_request{sending_time = V};
+    ({network_request_type,V}, Rec) -> Rec#network_counterparty_system_status_request{network_request_type = fix:parse_num(V)};
     ({network_request_id,V}, Rec) -> Rec#network_counterparty_system_status_request{network_request_id = V};
     ({ref_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{ref_comp_id = V};
     ({ref_sub_id,V}, Rec) -> Rec#network_counterparty_system_status_request{ref_sub_id = V};
@@ -3674,7 +4022,11 @@ decode_message_network_counterparty_system_status_response(Message, #network_cou
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #network_counterparty_system_status_response{fields = F} = lists:foldl(fun
-    ({network_status_response_type,V}, Rec) -> Rec#network_counterparty_system_status_response{network_status_response_type = list_to_integer(binary_to_list(V))};
+    ({sender_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#network_counterparty_system_status_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#network_counterparty_system_status_response{sending_time = V};
+    ({network_status_response_type,V}, Rec) -> Rec#network_counterparty_system_status_response{network_status_response_type = fix:parse_num(V)};
     ({network_request_id,V}, Rec) -> Rec#network_counterparty_system_status_response{network_request_id = V};
     ({network_response_id,V}, Rec) -> Rec#network_counterparty_system_status_response{network_response_id = V};
     ({last_network_response_id,V}, Rec) -> Rec#network_counterparty_system_status_response{last_network_response_id = V};
@@ -3682,7 +4034,7 @@ decode_message_network_counterparty_system_status_response(Message, #network_cou
     ({ref_sub_id,V}, Rec) -> Rec#network_counterparty_system_status_response{ref_sub_id = V};
     ({location_id,V}, Rec) -> Rec#network_counterparty_system_status_response{location_id = V};
     ({desk_id,V}, Rec) -> Rec#network_counterparty_system_status_response{desk_id = V};
-    ({status_value,V}, Rec) -> Rec#network_counterparty_system_status_response{status_value = list_to_integer(binary_to_list(V))};
+    ({status_value,V}, Rec) -> Rec#network_counterparty_system_status_response{status_value = fix:parse_num(V)};
     ({status_text,V}, Rec) -> Rec#network_counterparty_system_status_response{status_text = V};
     ({K,V}, #network_counterparty_system_status_response{fields = F} = Rec) -> Rec#network_counterparty_system_status_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3694,12 +4046,16 @@ decode_message_user_request(Message, #user_request{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #user_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#user_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#user_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#user_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#user_request{sending_time = V};
     ({user_request_id,V}, Rec) -> Rec#user_request{user_request_id = V};
-    ({user_request_type,V}, Rec) -> Rec#user_request{user_request_type = list_to_integer(binary_to_list(V))};
+    ({user_request_type,V}, Rec) -> Rec#user_request{user_request_type = fix:parse_num(V)};
     ({username,V}, Rec) -> Rec#user_request{username = V};
     ({password,V}, Rec) -> Rec#user_request{password = V};
     ({new_password,V}, Rec) -> Rec#user_request{new_password = V};
-    ({raw_data_length,V}, Rec) -> Rec#user_request{raw_data_length = list_to_integer(binary_to_list(V))};
+    ({raw_data_length,V}, Rec) -> Rec#user_request{raw_data_length = fix:parse_num(V)};
     ({raw_data,V}, Rec) -> Rec#user_request{raw_data = V};
     ({K,V}, #user_request{fields = F} = Rec) -> Rec#user_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3711,9 +4067,13 @@ decode_message_user_response(Message, #user_response{} = Record) ->
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #user_response{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#user_response{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#user_response{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#user_response{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#user_response{sending_time = V};
     ({user_request_id,V}, Rec) -> Rec#user_response{user_request_id = V};
     ({username,V}, Rec) -> Rec#user_response{username = V};
-    ({user_status,V}, Rec) -> Rec#user_response{user_status = list_to_integer(binary_to_list(V))};
+    ({user_status,V}, Rec) -> Rec#user_response{user_status = fix:parse_num(V)};
     ({user_status_text,V}, Rec) -> Rec#user_response{user_status_text = V};
     ({K,V}, #user_response{fields = F} = Rec) -> Rec#user_response{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3725,13 +4085,17 @@ decode_message_collateral_inquiry_ack(Message, #collateral_inquiry_ack{} = Recor
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #collateral_inquiry_ack{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#collateral_inquiry_ack{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#collateral_inquiry_ack{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#collateral_inquiry_ack{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#collateral_inquiry_ack{sending_time = V};
     ({coll_inquiry_id,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_id = V};
-    ({coll_inquiry_status,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_status = list_to_integer(binary_to_list(V))};
-    ({coll_inquiry_result,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_result = list_to_integer(binary_to_list(V))};
-    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_qualifier = list_to_integer(binary_to_list(V))};
-    ({tot_num_reports,V}, Rec) -> Rec#collateral_inquiry_ack{tot_num_reports = list_to_integer(binary_to_list(V))};
+    ({coll_inquiry_status,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_status = fix:parse_num(V)};
+    ({coll_inquiry_result,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_result = fix:parse_num(V)};
+    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_qualifier = fix:parse_num(V)};
+    ({tot_num_reports,V}, Rec) -> Rec#collateral_inquiry_ack{tot_num_reports = fix:parse_num(V)};
     ({account,V}, Rec) -> Rec#collateral_inquiry_ack{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_inquiry_ack{account_type = list_to_integer(binary_to_list(V))};
+    ({account_type,V}, Rec) -> Rec#collateral_inquiry_ack{account_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#collateral_inquiry_ack{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#collateral_inquiry_ack{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#collateral_inquiry_ack{secondary_order_id = V};
@@ -3740,18 +4104,18 @@ decode_message_collateral_inquiry_ack(Message, #collateral_inquiry_ack{} = Recor
     ({trade_report_id,V}, Rec) -> Rec#collateral_inquiry_ack{trade_report_id = V};
     ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_inquiry_ack{secondary_trade_report_id = V};
     ({settl_date,V}, Rec) -> Rec#collateral_inquiry_ack{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_inquiry_ack{quantity = list_to_integer(binary_to_list(V))};
-    ({qty_type,V}, Rec) -> Rec#collateral_inquiry_ack{qty_type = list_to_integer(binary_to_list(V))};
+    ({quantity,V}, Rec) -> Rec#collateral_inquiry_ack{quantity = fix:parse_num(V)};
+    ({qty_type,V}, Rec) -> Rec#collateral_inquiry_ack{qty_type = fix:parse_num(V)};
     ({currency,V}, Rec) -> Rec#collateral_inquiry_ack{currency = V};
     ({trading_session_id,V}, Rec) -> Rec#collateral_inquiry_ack{trading_session_id = V};
     ({trading_session_sub_id,V}, Rec) -> Rec#collateral_inquiry_ack{trading_session_sub_id = V};
     ({settl_sess_id,V}, Rec) -> Rec#collateral_inquiry_ack{settl_sess_id = V};
     ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_inquiry_ack{settl_sess_sub_id = V};
     ({clearing_business_date,V}, Rec) -> Rec#collateral_inquiry_ack{clearing_business_date = V};
-    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry_ack{response_transport_type = list_to_integer(binary_to_list(V))};
+    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry_ack{response_transport_type = fix:parse_num(V)};
     ({response_destination,V}, Rec) -> Rec#collateral_inquiry_ack{response_destination = V};
     ({text,V}, Rec) -> Rec#collateral_inquiry_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry_ack{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry_ack{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#collateral_inquiry_ack{encoded_text = V};
     ({K,V}, #collateral_inquiry_ack{fields = F} = Rec) -> Rec#collateral_inquiry_ack{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
@@ -3763,25 +4127,29 @@ decode_message_confirmation_request(Message, #confirmation_request{} = Record) -
     {field_by_number(K),V}
   end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
   Record1 = #confirmation_request{fields = F} = lists:foldl(fun
+    ({sender_comp_id,V}, Rec) -> Rec#confirmation_request{sender_comp_id = V};
+    ({target_comp_id,V}, Rec) -> Rec#confirmation_request{target_comp_id = V};
+    ({msg_seq_num,V}, Rec) -> Rec#confirmation_request{msg_seq_num = fix:parse_num(V)};
+    ({sending_time,V}, Rec) -> Rec#confirmation_request{sending_time = V};
     ({confirm_req_id,V}, Rec) -> Rec#confirmation_request{confirm_req_id = V};
-    ({confirm_type,V}, Rec) -> Rec#confirmation_request{confirm_type = list_to_integer(binary_to_list(V))};
+    ({confirm_type,V}, Rec) -> Rec#confirmation_request{confirm_type = fix:parse_num(V)};
     ({cl_ord_id,V}, Rec) -> Rec#confirmation_request{cl_ord_id = V};
     ({order_id,V}, Rec) -> Rec#confirmation_request{order_id = V};
     ({secondary_order_id,V}, Rec) -> Rec#confirmation_request{secondary_order_id = V};
     ({secondary_cl_ord_id,V}, Rec) -> Rec#confirmation_request{secondary_cl_ord_id = V};
     ({list_id,V}, Rec) -> Rec#confirmation_request{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#confirmation_request{order_qty = list_to_integer(binary_to_list(V))};
-    ({order_avg_px,V}, Rec) -> Rec#confirmation_request{order_avg_px = list_to_float(binary_to_list(V))};
-    ({order_booking_qty,V}, Rec) -> Rec#confirmation_request{order_booking_qty = list_to_integer(binary_to_list(V))};
+    ({order_qty,V}, Rec) -> Rec#confirmation_request{order_qty = fix:parse_num(V)};
+    ({order_avg_px,V}, Rec) -> Rec#confirmation_request{order_avg_px = fix:parse_num(V)};
+    ({order_booking_qty,V}, Rec) -> Rec#confirmation_request{order_booking_qty = fix:parse_num(V)};
     ({alloc_id,V}, Rec) -> Rec#confirmation_request{alloc_id = V};
     ({secondary_alloc_id,V}, Rec) -> Rec#confirmation_request{secondary_alloc_id = V};
     ({individual_alloc_id,V}, Rec) -> Rec#confirmation_request{individual_alloc_id = V};
     ({transact_time,V}, Rec) -> Rec#confirmation_request{transact_time = V};
     ({alloc_account,V}, Rec) -> Rec#confirmation_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation_request{alloc_acct_id_source = list_to_integer(binary_to_list(V))};
-    ({alloc_account_type,V}, Rec) -> Rec#confirmation_request{alloc_account_type = list_to_integer(binary_to_list(V))};
+    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation_request{alloc_acct_id_source = fix:parse_num(V)};
+    ({alloc_account_type,V}, Rec) -> Rec#confirmation_request{alloc_account_type = fix:parse_num(V)};
     ({text,V}, Rec) -> Rec#confirmation_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation_request{encoded_text_len = list_to_integer(binary_to_list(V))};
+    ({encoded_text_len,V}, Rec) -> Rec#confirmation_request{encoded_text_len = fix:parse_num(V)};
     ({encoded_text,V}, Rec) -> Rec#confirmation_request{encoded_text = V};
     ({K,V}, #confirmation_request{fields = F} = Rec) -> Rec#confirmation_request{fields = [{K,decode_typed_field(K,V)}|F]}
   end, Record, Fields),
