@@ -1,4 +1,5 @@
 -module(fix_app).
+-author('Max Lapshin <max@maxidoors.ru>').
 -include("log.hrl").
 
 -behaviour(application).

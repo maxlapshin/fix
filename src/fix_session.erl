@@ -1,4 +1,5 @@
 -module(fix_session).
+-author('Max Lapshin <max@maxidoors.ru>').
 -include("log.hrl").
 
 -export([start_link/2]).

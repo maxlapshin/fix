@@ -1,4 +1,5 @@
 -module(fix_sup).
+-author('Max Lapshin <max@maxidoors.ru>').
 
 -behaviour(supervisor).
 

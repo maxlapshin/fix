@@ -1,4 +1,9 @@
+%% @author Max Lapshin <max@maxidoors.ru>
+%% @copyright 2012 Max Lapshin
+%% @doc Main module for fix usage.
+%%
 -module(fix).
+-author('Max Lapshin <max@maxidoors.ru>').
 -include("log.hrl").
 % -include("../include/admin.hrl").
 % -include("../include/business.hrl").

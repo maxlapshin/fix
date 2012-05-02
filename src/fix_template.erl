@@ -1,4 +1,6 @@
 -module(fix_template).
+-author('Max Lapshin <max@maxidoors.ru>').
+
 -include("log.hrl").
 -compile(export_all).
 
