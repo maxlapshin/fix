@@ -22,6 +22,8 @@
 }).
 
 -include("meta_access.hrl").
+-include("../include/admin.hrl").
+-include("../include/business.hrl").
 
 start_link(Consumer, Options) ->
   gen_server:start_link(?MODULE, [Consumer, Options], []).
@@ -86,6 +88,10 @@ handle_info({tcp, Socket, Data}, #fix_session{buffer = Buffer} = Session) ->
   {Messages, Rest} = decode_messages(Bin),
   handle_messages(Messages, Session#fix_session{buffer = Rest});
 
+handle_info({tcp_closed, Socket}, #fix_session{socket = Socket} = Session) ->
+  ?D({fix_session,socket_closed}),
+  {stop, normal, Session};
+
 handle_info(Msg, Session) ->
   ?D({unknown,Msg}),
   {noreply, Session}.
@@ -126,10 +132,24 @@ decode_messages(Bin, Acc) ->
       erlang:error(broken_fix)
   end.
 
+handle_messages([#heartbeat{}|Messages], Session) ->
+  ?D(heartbeat),
+  handle_messages(Messages, Session);
+
 handle_messages([Message|Messages], #fix_session{consumer = Consumer} = Session) ->
-  ?D({fix, Message}),
+  dump(Message),
   Consumer ! {fix, self(), Message},
   handle_messages(Messages, Session);
 
 handle_messages([], #fix_session{} = Session) ->
   {noreply, Session}.
+
+dump(#market_data_snapshot_full_refresh{fields = Fields, md_entry_type = Type, md_entry_px = Price, md_entry_size = Size}) ->
+  ?D({market_data, if Type == <<"1">> -> ask; true -> bid end, proplists:get_value(symbol, Fields), Price, Size});
+
+dump(#logon{}) ->
+  ?D(logged_in);
+
+dump(Message) ->
+  ?D({fix, Message}).
+

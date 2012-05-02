@@ -29,7 +29,7 @@ pack(MessageType, Body, SeqNum, Sender, Target) ->
   Body2 = iolist_to_binary([encode([{begin_string, "FIX.4.4"}, {body_length, BodyLength}]), Body1]),
   CheckSum = checksum(Body2),
   Body3 = [Body2, encode([{check_sum, CheckSum}])],
-  ?D({out,Header2, dump(Body3)}),
+  % ?D({out,Header2, dump(Body3)}),
   Body3.
 
 checksum(Packet) ->

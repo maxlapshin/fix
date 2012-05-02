@@ -58,8 +58,10 @@ root() ->
 
 parse() ->
   {ok, Xml} = file:read_file(root() ++"/spec/FIX44.xml"),
-  {ok, #parser{} = State, _} = erlsom:parse_sax(Xml, #parser{}, fun handler/2, []),
-  State.
+  {ok, #parser{messages = Messages} = State, _} = erlsom:parse_sax(Xml, #parser{}, fun handler/2, []),
+  Prepend = ["sender_comp_id","target_comp_id","msg_seq_num","sending_time"],
+  State#parser{messages = [Message#message{fields = Prepend ++ Fields, required = Prepend ++ Required} || 
+  #message{fields = Fields, required = Required} = Message <- Messages]}.
 
 
 generate_includes() ->
@@ -181,8 +183,8 @@ generate_message_decoders([#message{name = Name, fields = MsgFields}|Messages], 
   "  Record1 = #",Name,"{fields = F} = lists:foldl(fun\n",
   lists:map(fun(FieldName) ->
     Value = case lists:keyfind(FieldName, #field.name, Fields) of
-      #field{type = float} -> "list_to_float(binary_to_list(V))";
-      #field{type = int} -> "list_to_integer(binary_to_list(V))";
+      #field{type = float} -> "fix:parse_num(V)";
+      #field{type = int} -> "fix:parse_num(V)";
       #field{type = bool} -> "V == <<\"Y\">>";
       _ -> "V"
     end,
