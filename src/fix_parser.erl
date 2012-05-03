@@ -280,3880 +280,7930 @@ decode_message(<<"35=BG",1,Message/binary>>) -> % CollateralInquiryAck
 decode_message(<<"35=BH",1,Message/binary>>) -> % ConfirmationRequest
   decode_message_confirmation_request(Message, #confirmation_request{}).
 
-decode_message_heartbeat(Message, #heartbeat{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #heartbeat{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#heartbeat{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#heartbeat{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#heartbeat{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#heartbeat{sending_time = V};
-    ({test_req_id,V}, Rec) -> Rec#heartbeat{test_req_id = V};
-    ({K,V}, #heartbeat{fields = F} = Rec) -> Rec#heartbeat{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#heartbeat{fields = lists:reverse(F)}.
-
-decode_message_test_request(Message, #test_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #test_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#test_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#test_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#test_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#test_request{sending_time = V};
-    ({test_req_id,V}, Rec) -> Rec#test_request{test_req_id = V};
-    ({K,V}, #test_request{fields = F} = Rec) -> Rec#test_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#test_request{fields = lists:reverse(F)}.
-
-decode_message_resend_request(Message, #resend_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #resend_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#resend_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#resend_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#resend_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#resend_request{sending_time = V};
-    ({begin_seq_no,V}, Rec) -> Rec#resend_request{begin_seq_no = fix:parse_num(V)};
-    ({end_seq_no,V}, Rec) -> Rec#resend_request{end_seq_no = fix:parse_num(V)};
-    ({K,V}, #resend_request{fields = F} = Rec) -> Rec#resend_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#resend_request{fields = lists:reverse(F)}.
-
-decode_message_reject(Message, #reject{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #reject{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#reject{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#reject{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#reject{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#reject{sending_time = V};
-    ({ref_seq_num,V}, Rec) -> Rec#reject{ref_seq_num = fix:parse_num(V)};
-    ({ref_tag_id,V}, Rec) -> Rec#reject{ref_tag_id = fix:parse_num(V)};
-    ({ref_msg_type,V}, Rec) -> Rec#reject{ref_msg_type = V};
-    ({session_reject_reason,V}, Rec) -> Rec#reject{session_reject_reason = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#reject{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#reject{encoded_text = V};
-    ({K,V}, #reject{fields = F} = Rec) -> Rec#reject{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#reject{fields = lists:reverse(F)}.
-
-decode_message_sequence_reset(Message, #sequence_reset{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #sequence_reset{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#sequence_reset{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#sequence_reset{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#sequence_reset{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#sequence_reset{sending_time = V};
-    ({gap_fill_flag,V}, Rec) -> Rec#sequence_reset{gap_fill_flag = V == <<"Y">>};
-    ({new_seq_no,V}, Rec) -> Rec#sequence_reset{new_seq_no = fix:parse_num(V)};
-    ({K,V}, #sequence_reset{fields = F} = Rec) -> Rec#sequence_reset{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#sequence_reset{fields = lists:reverse(F)}.
-
-decode_message_logout(Message, #logout{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #logout{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#logout{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#logout{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#logout{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#logout{sending_time = V};
-    ({text,V}, Rec) -> Rec#logout{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#logout{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#logout{encoded_text = V};
-    ({K,V}, #logout{fields = F} = Rec) -> Rec#logout{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#logout{fields = lists:reverse(F)}.
-
-decode_message_ioi(Message, #ioi{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #ioi{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#ioi{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#ioi{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#ioi{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#ioi{sending_time = V};
-    ({ioi_id,V}, Rec) -> Rec#ioi{ioi_id = V};
-    ({ioi_trans_type,V}, Rec) -> Rec#ioi{ioi_trans_type = V};
-    ({ioi_ref_id,V}, Rec) -> Rec#ioi{ioi_ref_id = V};
-    ({side,V}, Rec) -> Rec#ioi{side = V};
-    ({qty_type,V}, Rec) -> Rec#ioi{qty_type = fix:parse_num(V)};
-    ({ioi_qty,V}, Rec) -> Rec#ioi{ioi_qty = V};
-    ({currency,V}, Rec) -> Rec#ioi{currency = V};
-    ({leg_ioi_qty,V}, Rec) -> Rec#ioi{leg_ioi_qty = V};
-    ({price_type,V}, Rec) -> Rec#ioi{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#ioi{price = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#ioi{valid_until_time = V};
-    ({ioi_qlty_ind,V}, Rec) -> Rec#ioi{ioi_qlty_ind = V};
-    ({ioi_natural_flag,V}, Rec) -> Rec#ioi{ioi_natural_flag = V == <<"Y">>};
-    ({ioi_qualifier,V}, Rec) -> Rec#ioi{ioi_qualifier = V};
-    ({text,V}, Rec) -> Rec#ioi{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#ioi{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#ioi{encoded_text = V};
-    ({transact_time,V}, Rec) -> Rec#ioi{transact_time = V};
-    ({url_link,V}, Rec) -> Rec#ioi{url_link = V};
-    ({routing_type,V}, Rec) -> Rec#ioi{routing_type = fix:parse_num(V)};
-    ({routing_id,V}, Rec) -> Rec#ioi{routing_id = V};
-    ({K,V}, #ioi{fields = F} = Rec) -> Rec#ioi{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#ioi{fields = lists:reverse(F)}.
-
-decode_message_advertisement(Message, #advertisement{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #advertisement{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#advertisement{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#advertisement{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#advertisement{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#advertisement{sending_time = V};
-    ({adv_id,V}, Rec) -> Rec#advertisement{adv_id = V};
-    ({adv_trans_type,V}, Rec) -> Rec#advertisement{adv_trans_type = V};
-    ({adv_ref_id,V}, Rec) -> Rec#advertisement{adv_ref_id = V};
-    ({adv_side,V}, Rec) -> Rec#advertisement{adv_side = V};
-    ({quantity,V}, Rec) -> Rec#advertisement{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#advertisement{qty_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#advertisement{price = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#advertisement{currency = V};
-    ({trade_date,V}, Rec) -> Rec#advertisement{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#advertisement{transact_time = V};
-    ({text,V}, Rec) -> Rec#advertisement{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#advertisement{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#advertisement{encoded_text = V};
-    ({url_link,V}, Rec) -> Rec#advertisement{url_link = V};
-    ({last_mkt,V}, Rec) -> Rec#advertisement{last_mkt = V};
-    ({trading_session_id,V}, Rec) -> Rec#advertisement{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#advertisement{trading_session_sub_id = V};
-    ({K,V}, #advertisement{fields = F} = Rec) -> Rec#advertisement{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#advertisement{fields = lists:reverse(F)}.
-
-decode_message_execution_report(Message, #execution_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #execution_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#execution_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#execution_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#execution_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#execution_report{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#execution_report{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#execution_report{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#execution_report{secondary_cl_ord_id = V};
-    ({secondary_exec_id,V}, Rec) -> Rec#execution_report{secondary_exec_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#execution_report{cl_ord_id = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#execution_report{orig_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#execution_report{cl_ord_link_id = V};
-    ({quote_resp_id,V}, Rec) -> Rec#execution_report{quote_resp_id = V};
-    ({ord_status_req_id,V}, Rec) -> Rec#execution_report{ord_status_req_id = V};
-    ({mass_status_req_id,V}, Rec) -> Rec#execution_report{mass_status_req_id = V};
-    ({tot_num_reports,V}, Rec) -> Rec#execution_report{tot_num_reports = fix:parse_num(V)};
-    ({last_rpt_requested,V}, Rec) -> Rec#execution_report{last_rpt_requested = V == <<"Y">>};
-    ({trade_origination_date,V}, Rec) -> Rec#execution_report{trade_origination_date = V};
-    ({contra_broker,V}, Rec) -> Rec#execution_report{contra_broker = V};
-    ({contra_trader,V}, Rec) -> Rec#execution_report{contra_trader = V};
-    ({contra_trade_qty,V}, Rec) -> Rec#execution_report{contra_trade_qty = fix:parse_num(V)};
-    ({contra_trade_time,V}, Rec) -> Rec#execution_report{contra_trade_time = V};
-    ({contra_leg_ref_id,V}, Rec) -> Rec#execution_report{contra_leg_ref_id = V};
-    ({list_id,V}, Rec) -> Rec#execution_report{list_id = V};
-    ({cross_id,V}, Rec) -> Rec#execution_report{cross_id = V};
-    ({orig_cross_id,V}, Rec) -> Rec#execution_report{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#execution_report{cross_type = fix:parse_num(V)};
-    ({exec_id,V}, Rec) -> Rec#execution_report{exec_id = V};
-    ({exec_ref_id,V}, Rec) -> Rec#execution_report{exec_ref_id = V};
-    ({exec_type,V}, Rec) -> Rec#execution_report{exec_type = V};
-    ({ord_status,V}, Rec) -> Rec#execution_report{ord_status = V};
-    ({working_indicator,V}, Rec) -> Rec#execution_report{working_indicator = V == <<"Y">>};
-    ({ord_rej_reason,V}, Rec) -> Rec#execution_report{ord_rej_reason = fix:parse_num(V)};
-    ({exec_restatement_reason,V}, Rec) -> Rec#execution_report{exec_restatement_reason = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#execution_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#execution_report{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#execution_report{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#execution_report{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#execution_report{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#execution_report{prealloc_method = V};
-    ({settl_type,V}, Rec) -> Rec#execution_report{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#execution_report{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#execution_report{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#execution_report{clearing_fee_indicator = V};
-    ({side,V}, Rec) -> Rec#execution_report{side = V};
-    ({qty_type,V}, Rec) -> Rec#execution_report{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#execution_report{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#execution_report{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#execution_report{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#execution_report{stop_px = fix:parse_num(V)};
-    ({pegged_price,V}, Rec) -> Rec#execution_report{pegged_price = fix:parse_num(V)};
-    ({discretion_price,V}, Rec) -> Rec#execution_report{discretion_price = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#execution_report{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#execution_report{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#execution_report{participation_rate = V};
-    ({target_strategy_performance,V}, Rec) -> Rec#execution_report{target_strategy_performance = V};
-    ({currency,V}, Rec) -> Rec#execution_report{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#execution_report{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#execution_report{solicited_flag = V == <<"Y">>};
-    ({time_in_force,V}, Rec) -> Rec#execution_report{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#execution_report{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#execution_report{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#execution_report{expire_time = V};
-    ({exec_inst,V}, Rec) -> Rec#execution_report{exec_inst = V};
-    ({order_capacity,V}, Rec) -> Rec#execution_report{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#execution_report{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#execution_report{cust_order_capacity = fix:parse_num(V)};
-    ({last_qty,V}, Rec) -> Rec#execution_report{last_qty = fix:parse_num(V)};
-    ({underlying_last_qty,V}, Rec) -> Rec#execution_report{underlying_last_qty = fix:parse_num(V)};
-    ({last_px,V}, Rec) -> Rec#execution_report{last_px = fix:parse_num(V)};
-    ({underlying_last_px,V}, Rec) -> Rec#execution_report{underlying_last_px = fix:parse_num(V)};
-    ({last_par_px,V}, Rec) -> Rec#execution_report{last_par_px = fix:parse_num(V)};
-    ({last_spot_rate,V}, Rec) -> Rec#execution_report{last_spot_rate = fix:parse_num(V)};
-    ({last_forward_points,V}, Rec) -> Rec#execution_report{last_forward_points = V};
-    ({last_mkt,V}, Rec) -> Rec#execution_report{last_mkt = V};
-    ({trading_session_id,V}, Rec) -> Rec#execution_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#execution_report{trading_session_sub_id = V};
-    ({time_bracket,V}, Rec) -> Rec#execution_report{time_bracket = V};
-    ({last_capacity,V}, Rec) -> Rec#execution_report{last_capacity = V};
-    ({leaves_qty,V}, Rec) -> Rec#execution_report{leaves_qty = fix:parse_num(V)};
-    ({cum_qty,V}, Rec) -> Rec#execution_report{cum_qty = fix:parse_num(V)};
-    ({avg_px,V}, Rec) -> Rec#execution_report{avg_px = fix:parse_num(V)};
-    ({day_order_qty,V}, Rec) -> Rec#execution_report{day_order_qty = fix:parse_num(V)};
-    ({day_cum_qty,V}, Rec) -> Rec#execution_report{day_cum_qty = fix:parse_num(V)};
-    ({day_avg_px,V}, Rec) -> Rec#execution_report{day_avg_px = fix:parse_num(V)};
-    ({gt_booking_inst,V}, Rec) -> Rec#execution_report{gt_booking_inst = fix:parse_num(V)};
-    ({trade_date,V}, Rec) -> Rec#execution_report{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#execution_report{transact_time = V};
-    ({report_to_exch,V}, Rec) -> Rec#execution_report{report_to_exch = V == <<"Y">>};
-    ({gross_trade_amt,V}, Rec) -> Rec#execution_report{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#execution_report{num_days_interest = fix:parse_num(V)};
-    ({ex_date,V}, Rec) -> Rec#execution_report{ex_date = V};
-    ({accrued_interest_rate,V}, Rec) -> Rec#execution_report{accrued_interest_rate = V};
-    ({accrued_interest_amt,V}, Rec) -> Rec#execution_report{accrued_interest_amt = V};
-    ({interest_at_maturity,V}, Rec) -> Rec#execution_report{interest_at_maturity = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#execution_report{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#execution_report{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#execution_report{end_cash = V};
-    ({traded_flat_switch,V}, Rec) -> Rec#execution_report{traded_flat_switch = V == <<"Y">>};
-    ({basis_feature_date,V}, Rec) -> Rec#execution_report{basis_feature_date = V};
-    ({basis_feature_price,V}, Rec) -> Rec#execution_report{basis_feature_price = fix:parse_num(V)};
-    ({concession,V}, Rec) -> Rec#execution_report{concession = V};
-    ({total_takedown,V}, Rec) -> Rec#execution_report{total_takedown = V};
-    ({net_money,V}, Rec) -> Rec#execution_report{net_money = V};
-    ({settl_curr_amt,V}, Rec) -> Rec#execution_report{settl_curr_amt = V};
-    ({settl_currency,V}, Rec) -> Rec#execution_report{settl_currency = V};
-    ({settl_curr_fx_rate,V}, Rec) -> Rec#execution_report{settl_curr_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#execution_report{settl_curr_fx_rate_calc = V};
-    ({handl_inst,V}, Rec) -> Rec#execution_report{handl_inst = V};
-    ({min_qty,V}, Rec) -> Rec#execution_report{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#execution_report{max_floor = fix:parse_num(V)};
-    ({position_effect,V}, Rec) -> Rec#execution_report{position_effect = V};
-    ({max_show,V}, Rec) -> Rec#execution_report{max_show = fix:parse_num(V)};
-    ({booking_type,V}, Rec) -> Rec#execution_report{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#execution_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#execution_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#execution_report{encoded_text = V};
-    ({settl_date2,V}, Rec) -> Rec#execution_report{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#execution_report{order_qty2 = fix:parse_num(V)};
-    ({last_forward_points2,V}, Rec) -> Rec#execution_report{last_forward_points2 = V};
-    ({multi_leg_reporting_type,V}, Rec) -> Rec#execution_report{multi_leg_reporting_type = V};
-    ({cancellation_rights,V}, Rec) -> Rec#execution_report{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#execution_report{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#execution_report{regist_id = V};
-    ({designation,V}, Rec) -> Rec#execution_report{designation = V};
-    ({trans_bkd_time,V}, Rec) -> Rec#execution_report{trans_bkd_time = V};
-    ({exec_valuation_point,V}, Rec) -> Rec#execution_report{exec_valuation_point = V};
-    ({exec_price_type,V}, Rec) -> Rec#execution_report{exec_price_type = V};
-    ({exec_price_adjustment,V}, Rec) -> Rec#execution_report{exec_price_adjustment = V};
-    ({priority_indicator,V}, Rec) -> Rec#execution_report{priority_indicator = fix:parse_num(V)};
-    ({price_improvement,V}, Rec) -> Rec#execution_report{price_improvement = V};
-    ({last_liquidity_ind,V}, Rec) -> Rec#execution_report{last_liquidity_ind = fix:parse_num(V)};
-    ({cont_amt_type,V}, Rec) -> Rec#execution_report{cont_amt_type = fix:parse_num(V)};
-    ({cont_amt_value,V}, Rec) -> Rec#execution_report{cont_amt_value = V};
-    ({cont_amt_curr,V}, Rec) -> Rec#execution_report{cont_amt_curr = V};
-    ({leg_qty,V}, Rec) -> Rec#execution_report{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#execution_report{leg_swap_type = fix:parse_num(V)};
-    ({leg_position_effect,V}, Rec) -> Rec#execution_report{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#execution_report{leg_covered_or_uncovered = fix:parse_num(V)};
-    ({leg_ref_id,V}, Rec) -> Rec#execution_report{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#execution_report{leg_price = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#execution_report{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#execution_report{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#execution_report{leg_last_px = fix:parse_num(V)};
-    ({copy_msg_indicator,V}, Rec) -> Rec#execution_report{copy_msg_indicator = V == <<"Y">>};
-    ({misc_fee_amt,V}, Rec) -> Rec#execution_report{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#execution_report{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#execution_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#execution_report{misc_fee_basis = fix:parse_num(V)};
-    ({K,V}, #execution_report{fields = F} = Rec) -> Rec#execution_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#execution_report{fields = lists:reverse(F)}.
-
-decode_message_order_cancel_reject(Message, #order_cancel_reject{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_cancel_reject{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_reject{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_cancel_reject{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_reject{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_cancel_reject{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#order_cancel_reject{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#order_cancel_reject{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_cancel_reject{secondary_cl_ord_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_cancel_reject{cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#order_cancel_reject{cl_ord_link_id = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#order_cancel_reject{orig_cl_ord_id = V};
-    ({ord_status,V}, Rec) -> Rec#order_cancel_reject{ord_status = V};
-    ({working_indicator,V}, Rec) -> Rec#order_cancel_reject{working_indicator = V == <<"Y">>};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_reject{orig_ord_mod_time = V};
-    ({list_id,V}, Rec) -> Rec#order_cancel_reject{list_id = V};
-    ({account,V}, Rec) -> Rec#order_cancel_reject{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_reject{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#order_cancel_reject{account_type = fix:parse_num(V)};
-    ({trade_origination_date,V}, Rec) -> Rec#order_cancel_reject{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#order_cancel_reject{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#order_cancel_reject{transact_time = V};
-    ({cxl_rej_response_to,V}, Rec) -> Rec#order_cancel_reject{cxl_rej_response_to = V};
-    ({cxl_rej_reason,V}, Rec) -> Rec#order_cancel_reject{cxl_rej_reason = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#order_cancel_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_reject{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#order_cancel_reject{encoded_text = V};
-    ({K,V}, #order_cancel_reject{fields = F} = Rec) -> Rec#order_cancel_reject{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_cancel_reject{fields = lists:reverse(F)}.
-
-decode_message_logon(Message, #logon{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #logon{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#logon{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#logon{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#logon{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#logon{sending_time = V};
-    ({encrypt_method,V}, Rec) -> Rec#logon{encrypt_method = fix:parse_num(V)};
-    ({heart_bt_int,V}, Rec) -> Rec#logon{heart_bt_int = fix:parse_num(V)};
-    ({raw_data_length,V}, Rec) -> Rec#logon{raw_data_length = fix:parse_num(V)};
-    ({raw_data,V}, Rec) -> Rec#logon{raw_data = V};
-    ({reset_seq_num_flag,V}, Rec) -> Rec#logon{reset_seq_num_flag = V == <<"Y">>};
-    ({next_expected_msg_seq_num,V}, Rec) -> Rec#logon{next_expected_msg_seq_num = fix:parse_num(V)};
-    ({max_message_size,V}, Rec) -> Rec#logon{max_message_size = fix:parse_num(V)};
-    ({ref_msg_type,V}, Rec) -> Rec#logon{ref_msg_type = V};
-    ({msg_direction,V}, Rec) -> Rec#logon{msg_direction = V};
-    ({test_message_indicator,V}, Rec) -> Rec#logon{test_message_indicator = V == <<"Y">>};
-    ({username,V}, Rec) -> Rec#logon{username = V};
-    ({password,V}, Rec) -> Rec#logon{password = V};
-    ({K,V}, #logon{fields = F} = Rec) -> Rec#logon{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#logon{fields = lists:reverse(F)}.
-
-decode_message_news(Message, #news{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #news{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#news{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#news{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#news{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#news{sending_time = V};
-    ({orig_time,V}, Rec) -> Rec#news{orig_time = V};
-    ({urgency,V}, Rec) -> Rec#news{urgency = V};
-    ({headline,V}, Rec) -> Rec#news{headline = V};
-    ({encoded_headline_len,V}, Rec) -> Rec#news{encoded_headline_len = fix:parse_num(V)};
-    ({encoded_headline,V}, Rec) -> Rec#news{encoded_headline = V};
-    ({routing_type,V}, Rec) -> Rec#news{routing_type = fix:parse_num(V)};
-    ({routing_id,V}, Rec) -> Rec#news{routing_id = V};
-    ({text,V}, Rec) -> Rec#news{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#news{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#news{encoded_text = V};
-    ({url_link,V}, Rec) -> Rec#news{url_link = V};
-    ({raw_data_length,V}, Rec) -> Rec#news{raw_data_length = fix:parse_num(V)};
-    ({raw_data,V}, Rec) -> Rec#news{raw_data = V};
-    ({K,V}, #news{fields = F} = Rec) -> Rec#news{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#news{fields = lists:reverse(F)}.
-
-decode_message_email(Message, #email{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #email{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#email{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#email{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#email{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#email{sending_time = V};
-    ({email_thread_id,V}, Rec) -> Rec#email{email_thread_id = V};
-    ({email_type,V}, Rec) -> Rec#email{email_type = V};
-    ({orig_time,V}, Rec) -> Rec#email{orig_time = V};
-    ({subject,V}, Rec) -> Rec#email{subject = V};
-    ({encoded_subject_len,V}, Rec) -> Rec#email{encoded_subject_len = fix:parse_num(V)};
-    ({encoded_subject,V}, Rec) -> Rec#email{encoded_subject = V};
-    ({routing_type,V}, Rec) -> Rec#email{routing_type = fix:parse_num(V)};
-    ({routing_id,V}, Rec) -> Rec#email{routing_id = V};
-    ({order_id,V}, Rec) -> Rec#email{order_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#email{cl_ord_id = V};
-    ({text,V}, Rec) -> Rec#email{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#email{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#email{encoded_text = V};
-    ({raw_data_length,V}, Rec) -> Rec#email{raw_data_length = fix:parse_num(V)};
-    ({raw_data,V}, Rec) -> Rec#email{raw_data = V};
-    ({K,V}, #email{fields = F} = Rec) -> Rec#email{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#email{fields = lists:reverse(F)}.
-
-decode_message_new_order_single(Message, #new_order_single{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #new_order_single{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#new_order_single{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#new_order_single{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#new_order_single{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#new_order_single{sending_time = V};
-    ({cl_ord_id,V}, Rec) -> Rec#new_order_single{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_single{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#new_order_single{cl_ord_link_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#new_order_single{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#new_order_single{trade_date = V};
-    ({account,V}, Rec) -> Rec#new_order_single{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_single{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#new_order_single{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#new_order_single{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#new_order_single{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#new_order_single{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#new_order_single{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#new_order_single{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_single{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#new_order_single{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#new_order_single{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_single{alloc_qty = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#new_order_single{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#new_order_single{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#new_order_single{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_single{clearing_fee_indicator = V};
-    ({handl_inst,V}, Rec) -> Rec#new_order_single{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#new_order_single{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_single{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#new_order_single{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#new_order_single{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#new_order_single{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#new_order_single{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#new_order_single{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_single{prev_close_px = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#new_order_single{side = V};
-    ({locate_reqd,V}, Rec) -> Rec#new_order_single{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#new_order_single{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_single{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#new_order_single{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_single{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#new_order_single{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#new_order_single{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#new_order_single{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#new_order_single{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#new_order_single{solicited_flag = V == <<"Y">>};
-    ({ioi_id,V}, Rec) -> Rec#new_order_single{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#new_order_single{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#new_order_single{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#new_order_single{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#new_order_single{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#new_order_single{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_single{gt_booking_inst = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#new_order_single{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#new_order_single{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_single{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#new_order_single{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#new_order_single{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_single{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#new_order_single{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_single{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#new_order_single{encoded_text = V};
-    ({settl_date2,V}, Rec) -> Rec#new_order_single{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#new_order_single{order_qty2 = fix:parse_num(V)};
-    ({price2,V}, Rec) -> Rec#new_order_single{price2 = fix:parse_num(V)};
-    ({position_effect,V}, Rec) -> Rec#new_order_single{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_single{covered_or_uncovered = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#new_order_single{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#new_order_single{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#new_order_single{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#new_order_single{participation_rate = V};
-    ({cancellation_rights,V}, Rec) -> Rec#new_order_single{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#new_order_single{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#new_order_single{regist_id = V};
-    ({designation,V}, Rec) -> Rec#new_order_single{designation = V};
-    ({K,V}, #new_order_single{fields = F} = Rec) -> Rec#new_order_single{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#new_order_single{fields = lists:reverse(F)}.
-
-decode_message_new_order_list(Message, #new_order_list{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #new_order_list{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#new_order_list{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#new_order_list{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#new_order_list{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#new_order_list{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#new_order_list{list_id = V};
-    ({bid_id,V}, Rec) -> Rec#new_order_list{bid_id = V};
-    ({client_bid_id,V}, Rec) -> Rec#new_order_list{client_bid_id = V};
-    ({prog_rpt_reqs,V}, Rec) -> Rec#new_order_list{prog_rpt_reqs = fix:parse_num(V)};
-    ({bid_type,V}, Rec) -> Rec#new_order_list{bid_type = fix:parse_num(V)};
-    ({prog_period_interval,V}, Rec) -> Rec#new_order_list{prog_period_interval = fix:parse_num(V)};
-    ({cancellation_rights,V}, Rec) -> Rec#new_order_list{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#new_order_list{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#new_order_list{regist_id = V};
-    ({list_exec_inst_type,V}, Rec) -> Rec#new_order_list{list_exec_inst_type = V};
-    ({list_exec_inst,V}, Rec) -> Rec#new_order_list{list_exec_inst = V};
-    ({encoded_list_exec_inst_len,V}, Rec) -> Rec#new_order_list{encoded_list_exec_inst_len = fix:parse_num(V)};
-    ({encoded_list_exec_inst,V}, Rec) -> Rec#new_order_list{encoded_list_exec_inst = V};
-    ({allowable_one_sidedness_pct,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_pct = V};
-    ({allowable_one_sidedness_value,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_value = V};
-    ({allowable_one_sidedness_curr,V}, Rec) -> Rec#new_order_list{allowable_one_sidedness_curr = V};
-    ({tot_no_orders,V}, Rec) -> Rec#new_order_list{tot_no_orders = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#new_order_list{last_fragment = V == <<"Y">>};
-    ({cl_ord_id,V}, Rec) -> Rec#new_order_list{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_list{secondary_cl_ord_id = V};
-    ({list_seq_no,V}, Rec) -> Rec#new_order_list{list_seq_no = fix:parse_num(V)};
-    ({cl_ord_link_id,V}, Rec) -> Rec#new_order_list{cl_ord_link_id = V};
-    ({settl_inst_mode,V}, Rec) -> Rec#new_order_list{settl_inst_mode = V};
-    ({trade_origination_date,V}, Rec) -> Rec#new_order_list{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#new_order_list{trade_date = V};
-    ({account,V}, Rec) -> Rec#new_order_list{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_list{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#new_order_list{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#new_order_list{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#new_order_list{booking_unit = V};
-    ({alloc_id,V}, Rec) -> Rec#new_order_list{alloc_id = V};
-    ({prealloc_method,V}, Rec) -> Rec#new_order_list{prealloc_method = V};
-    ({alloc_account,V}, Rec) -> Rec#new_order_list{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_list{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#new_order_list{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#new_order_list{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_list{alloc_qty = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#new_order_list{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#new_order_list{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#new_order_list{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_list{clearing_fee_indicator = V};
-    ({handl_inst,V}, Rec) -> Rec#new_order_list{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#new_order_list{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_list{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#new_order_list{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#new_order_list{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#new_order_list{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#new_order_list{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#new_order_list{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_list{prev_close_px = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#new_order_list{side = V};
-    ({side_value_ind,V}, Rec) -> Rec#new_order_list{side_value_ind = fix:parse_num(V)};
-    ({locate_reqd,V}, Rec) -> Rec#new_order_list{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#new_order_list{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_list{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#new_order_list{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_list{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#new_order_list{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#new_order_list{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#new_order_list{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#new_order_list{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#new_order_list{solicited_flag = V == <<"Y">>};
-    ({ioi_id,V}, Rec) -> Rec#new_order_list{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#new_order_list{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#new_order_list{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#new_order_list{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#new_order_list{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#new_order_list{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_list{gt_booking_inst = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#new_order_list{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#new_order_list{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_list{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#new_order_list{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#new_order_list{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_list{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#new_order_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_list{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#new_order_list{encoded_text = V};
-    ({settl_date2,V}, Rec) -> Rec#new_order_list{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#new_order_list{order_qty2 = fix:parse_num(V)};
-    ({price2,V}, Rec) -> Rec#new_order_list{price2 = fix:parse_num(V)};
-    ({position_effect,V}, Rec) -> Rec#new_order_list{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_list{covered_or_uncovered = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#new_order_list{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#new_order_list{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#new_order_list{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#new_order_list{participation_rate = V};
-    ({designation,V}, Rec) -> Rec#new_order_list{designation = V};
-    ({K,V}, #new_order_list{fields = F} = Rec) -> Rec#new_order_list{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#new_order_list{fields = lists:reverse(F)}.
-
-decode_message_order_cancel_request(Message, #order_cancel_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_cancel_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_cancel_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_cancel_request{sending_time = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#order_cancel_request{orig_cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#order_cancel_request{order_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_cancel_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_cancel_request{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#order_cancel_request{cl_ord_link_id = V};
-    ({list_id,V}, Rec) -> Rec#order_cancel_request{list_id = V};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_request{orig_ord_mod_time = V};
-    ({account,V}, Rec) -> Rec#order_cancel_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#order_cancel_request{account_type = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#order_cancel_request{side = V};
-    ({transact_time,V}, Rec) -> Rec#order_cancel_request{transact_time = V};
-    ({compliance_id,V}, Rec) -> Rec#order_cancel_request{compliance_id = V};
-    ({text,V}, Rec) -> Rec#order_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#order_cancel_request{encoded_text = V};
-    ({K,V}, #order_cancel_request{fields = F} = Rec) -> Rec#order_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_cancel_request{fields = lists:reverse(F)}.
-
-decode_message_order_cancel_replace_request(Message, #order_cancel_replace_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_cancel_replace_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_cancel_replace_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_cancel_replace_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_cancel_replace_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_cancel_replace_request{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#order_cancel_replace_request{order_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#order_cancel_replace_request{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#order_cancel_replace_request{trade_date = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#order_cancel_replace_request{orig_cl_ord_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_cancel_replace_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_cancel_replace_request{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#order_cancel_replace_request{cl_ord_link_id = V};
-    ({list_id,V}, Rec) -> Rec#order_cancel_replace_request{list_id = V};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#order_cancel_replace_request{orig_ord_mod_time = V};
-    ({account,V}, Rec) -> Rec#order_cancel_replace_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#order_cancel_replace_request{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#order_cancel_replace_request{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#order_cancel_replace_request{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#order_cancel_replace_request{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#order_cancel_replace_request{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#order_cancel_replace_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#order_cancel_replace_request{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#order_cancel_replace_request{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#order_cancel_replace_request{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#order_cancel_replace_request{alloc_qty = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#order_cancel_replace_request{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#order_cancel_replace_request{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#order_cancel_replace_request{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#order_cancel_replace_request{clearing_fee_indicator = V};
-    ({handl_inst,V}, Rec) -> Rec#order_cancel_replace_request{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#order_cancel_replace_request{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#order_cancel_replace_request{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#order_cancel_replace_request{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#order_cancel_replace_request{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#order_cancel_replace_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#order_cancel_replace_request{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#order_cancel_replace_request{side = V};
-    ({transact_time,V}, Rec) -> Rec#order_cancel_replace_request{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#order_cancel_replace_request{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#order_cancel_replace_request{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#order_cancel_replace_request{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#order_cancel_replace_request{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#order_cancel_replace_request{stop_px = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#order_cancel_replace_request{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#order_cancel_replace_request{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#order_cancel_replace_request{participation_rate = V};
-    ({compliance_id,V}, Rec) -> Rec#order_cancel_replace_request{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#order_cancel_replace_request{solicited_flag = V == <<"Y">>};
-    ({currency,V}, Rec) -> Rec#order_cancel_replace_request{currency = V};
-    ({time_in_force,V}, Rec) -> Rec#order_cancel_replace_request{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#order_cancel_replace_request{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#order_cancel_replace_request{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#order_cancel_replace_request{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#order_cancel_replace_request{gt_booking_inst = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#order_cancel_replace_request{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#order_cancel_replace_request{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#order_cancel_replace_request{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#order_cancel_replace_request{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#order_cancel_replace_request{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#order_cancel_replace_request{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#order_cancel_replace_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_cancel_replace_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#order_cancel_replace_request{encoded_text = V};
-    ({settl_date2,V}, Rec) -> Rec#order_cancel_replace_request{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#order_cancel_replace_request{order_qty2 = fix:parse_num(V)};
-    ({price2,V}, Rec) -> Rec#order_cancel_replace_request{price2 = fix:parse_num(V)};
-    ({position_effect,V}, Rec) -> Rec#order_cancel_replace_request{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#order_cancel_replace_request{covered_or_uncovered = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#order_cancel_replace_request{max_show = fix:parse_num(V)};
-    ({locate_reqd,V}, Rec) -> Rec#order_cancel_replace_request{locate_reqd = V == <<"Y">>};
-    ({cancellation_rights,V}, Rec) -> Rec#order_cancel_replace_request{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#order_cancel_replace_request{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#order_cancel_replace_request{regist_id = V};
-    ({designation,V}, Rec) -> Rec#order_cancel_replace_request{designation = V};
-    ({K,V}, #order_cancel_replace_request{fields = F} = Rec) -> Rec#order_cancel_replace_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_cancel_replace_request{fields = lists:reverse(F)}.
-
-decode_message_order_status_request(Message, #order_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_status_request{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#order_status_request{order_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_status_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_status_request{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#order_status_request{cl_ord_link_id = V};
-    ({ord_status_req_id,V}, Rec) -> Rec#order_status_request{ord_status_req_id = V};
-    ({account,V}, Rec) -> Rec#order_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_status_request{acct_id_source = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#order_status_request{side = V};
-    ({K,V}, #order_status_request{fields = F} = Rec) -> Rec#order_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_status_request{fields = lists:reverse(F)}.
-
-decode_message_allocation_instruction(Message, #allocation_instruction{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #allocation_instruction{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#allocation_instruction{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#allocation_instruction{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#allocation_instruction{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#allocation_instruction{sending_time = V};
-    ({alloc_id,V}, Rec) -> Rec#allocation_instruction{alloc_id = V};
-    ({alloc_trans_type,V}, Rec) -> Rec#allocation_instruction{alloc_trans_type = V};
-    ({alloc_type,V}, Rec) -> Rec#allocation_instruction{alloc_type = fix:parse_num(V)};
-    ({secondary_alloc_id,V}, Rec) -> Rec#allocation_instruction{secondary_alloc_id = V};
-    ({ref_alloc_id,V}, Rec) -> Rec#allocation_instruction{ref_alloc_id = V};
-    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_instruction{alloc_canc_replace_reason = fix:parse_num(V)};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction{alloc_intermed_req_type = fix:parse_num(V)};
-    ({alloc_link_id,V}, Rec) -> Rec#allocation_instruction{alloc_link_id = V};
-    ({alloc_link_type,V}, Rec) -> Rec#allocation_instruction{alloc_link_type = fix:parse_num(V)};
-    ({booking_ref_id,V}, Rec) -> Rec#allocation_instruction{booking_ref_id = V};
-    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_instruction{alloc_no_orders_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#allocation_instruction{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#allocation_instruction{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#allocation_instruction{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#allocation_instruction{secondary_cl_ord_id = V};
-    ({list_id,V}, Rec) -> Rec#allocation_instruction{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#allocation_instruction{order_qty = fix:parse_num(V)};
-    ({order_avg_px,V}, Rec) -> Rec#allocation_instruction{order_avg_px = fix:parse_num(V)};
-    ({order_booking_qty,V}, Rec) -> Rec#allocation_instruction{order_booking_qty = fix:parse_num(V)};
-    ({last_qty,V}, Rec) -> Rec#allocation_instruction{last_qty = fix:parse_num(V)};
-    ({exec_id,V}, Rec) -> Rec#allocation_instruction{exec_id = V};
-    ({secondary_exec_id,V}, Rec) -> Rec#allocation_instruction{secondary_exec_id = V};
-    ({last_px,V}, Rec) -> Rec#allocation_instruction{last_px = fix:parse_num(V)};
-    ({last_par_px,V}, Rec) -> Rec#allocation_instruction{last_par_px = fix:parse_num(V)};
-    ({last_capacity,V}, Rec) -> Rec#allocation_instruction{last_capacity = V};
-    ({previously_reported,V}, Rec) -> Rec#allocation_instruction{previously_reported = V == <<"Y">>};
-    ({reversal_indicator,V}, Rec) -> Rec#allocation_instruction{reversal_indicator = V == <<"Y">>};
-    ({match_type,V}, Rec) -> Rec#allocation_instruction{match_type = V};
-    ({side,V}, Rec) -> Rec#allocation_instruction{side = V};
-    ({quantity,V}, Rec) -> Rec#allocation_instruction{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#allocation_instruction{qty_type = fix:parse_num(V)};
-    ({last_mkt,V}, Rec) -> Rec#allocation_instruction{last_mkt = V};
-    ({trade_origination_date,V}, Rec) -> Rec#allocation_instruction{trade_origination_date = V};
-    ({trading_session_id,V}, Rec) -> Rec#allocation_instruction{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#allocation_instruction{trading_session_sub_id = V};
-    ({price_type,V}, Rec) -> Rec#allocation_instruction{price_type = fix:parse_num(V)};
-    ({avg_px,V}, Rec) -> Rec#allocation_instruction{avg_px = fix:parse_num(V)};
-    ({avg_par_px,V}, Rec) -> Rec#allocation_instruction{avg_par_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#allocation_instruction{currency = V};
-    ({avg_px_precision,V}, Rec) -> Rec#allocation_instruction{avg_px_precision = fix:parse_num(V)};
-    ({trade_date,V}, Rec) -> Rec#allocation_instruction{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#allocation_instruction{transact_time = V};
-    ({settl_type,V}, Rec) -> Rec#allocation_instruction{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#allocation_instruction{settl_date = V};
-    ({booking_type,V}, Rec) -> Rec#allocation_instruction{booking_type = fix:parse_num(V)};
-    ({gross_trade_amt,V}, Rec) -> Rec#allocation_instruction{gross_trade_amt = V};
-    ({concession,V}, Rec) -> Rec#allocation_instruction{concession = V};
-    ({total_takedown,V}, Rec) -> Rec#allocation_instruction{total_takedown = V};
-    ({net_money,V}, Rec) -> Rec#allocation_instruction{net_money = V};
-    ({position_effect,V}, Rec) -> Rec#allocation_instruction{position_effect = V};
-    ({auto_accept_indicator,V}, Rec) -> Rec#allocation_instruction{auto_accept_indicator = V == <<"Y">>};
-    ({text,V}, Rec) -> Rec#allocation_instruction{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#allocation_instruction{encoded_text = V};
-    ({num_days_interest,V}, Rec) -> Rec#allocation_instruction{num_days_interest = fix:parse_num(V)};
-    ({accrued_interest_rate,V}, Rec) -> Rec#allocation_instruction{accrued_interest_rate = V};
-    ({accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{accrued_interest_amt = V};
-    ({total_accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{total_accrued_interest_amt = V};
-    ({interest_at_maturity,V}, Rec) -> Rec#allocation_instruction{interest_at_maturity = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#allocation_instruction{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#allocation_instruction{end_cash = V};
-    ({legal_confirm,V}, Rec) -> Rec#allocation_instruction{legal_confirm = V == <<"Y">>};
-    ({tot_no_allocs,V}, Rec) -> Rec#allocation_instruction{tot_no_allocs = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#allocation_instruction{last_fragment = V == <<"Y">>};
-    ({alloc_account,V}, Rec) -> Rec#allocation_instruction{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction{alloc_acct_id_source = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#allocation_instruction{match_status = V};
-    ({alloc_price,V}, Rec) -> Rec#allocation_instruction{alloc_price = fix:parse_num(V)};
-    ({alloc_qty,V}, Rec) -> Rec#allocation_instruction{alloc_qty = fix:parse_num(V)};
-    ({individual_alloc_id,V}, Rec) -> Rec#allocation_instruction{individual_alloc_id = V};
-    ({process_code,V}, Rec) -> Rec#allocation_instruction{process_code = V};
-    ({notify_broker_of_credit,V}, Rec) -> Rec#allocation_instruction{notify_broker_of_credit = V == <<"Y">>};
-    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_instruction{alloc_handl_inst = fix:parse_num(V)};
-    ({alloc_text,V}, Rec) -> Rec#allocation_instruction{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction{encoded_alloc_text_len = fix:parse_num(V)};
-    ({encoded_alloc_text,V}, Rec) -> Rec#allocation_instruction{encoded_alloc_text = V};
-    ({alloc_avg_px,V}, Rec) -> Rec#allocation_instruction{alloc_avg_px = fix:parse_num(V)};
-    ({alloc_net_money,V}, Rec) -> Rec#allocation_instruction{alloc_net_money = V};
-    ({settl_curr_amt,V}, Rec) -> Rec#allocation_instruction{settl_curr_amt = V};
-    ({alloc_settl_curr_amt,V}, Rec) -> Rec#allocation_instruction{alloc_settl_curr_amt = V};
-    ({settl_currency,V}, Rec) -> Rec#allocation_instruction{settl_currency = V};
-    ({alloc_settl_currency,V}, Rec) -> Rec#allocation_instruction{alloc_settl_currency = V};
-    ({settl_curr_fx_rate,V}, Rec) -> Rec#allocation_instruction{settl_curr_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#allocation_instruction{settl_curr_fx_rate_calc = V};
-    ({alloc_accrued_interest_amt,V}, Rec) -> Rec#allocation_instruction{alloc_accrued_interest_amt = V};
-    ({alloc_interest_at_maturity,V}, Rec) -> Rec#allocation_instruction{alloc_interest_at_maturity = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#allocation_instruction{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#allocation_instruction{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#allocation_instruction{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#allocation_instruction{misc_fee_basis = fix:parse_num(V)};
-    ({clearing_instruction,V}, Rec) -> Rec#allocation_instruction{clearing_instruction = fix:parse_num(V)};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#allocation_instruction{clearing_fee_indicator = V};
-    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_instruction{alloc_settl_inst_type = fix:parse_num(V)};
-    ({K,V}, #allocation_instruction{fields = F} = Rec) -> Rec#allocation_instruction{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#allocation_instruction{fields = lists:reverse(F)}.
-
-decode_message_list_cancel_request(Message, #list_cancel_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #list_cancel_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#list_cancel_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#list_cancel_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#list_cancel_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#list_cancel_request{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#list_cancel_request{list_id = V};
-    ({transact_time,V}, Rec) -> Rec#list_cancel_request{transact_time = V};
-    ({trade_origination_date,V}, Rec) -> Rec#list_cancel_request{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#list_cancel_request{trade_date = V};
-    ({text,V}, Rec) -> Rec#list_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_cancel_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#list_cancel_request{encoded_text = V};
-    ({K,V}, #list_cancel_request{fields = F} = Rec) -> Rec#list_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#list_cancel_request{fields = lists:reverse(F)}.
-
-decode_message_list_execute(Message, #list_execute{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #list_execute{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#list_execute{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#list_execute{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#list_execute{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#list_execute{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#list_execute{list_id = V};
-    ({client_bid_id,V}, Rec) -> Rec#list_execute{client_bid_id = V};
-    ({bid_id,V}, Rec) -> Rec#list_execute{bid_id = V};
-    ({transact_time,V}, Rec) -> Rec#list_execute{transact_time = V};
-    ({text,V}, Rec) -> Rec#list_execute{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_execute{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#list_execute{encoded_text = V};
-    ({K,V}, #list_execute{fields = F} = Rec) -> Rec#list_execute{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#list_execute{fields = lists:reverse(F)}.
-
-decode_message_list_status_request(Message, #list_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #list_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#list_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#list_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#list_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#list_status_request{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#list_status_request{list_id = V};
-    ({text,V}, Rec) -> Rec#list_status_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_status_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#list_status_request{encoded_text = V};
-    ({K,V}, #list_status_request{fields = F} = Rec) -> Rec#list_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#list_status_request{fields = lists:reverse(F)}.
-
-decode_message_list_status(Message, #list_status{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #list_status{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#list_status{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#list_status{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#list_status{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#list_status{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#list_status{list_id = V};
-    ({list_status_type,V}, Rec) -> Rec#list_status{list_status_type = fix:parse_num(V)};
-    ({no_rpts,V}, Rec) -> Rec#list_status{no_rpts = fix:parse_num(V)};
-    ({list_order_status,V}, Rec) -> Rec#list_status{list_order_status = fix:parse_num(V)};
-    ({rpt_seq,V}, Rec) -> Rec#list_status{rpt_seq = fix:parse_num(V)};
-    ({list_status_text,V}, Rec) -> Rec#list_status{list_status_text = V};
-    ({encoded_list_status_text_len,V}, Rec) -> Rec#list_status{encoded_list_status_text_len = fix:parse_num(V)};
-    ({encoded_list_status_text,V}, Rec) -> Rec#list_status{encoded_list_status_text = V};
-    ({transact_time,V}, Rec) -> Rec#list_status{transact_time = V};
-    ({tot_no_orders,V}, Rec) -> Rec#list_status{tot_no_orders = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#list_status{last_fragment = V == <<"Y">>};
-    ({cl_ord_id,V}, Rec) -> Rec#list_status{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#list_status{secondary_cl_ord_id = V};
-    ({cum_qty,V}, Rec) -> Rec#list_status{cum_qty = fix:parse_num(V)};
-    ({ord_status,V}, Rec) -> Rec#list_status{ord_status = V};
-    ({working_indicator,V}, Rec) -> Rec#list_status{working_indicator = V == <<"Y">>};
-    ({leaves_qty,V}, Rec) -> Rec#list_status{leaves_qty = fix:parse_num(V)};
-    ({cxl_qty,V}, Rec) -> Rec#list_status{cxl_qty = fix:parse_num(V)};
-    ({avg_px,V}, Rec) -> Rec#list_status{avg_px = fix:parse_num(V)};
-    ({ord_rej_reason,V}, Rec) -> Rec#list_status{ord_rej_reason = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#list_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_status{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#list_status{encoded_text = V};
-    ({K,V}, #list_status{fields = F} = Rec) -> Rec#list_status{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#list_status{fields = lists:reverse(F)}.
-
-decode_message_allocation_instruction_ack(Message, #allocation_instruction_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #allocation_instruction_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#allocation_instruction_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#allocation_instruction_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#allocation_instruction_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#allocation_instruction_ack{sending_time = V};
-    ({alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{alloc_id = V};
-    ({secondary_alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{secondary_alloc_id = V};
-    ({trade_date,V}, Rec) -> Rec#allocation_instruction_ack{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#allocation_instruction_ack{transact_time = V};
-    ({alloc_status,V}, Rec) -> Rec#allocation_instruction_ack{alloc_status = fix:parse_num(V)};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{alloc_rej_code = fix:parse_num(V)};
-    ({alloc_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_type = fix:parse_num(V)};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_instruction_ack{alloc_intermed_req_type = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#allocation_instruction_ack{match_status = V};
-    ({product,V}, Rec) -> Rec#allocation_instruction_ack{product = fix:parse_num(V)};
-    ({security_type,V}, Rec) -> Rec#allocation_instruction_ack{security_type = V};
-    ({text,V}, Rec) -> Rec#allocation_instruction_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#allocation_instruction_ack{encoded_text = V};
-    ({alloc_account,V}, Rec) -> Rec#allocation_instruction_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_instruction_ack{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_price,V}, Rec) -> Rec#allocation_instruction_ack{alloc_price = fix:parse_num(V)};
-    ({individual_alloc_id,V}, Rec) -> Rec#allocation_instruction_ack{individual_alloc_id = V};
-    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_instruction_ack{individual_alloc_rej_code = fix:parse_num(V)};
-    ({alloc_text,V}, Rec) -> Rec#allocation_instruction_ack{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_instruction_ack{encoded_alloc_text_len = fix:parse_num(V)};
-    ({encoded_alloc_text,V}, Rec) -> Rec#allocation_instruction_ack{encoded_alloc_text = V};
-    ({K,V}, #allocation_instruction_ack{fields = F} = Rec) -> Rec#allocation_instruction_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#allocation_instruction_ack{fields = lists:reverse(F)}.
-
-decode_message_dont_know_trade(Message, #dont_know_trade{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #dont_know_trade{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#dont_know_trade{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#dont_know_trade{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#dont_know_trade{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#dont_know_trade{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#dont_know_trade{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#dont_know_trade{secondary_order_id = V};
-    ({exec_id,V}, Rec) -> Rec#dont_know_trade{exec_id = V};
-    ({dk_reason,V}, Rec) -> Rec#dont_know_trade{dk_reason = V};
-    ({side,V}, Rec) -> Rec#dont_know_trade{side = V};
-    ({last_qty,V}, Rec) -> Rec#dont_know_trade{last_qty = fix:parse_num(V)};
-    ({last_px,V}, Rec) -> Rec#dont_know_trade{last_px = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#dont_know_trade{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#dont_know_trade{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#dont_know_trade{encoded_text = V};
-    ({K,V}, #dont_know_trade{fields = F} = Rec) -> Rec#dont_know_trade{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#dont_know_trade{fields = lists:reverse(F)}.
-
-decode_message_quote_request(Message, #quote_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_request{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#quote_request{quote_req_id = V};
-    ({rfq_req_id,V}, Rec) -> Rec#quote_request{rfq_req_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#quote_request{cl_ord_id = V};
-    ({order_capacity,V}, Rec) -> Rec#quote_request{order_capacity = V};
-    ({prev_close_px,V}, Rec) -> Rec#quote_request{prev_close_px = fix:parse_num(V)};
-    ({quote_request_type,V}, Rec) -> Rec#quote_request{quote_request_type = fix:parse_num(V)};
-    ({quote_type,V}, Rec) -> Rec#quote_request{quote_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_request{trading_session_sub_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#quote_request{trade_origination_date = V};
-    ({side,V}, Rec) -> Rec#quote_request{side = V};
-    ({qty_type,V}, Rec) -> Rec#quote_request{qty_type = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#quote_request{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#quote_request{settl_date = V};
-    ({settl_date2,V}, Rec) -> Rec#quote_request{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_request{order_qty2 = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#quote_request{currency = V};
-    ({account,V}, Rec) -> Rec#quote_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_request{account_type = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#quote_request{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_request{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#quote_request{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#quote_request{leg_settl_date = V};
-    ({quote_qualifier,V}, Rec) -> Rec#quote_request{quote_qualifier = V};
-    ({quote_price_type,V}, Rec) -> Rec#quote_request{quote_price_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#quote_request{ord_type = V};
-    ({valid_until_time,V}, Rec) -> Rec#quote_request{valid_until_time = V};
-    ({expire_time,V}, Rec) -> Rec#quote_request{expire_time = V};
-    ({transact_time,V}, Rec) -> Rec#quote_request{transact_time = V};
-    ({price_type,V}, Rec) -> Rec#quote_request{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#quote_request{price = fix:parse_num(V)};
-    ({price2,V}, Rec) -> Rec#quote_request{price2 = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#quote_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#quote_request{encoded_text = V};
-    ({K,V}, #quote_request{fields = F} = Rec) -> Rec#quote_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_request{fields = lists:reverse(F)}.
-
-decode_message_quote(Message, #quote{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#quote{quote_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#quote{quote_id = V};
-    ({quote_resp_id,V}, Rec) -> Rec#quote{quote_resp_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote{quote_type = fix:parse_num(V)};
-    ({quote_qualifier,V}, Rec) -> Rec#quote{quote_qualifier = V};
-    ({quote_response_level,V}, Rec) -> Rec#quote{quote_response_level = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#quote{side = V};
-    ({settl_type,V}, Rec) -> Rec#quote{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#quote{settl_date = V};
-    ({settl_date2,V}, Rec) -> Rec#quote{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote{order_qty2 = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#quote{currency = V};
-    ({account,V}, Rec) -> Rec#quote{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote{account_type = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#quote{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#quote{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#quote{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#quote{leg_settl_date = V};
-    ({leg_price_type,V}, Rec) -> Rec#quote{leg_price_type = fix:parse_num(V)};
-    ({leg_bid_px,V}, Rec) -> Rec#quote{leg_bid_px = fix:parse_num(V)};
-    ({leg_offer_px,V}, Rec) -> Rec#quote{leg_offer_px = fix:parse_num(V)};
-    ({bid_px,V}, Rec) -> Rec#quote{bid_px = fix:parse_num(V)};
-    ({offer_px,V}, Rec) -> Rec#quote{offer_px = fix:parse_num(V)};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote{mkt_bid_px = fix:parse_num(V)};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote{mkt_offer_px = fix:parse_num(V)};
-    ({min_bid_size,V}, Rec) -> Rec#quote{min_bid_size = fix:parse_num(V)};
-    ({bid_size,V}, Rec) -> Rec#quote{bid_size = fix:parse_num(V)};
-    ({min_offer_size,V}, Rec) -> Rec#quote{min_offer_size = fix:parse_num(V)};
-    ({offer_size,V}, Rec) -> Rec#quote{offer_size = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#quote{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote{bid_spot_rate = fix:parse_num(V)};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote{offer_spot_rate = fix:parse_num(V)};
-    ({bid_forward_points,V}, Rec) -> Rec#quote{bid_forward_points = V};
-    ({offer_forward_points,V}, Rec) -> Rec#quote{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote{mid_px = fix:parse_num(V)};
-    ({bid_yield,V}, Rec) -> Rec#quote{bid_yield = V};
-    ({mid_yield,V}, Rec) -> Rec#quote{mid_yield = V};
-    ({offer_yield,V}, Rec) -> Rec#quote{offer_yield = V};
-    ({transact_time,V}, Rec) -> Rec#quote{transact_time = V};
-    ({ord_type,V}, Rec) -> Rec#quote{ord_type = V};
-    ({bid_forward_points2,V}, Rec) -> Rec#quote{bid_forward_points2 = V};
-    ({offer_forward_points2,V}, Rec) -> Rec#quote{offer_forward_points2 = V};
-    ({settl_curr_bid_fx_rate,V}, Rec) -> Rec#quote{settl_curr_bid_fx_rate = V};
-    ({settl_curr_offer_fx_rate,V}, Rec) -> Rec#quote{settl_curr_offer_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote{settl_curr_fx_rate_calc = V};
-    ({comm_type,V}, Rec) -> Rec#quote{comm_type = V};
-    ({commission,V}, Rec) -> Rec#quote{commission = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote{cust_order_capacity = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#quote{ex_destination = V};
-    ({order_capacity,V}, Rec) -> Rec#quote{order_capacity = V};
-    ({price_type,V}, Rec) -> Rec#quote{price_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#quote{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#quote{encoded_text = V};
-    ({K,V}, #quote{fields = F} = Rec) -> Rec#quote{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote{fields = lists:reverse(F)}.
-
-decode_message_settlement_instructions(Message, #settlement_instructions{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #settlement_instructions{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#settlement_instructions{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#settlement_instructions{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#settlement_instructions{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#settlement_instructions{sending_time = V};
-    ({settl_inst_msg_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_msg_id = V};
-    ({settl_inst_req_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_req_id = V};
-    ({settl_inst_mode,V}, Rec) -> Rec#settlement_instructions{settl_inst_mode = V};
-    ({settl_inst_req_rej_code,V}, Rec) -> Rec#settlement_instructions{settl_inst_req_rej_code = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#settlement_instructions{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#settlement_instructions{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#settlement_instructions{encoded_text = V};
-    ({cl_ord_id,V}, Rec) -> Rec#settlement_instructions{cl_ord_id = V};
-    ({transact_time,V}, Rec) -> Rec#settlement_instructions{transact_time = V};
-    ({settl_inst_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_id = V};
-    ({settl_inst_trans_type,V}, Rec) -> Rec#settlement_instructions{settl_inst_trans_type = V};
-    ({settl_inst_ref_id,V}, Rec) -> Rec#settlement_instructions{settl_inst_ref_id = V};
-    ({side,V}, Rec) -> Rec#settlement_instructions{side = V};
-    ({product,V}, Rec) -> Rec#settlement_instructions{product = fix:parse_num(V)};
-    ({security_type,V}, Rec) -> Rec#settlement_instructions{security_type = V};
-    ({cfi_code,V}, Rec) -> Rec#settlement_instructions{cfi_code = V};
-    ({effective_time,V}, Rec) -> Rec#settlement_instructions{effective_time = V};
-    ({expire_time,V}, Rec) -> Rec#settlement_instructions{expire_time = V};
-    ({last_update_time,V}, Rec) -> Rec#settlement_instructions{last_update_time = V};
-    ({payment_method,V}, Rec) -> Rec#settlement_instructions{payment_method = fix:parse_num(V)};
-    ({payment_ref,V}, Rec) -> Rec#settlement_instructions{payment_ref = V};
-    ({card_holder_name,V}, Rec) -> Rec#settlement_instructions{card_holder_name = V};
-    ({card_number,V}, Rec) -> Rec#settlement_instructions{card_number = V};
-    ({card_start_date,V}, Rec) -> Rec#settlement_instructions{card_start_date = V};
-    ({card_exp_date,V}, Rec) -> Rec#settlement_instructions{card_exp_date = V};
-    ({card_iss_num,V}, Rec) -> Rec#settlement_instructions{card_iss_num = V};
-    ({payment_date,V}, Rec) -> Rec#settlement_instructions{payment_date = V};
-    ({payment_remitter_id,V}, Rec) -> Rec#settlement_instructions{payment_remitter_id = V};
-    ({K,V}, #settlement_instructions{fields = F} = Rec) -> Rec#settlement_instructions{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#settlement_instructions{fields = lists:reverse(F)}.
-
-decode_message_market_data_request(Message, #market_data_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #market_data_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#market_data_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#market_data_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#market_data_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#market_data_request{sending_time = V};
-    ({md_req_id,V}, Rec) -> Rec#market_data_request{md_req_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#market_data_request{subscription_request_type = V};
-    ({market_depth,V}, Rec) -> Rec#market_data_request{market_depth = fix:parse_num(V)};
-    ({md_update_type,V}, Rec) -> Rec#market_data_request{md_update_type = fix:parse_num(V)};
-    ({aggregated_book,V}, Rec) -> Rec#market_data_request{aggregated_book = V == <<"Y">>};
-    ({open_close_settl_flag,V}, Rec) -> Rec#market_data_request{open_close_settl_flag = V};
-    ({scope,V}, Rec) -> Rec#market_data_request{scope = V};
-    ({md_implicit_delete,V}, Rec) -> Rec#market_data_request{md_implicit_delete = V == <<"Y">>};
-    ({md_entry_type,V}, Rec) -> Rec#market_data_request{md_entry_type = V};
-    ({trading_session_id,V}, Rec) -> Rec#market_data_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#market_data_request{trading_session_sub_id = V};
-    ({appl_queue_action,V}, Rec) -> Rec#market_data_request{appl_queue_action = fix:parse_num(V)};
-    ({appl_queue_max,V}, Rec) -> Rec#market_data_request{appl_queue_max = fix:parse_num(V)};
-    ({K,V}, #market_data_request{fields = F} = Rec) -> Rec#market_data_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#market_data_request{fields = lists:reverse(F)}.
-
-decode_message_market_data_snapshot_full_refresh(Message, #market_data_snapshot_full_refresh{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #market_data_snapshot_full_refresh{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#market_data_snapshot_full_refresh{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{sending_time = V};
-    ({md_req_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_req_id = V};
-    ({financial_status,V}, Rec) -> Rec#market_data_snapshot_full_refresh{financial_status = V};
-    ({corporate_action,V}, Rec) -> Rec#market_data_snapshot_full_refresh{corporate_action = V};
-    ({net_chg_prev_day,V}, Rec) -> Rec#market_data_snapshot_full_refresh{net_chg_prev_day = V};
-    ({md_entry_type,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_type = V};
-    ({md_entry_px,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#market_data_snapshot_full_refresh{currency = V};
-    ({md_entry_size,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_size = fix:parse_num(V)};
-    ({md_entry_date,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_date = V};
-    ({md_entry_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_time = V};
-    ({tick_direction,V}, Rec) -> Rec#market_data_snapshot_full_refresh{tick_direction = V};
-    ({md_mkt,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_mkt = V};
-    ({trading_session_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{trading_session_sub_id = V};
-    ({quote_condition,V}, Rec) -> Rec#market_data_snapshot_full_refresh{quote_condition = V};
-    ({trade_condition,V}, Rec) -> Rec#market_data_snapshot_full_refresh{trade_condition = V};
-    ({md_entry_originator,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_originator = V};
-    ({location_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{location_id = V};
-    ({desk_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{desk_id = V};
-    ({open_close_settl_flag,V}, Rec) -> Rec#market_data_snapshot_full_refresh{open_close_settl_flag = V};
-    ({time_in_force,V}, Rec) -> Rec#market_data_snapshot_full_refresh{time_in_force = V};
-    ({expire_date,V}, Rec) -> Rec#market_data_snapshot_full_refresh{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#market_data_snapshot_full_refresh{expire_time = V};
-    ({min_qty,V}, Rec) -> Rec#market_data_snapshot_full_refresh{min_qty = fix:parse_num(V)};
-    ({exec_inst,V}, Rec) -> Rec#market_data_snapshot_full_refresh{exec_inst = V};
-    ({seller_days,V}, Rec) -> Rec#market_data_snapshot_full_refresh{seller_days = fix:parse_num(V)};
-    ({order_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{order_id = V};
-    ({quote_entry_id,V}, Rec) -> Rec#market_data_snapshot_full_refresh{quote_entry_id = V};
-    ({md_entry_buyer,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_buyer = V};
-    ({md_entry_seller,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_seller = V};
-    ({number_of_orders,V}, Rec) -> Rec#market_data_snapshot_full_refresh{number_of_orders = fix:parse_num(V)};
-    ({md_entry_position_no,V}, Rec) -> Rec#market_data_snapshot_full_refresh{md_entry_position_no = fix:parse_num(V)};
-    ({scope,V}, Rec) -> Rec#market_data_snapshot_full_refresh{scope = V};
-    ({price_delta,V}, Rec) -> Rec#market_data_snapshot_full_refresh{price_delta = V};
-    ({text,V}, Rec) -> Rec#market_data_snapshot_full_refresh{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_snapshot_full_refresh{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#market_data_snapshot_full_refresh{encoded_text = V};
-    ({appl_queue_depth,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_depth = fix:parse_num(V)};
-    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_snapshot_full_refresh{appl_queue_resolution = fix:parse_num(V)};
-    ({K,V}, #market_data_snapshot_full_refresh{fields = F} = Rec) -> Rec#market_data_snapshot_full_refresh{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#market_data_snapshot_full_refresh{fields = lists:reverse(F)}.
-
-decode_message_market_data_incremental_refresh(Message, #market_data_incremental_refresh{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #market_data_incremental_refresh{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#market_data_incremental_refresh{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#market_data_incremental_refresh{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#market_data_incremental_refresh{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#market_data_incremental_refresh{sending_time = V};
-    ({md_req_id,V}, Rec) -> Rec#market_data_incremental_refresh{md_req_id = V};
-    ({md_update_action,V}, Rec) -> Rec#market_data_incremental_refresh{md_update_action = V};
-    ({delete_reason,V}, Rec) -> Rec#market_data_incremental_refresh{delete_reason = V};
-    ({md_entry_type,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_type = V};
-    ({md_entry_id,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_id = V};
-    ({md_entry_ref_id,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_ref_id = V};
-    ({financial_status,V}, Rec) -> Rec#market_data_incremental_refresh{financial_status = V};
-    ({corporate_action,V}, Rec) -> Rec#market_data_incremental_refresh{corporate_action = V};
-    ({md_entry_px,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#market_data_incremental_refresh{currency = V};
-    ({md_entry_size,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_size = fix:parse_num(V)};
-    ({md_entry_date,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_date = V};
-    ({md_entry_time,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_time = V};
-    ({tick_direction,V}, Rec) -> Rec#market_data_incremental_refresh{tick_direction = V};
-    ({md_mkt,V}, Rec) -> Rec#market_data_incremental_refresh{md_mkt = V};
-    ({trading_session_id,V}, Rec) -> Rec#market_data_incremental_refresh{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#market_data_incremental_refresh{trading_session_sub_id = V};
-    ({quote_condition,V}, Rec) -> Rec#market_data_incremental_refresh{quote_condition = V};
-    ({trade_condition,V}, Rec) -> Rec#market_data_incremental_refresh{trade_condition = V};
-    ({md_entry_originator,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_originator = V};
-    ({location_id,V}, Rec) -> Rec#market_data_incremental_refresh{location_id = V};
-    ({desk_id,V}, Rec) -> Rec#market_data_incremental_refresh{desk_id = V};
-    ({open_close_settl_flag,V}, Rec) -> Rec#market_data_incremental_refresh{open_close_settl_flag = V};
-    ({time_in_force,V}, Rec) -> Rec#market_data_incremental_refresh{time_in_force = V};
-    ({expire_date,V}, Rec) -> Rec#market_data_incremental_refresh{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#market_data_incremental_refresh{expire_time = V};
-    ({min_qty,V}, Rec) -> Rec#market_data_incremental_refresh{min_qty = fix:parse_num(V)};
-    ({exec_inst,V}, Rec) -> Rec#market_data_incremental_refresh{exec_inst = V};
-    ({seller_days,V}, Rec) -> Rec#market_data_incremental_refresh{seller_days = fix:parse_num(V)};
-    ({order_id,V}, Rec) -> Rec#market_data_incremental_refresh{order_id = V};
-    ({quote_entry_id,V}, Rec) -> Rec#market_data_incremental_refresh{quote_entry_id = V};
-    ({md_entry_buyer,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_buyer = V};
-    ({md_entry_seller,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_seller = V};
-    ({number_of_orders,V}, Rec) -> Rec#market_data_incremental_refresh{number_of_orders = fix:parse_num(V)};
-    ({md_entry_position_no,V}, Rec) -> Rec#market_data_incremental_refresh{md_entry_position_no = fix:parse_num(V)};
-    ({scope,V}, Rec) -> Rec#market_data_incremental_refresh{scope = V};
-    ({price_delta,V}, Rec) -> Rec#market_data_incremental_refresh{price_delta = V};
-    ({net_chg_prev_day,V}, Rec) -> Rec#market_data_incremental_refresh{net_chg_prev_day = V};
-    ({text,V}, Rec) -> Rec#market_data_incremental_refresh{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_incremental_refresh{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#market_data_incremental_refresh{encoded_text = V};
-    ({appl_queue_depth,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_depth = fix:parse_num(V)};
-    ({appl_queue_resolution,V}, Rec) -> Rec#market_data_incremental_refresh{appl_queue_resolution = fix:parse_num(V)};
-    ({K,V}, #market_data_incremental_refresh{fields = F} = Rec) -> Rec#market_data_incremental_refresh{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#market_data_incremental_refresh{fields = lists:reverse(F)}.
-
-decode_message_market_data_request_reject(Message, #market_data_request_reject{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #market_data_request_reject{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#market_data_request_reject{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#market_data_request_reject{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#market_data_request_reject{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#market_data_request_reject{sending_time = V};
-    ({md_req_id,V}, Rec) -> Rec#market_data_request_reject{md_req_id = V};
-    ({md_req_rej_reason,V}, Rec) -> Rec#market_data_request_reject{md_req_rej_reason = V};
-    ({alt_md_source_id,V}, Rec) -> Rec#market_data_request_reject{alt_md_source_id = V};
-    ({text,V}, Rec) -> Rec#market_data_request_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#market_data_request_reject{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#market_data_request_reject{encoded_text = V};
-    ({K,V}, #market_data_request_reject{fields = F} = Rec) -> Rec#market_data_request_reject{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#market_data_request_reject{fields = lists:reverse(F)}.
-
-decode_message_quote_cancel(Message, #quote_cancel{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_cancel{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_cancel{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_cancel{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_cancel{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_cancel{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#quote_cancel{quote_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#quote_cancel{quote_id = V};
-    ({quote_cancel_type,V}, Rec) -> Rec#quote_cancel{quote_cancel_type = fix:parse_num(V)};
-    ({quote_response_level,V}, Rec) -> Rec#quote_cancel{quote_response_level = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#quote_cancel{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_cancel{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_cancel{account_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote_cancel{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_cancel{trading_session_sub_id = V};
-    ({K,V}, #quote_cancel{fields = F} = Rec) -> Rec#quote_cancel{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_cancel{fields = lists:reverse(F)}.
-
-decode_message_quote_status_request(Message, #quote_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_status_request{sending_time = V};
-    ({quote_status_req_id,V}, Rec) -> Rec#quote_status_request{quote_status_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#quote_status_request{quote_id = V};
-    ({account,V}, Rec) -> Rec#quote_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_status_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_status_request{account_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote_status_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_status_request{trading_session_sub_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#quote_status_request{subscription_request_type = V};
-    ({K,V}, #quote_status_request{fields = F} = Rec) -> Rec#quote_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_status_request{fields = lists:reverse(F)}.
-
-decode_message_mass_quote_acknowledgement(Message, #mass_quote_acknowledgement{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #mass_quote_acknowledgement{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#mass_quote_acknowledgement{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#mass_quote_acknowledgement{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#mass_quote_acknowledgement{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#mass_quote_acknowledgement{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_id = V};
-    ({quote_status,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_status = fix:parse_num(V)};
-    ({quote_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_reject_reason = fix:parse_num(V)};
-    ({quote_response_level,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_response_level = fix:parse_num(V)};
-    ({quote_type,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_type = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#mass_quote_acknowledgement{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#mass_quote_acknowledgement{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#mass_quote_acknowledgement{account_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#mass_quote_acknowledgement{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#mass_quote_acknowledgement{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#mass_quote_acknowledgement{encoded_text = V};
-    ({quote_set_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_set_id = V};
-    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote_acknowledgement{tot_no_quote_entries = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#mass_quote_acknowledgement{last_fragment = V == <<"Y">>};
-    ({quote_entry_id,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_entry_id = V};
-    ({bid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_px = fix:parse_num(V)};
-    ({offer_px,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_px = fix:parse_num(V)};
-    ({bid_size,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_size = fix:parse_num(V)};
-    ({offer_size,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_size = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#mass_quote_acknowledgement{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_spot_rate = fix:parse_num(V)};
-    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_spot_rate = fix:parse_num(V)};
-    ({bid_forward_points,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_forward_points = V};
-    ({offer_forward_points,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#mass_quote_acknowledgement{mid_px = fix:parse_num(V)};
-    ({bid_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_yield = V};
-    ({mid_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{mid_yield = V};
-    ({offer_yield,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_yield = V};
-    ({transact_time,V}, Rec) -> Rec#mass_quote_acknowledgement{transact_time = V};
-    ({trading_session_id,V}, Rec) -> Rec#mass_quote_acknowledgement{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#mass_quote_acknowledgement{trading_session_sub_id = V};
-    ({settl_date,V}, Rec) -> Rec#mass_quote_acknowledgement{settl_date = V};
-    ({ord_type,V}, Rec) -> Rec#mass_quote_acknowledgement{ord_type = V};
-    ({settl_date2,V}, Rec) -> Rec#mass_quote_acknowledgement{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#mass_quote_acknowledgement{order_qty2 = fix:parse_num(V)};
-    ({bid_forward_points2,V}, Rec) -> Rec#mass_quote_acknowledgement{bid_forward_points2 = V};
-    ({offer_forward_points2,V}, Rec) -> Rec#mass_quote_acknowledgement{offer_forward_points2 = V};
-    ({currency,V}, Rec) -> Rec#mass_quote_acknowledgement{currency = V};
-    ({quote_entry_reject_reason,V}, Rec) -> Rec#mass_quote_acknowledgement{quote_entry_reject_reason = fix:parse_num(V)};
-    ({K,V}, #mass_quote_acknowledgement{fields = F} = Rec) -> Rec#mass_quote_acknowledgement{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#mass_quote_acknowledgement{fields = lists:reverse(F)}.
-
-decode_message_security_definition_request(Message, #security_definition_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_definition_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_definition_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_definition_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_definition_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_definition_request{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_definition_request{security_req_id = V};
-    ({security_request_type,V}, Rec) -> Rec#security_definition_request{security_request_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#security_definition_request{currency = V};
-    ({text,V}, Rec) -> Rec#security_definition_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_definition_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_definition_request{encoded_text = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_definition_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_definition_request{trading_session_sub_id = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_definition_request{expiration_cycle = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#security_definition_request{subscription_request_type = V};
-    ({K,V}, #security_definition_request{fields = F} = Rec) -> Rec#security_definition_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_definition_request{fields = lists:reverse(F)}.
-
-decode_message_security_definition(Message, #security_definition{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_definition{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_definition{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_definition{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_definition{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_definition{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_definition{security_req_id = V};
-    ({security_response_id,V}, Rec) -> Rec#security_definition{security_response_id = V};
-    ({security_response_type,V}, Rec) -> Rec#security_definition{security_response_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#security_definition{currency = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_definition{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_definition{trading_session_sub_id = V};
-    ({text,V}, Rec) -> Rec#security_definition{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_definition{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_definition{encoded_text = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_definition{expiration_cycle = fix:parse_num(V)};
-    ({round_lot,V}, Rec) -> Rec#security_definition{round_lot = fix:parse_num(V)};
-    ({min_trade_vol,V}, Rec) -> Rec#security_definition{min_trade_vol = fix:parse_num(V)};
-    ({K,V}, #security_definition{fields = F} = Rec) -> Rec#security_definition{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_definition{fields = lists:reverse(F)}.
-
-decode_message_security_status_request(Message, #security_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_status_request{sending_time = V};
-    ({security_status_req_id,V}, Rec) -> Rec#security_status_request{security_status_req_id = V};
-    ({currency,V}, Rec) -> Rec#security_status_request{currency = V};
-    ({subscription_request_type,V}, Rec) -> Rec#security_status_request{subscription_request_type = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_status_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_status_request{trading_session_sub_id = V};
-    ({K,V}, #security_status_request{fields = F} = Rec) -> Rec#security_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_status_request{fields = lists:reverse(F)}.
-
-decode_message_security_status(Message, #security_status{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_status{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_status{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_status{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_status{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_status{sending_time = V};
-    ({security_status_req_id,V}, Rec) -> Rec#security_status{security_status_req_id = V};
-    ({currency,V}, Rec) -> Rec#security_status{currency = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_status{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_status{trading_session_sub_id = V};
-    ({unsolicited_indicator,V}, Rec) -> Rec#security_status{unsolicited_indicator = V == <<"Y">>};
-    ({security_trading_status,V}, Rec) -> Rec#security_status{security_trading_status = fix:parse_num(V)};
-    ({financial_status,V}, Rec) -> Rec#security_status{financial_status = V};
-    ({corporate_action,V}, Rec) -> Rec#security_status{corporate_action = V};
-    ({halt_reason_char,V}, Rec) -> Rec#security_status{halt_reason_char = V};
-    ({in_view_of_common,V}, Rec) -> Rec#security_status{in_view_of_common = V == <<"Y">>};
-    ({due_to_related,V}, Rec) -> Rec#security_status{due_to_related = V == <<"Y">>};
-    ({buy_volume,V}, Rec) -> Rec#security_status{buy_volume = fix:parse_num(V)};
-    ({sell_volume,V}, Rec) -> Rec#security_status{sell_volume = fix:parse_num(V)};
-    ({high_px,V}, Rec) -> Rec#security_status{high_px = fix:parse_num(V)};
-    ({low_px,V}, Rec) -> Rec#security_status{low_px = fix:parse_num(V)};
-    ({last_px,V}, Rec) -> Rec#security_status{last_px = fix:parse_num(V)};
-    ({transact_time,V}, Rec) -> Rec#security_status{transact_time = V};
-    ({adjustment,V}, Rec) -> Rec#security_status{adjustment = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#security_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_status{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_status{encoded_text = V};
-    ({K,V}, #security_status{fields = F} = Rec) -> Rec#security_status{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_status{fields = lists:reverse(F)}.
-
-decode_message_trading_session_status_request(Message, #trading_session_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trading_session_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trading_session_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trading_session_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trading_session_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trading_session_status_request{sending_time = V};
-    ({trad_ses_req_id,V}, Rec) -> Rec#trading_session_status_request{trad_ses_req_id = V};
-    ({trading_session_id,V}, Rec) -> Rec#trading_session_status_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#trading_session_status_request{trading_session_sub_id = V};
-    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status_request{trad_ses_method = fix:parse_num(V)};
-    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status_request{trad_ses_mode = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#trading_session_status_request{subscription_request_type = V};
-    ({K,V}, #trading_session_status_request{fields = F} = Rec) -> Rec#trading_session_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trading_session_status_request{fields = lists:reverse(F)}.
-
-decode_message_trading_session_status(Message, #trading_session_status{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trading_session_status{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trading_session_status{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trading_session_status{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trading_session_status{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trading_session_status{sending_time = V};
-    ({trad_ses_req_id,V}, Rec) -> Rec#trading_session_status{trad_ses_req_id = V};
-    ({trading_session_id,V}, Rec) -> Rec#trading_session_status{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#trading_session_status{trading_session_sub_id = V};
-    ({trad_ses_method,V}, Rec) -> Rec#trading_session_status{trad_ses_method = fix:parse_num(V)};
-    ({trad_ses_mode,V}, Rec) -> Rec#trading_session_status{trad_ses_mode = fix:parse_num(V)};
-    ({unsolicited_indicator,V}, Rec) -> Rec#trading_session_status{unsolicited_indicator = V == <<"Y">>};
-    ({trad_ses_status,V}, Rec) -> Rec#trading_session_status{trad_ses_status = fix:parse_num(V)};
-    ({trad_ses_status_rej_reason,V}, Rec) -> Rec#trading_session_status{trad_ses_status_rej_reason = fix:parse_num(V)};
-    ({trad_ses_start_time,V}, Rec) -> Rec#trading_session_status{trad_ses_start_time = V};
-    ({trad_ses_open_time,V}, Rec) -> Rec#trading_session_status{trad_ses_open_time = V};
-    ({trad_ses_pre_close_time,V}, Rec) -> Rec#trading_session_status{trad_ses_pre_close_time = V};
-    ({trad_ses_close_time,V}, Rec) -> Rec#trading_session_status{trad_ses_close_time = V};
-    ({trad_ses_end_time,V}, Rec) -> Rec#trading_session_status{trad_ses_end_time = V};
-    ({total_volume_traded,V}, Rec) -> Rec#trading_session_status{total_volume_traded = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#trading_session_status{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trading_session_status{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#trading_session_status{encoded_text = V};
-    ({K,V}, #trading_session_status{fields = F} = Rec) -> Rec#trading_session_status{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trading_session_status{fields = lists:reverse(F)}.
-
-decode_message_mass_quote(Message, #mass_quote{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #mass_quote{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#mass_quote{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#mass_quote{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#mass_quote{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#mass_quote{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#mass_quote{quote_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#mass_quote{quote_id = V};
-    ({quote_type,V}, Rec) -> Rec#mass_quote{quote_type = fix:parse_num(V)};
-    ({quote_response_level,V}, Rec) -> Rec#mass_quote{quote_response_level = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#mass_quote{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#mass_quote{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#mass_quote{account_type = fix:parse_num(V)};
-    ({def_bid_size,V}, Rec) -> Rec#mass_quote{def_bid_size = fix:parse_num(V)};
-    ({def_offer_size,V}, Rec) -> Rec#mass_quote{def_offer_size = fix:parse_num(V)};
-    ({quote_set_id,V}, Rec) -> Rec#mass_quote{quote_set_id = V};
-    ({quote_set_valid_until_time,V}, Rec) -> Rec#mass_quote{quote_set_valid_until_time = V};
-    ({tot_no_quote_entries,V}, Rec) -> Rec#mass_quote{tot_no_quote_entries = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#mass_quote{last_fragment = V == <<"Y">>};
-    ({quote_entry_id,V}, Rec) -> Rec#mass_quote{quote_entry_id = V};
-    ({bid_px,V}, Rec) -> Rec#mass_quote{bid_px = fix:parse_num(V)};
-    ({offer_px,V}, Rec) -> Rec#mass_quote{offer_px = fix:parse_num(V)};
-    ({bid_size,V}, Rec) -> Rec#mass_quote{bid_size = fix:parse_num(V)};
-    ({offer_size,V}, Rec) -> Rec#mass_quote{offer_size = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#mass_quote{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#mass_quote{bid_spot_rate = fix:parse_num(V)};
-    ({offer_spot_rate,V}, Rec) -> Rec#mass_quote{offer_spot_rate = fix:parse_num(V)};
-    ({bid_forward_points,V}, Rec) -> Rec#mass_quote{bid_forward_points = V};
-    ({offer_forward_points,V}, Rec) -> Rec#mass_quote{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#mass_quote{mid_px = fix:parse_num(V)};
-    ({bid_yield,V}, Rec) -> Rec#mass_quote{bid_yield = V};
-    ({mid_yield,V}, Rec) -> Rec#mass_quote{mid_yield = V};
-    ({offer_yield,V}, Rec) -> Rec#mass_quote{offer_yield = V};
-    ({transact_time,V}, Rec) -> Rec#mass_quote{transact_time = V};
-    ({trading_session_id,V}, Rec) -> Rec#mass_quote{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#mass_quote{trading_session_sub_id = V};
-    ({settl_date,V}, Rec) -> Rec#mass_quote{settl_date = V};
-    ({ord_type,V}, Rec) -> Rec#mass_quote{ord_type = V};
-    ({settl_date2,V}, Rec) -> Rec#mass_quote{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#mass_quote{order_qty2 = fix:parse_num(V)};
-    ({bid_forward_points2,V}, Rec) -> Rec#mass_quote{bid_forward_points2 = V};
-    ({offer_forward_points2,V}, Rec) -> Rec#mass_quote{offer_forward_points2 = V};
-    ({currency,V}, Rec) -> Rec#mass_quote{currency = V};
-    ({K,V}, #mass_quote{fields = F} = Rec) -> Rec#mass_quote{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#mass_quote{fields = lists:reverse(F)}.
-
-decode_message_business_message_reject(Message, #business_message_reject{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #business_message_reject{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#business_message_reject{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#business_message_reject{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#business_message_reject{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#business_message_reject{sending_time = V};
-    ({ref_seq_num,V}, Rec) -> Rec#business_message_reject{ref_seq_num = fix:parse_num(V)};
-    ({ref_msg_type,V}, Rec) -> Rec#business_message_reject{ref_msg_type = V};
-    ({business_reject_ref_id,V}, Rec) -> Rec#business_message_reject{business_reject_ref_id = V};
-    ({business_reject_reason,V}, Rec) -> Rec#business_message_reject{business_reject_reason = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#business_message_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#business_message_reject{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#business_message_reject{encoded_text = V};
-    ({K,V}, #business_message_reject{fields = F} = Rec) -> Rec#business_message_reject{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#business_message_reject{fields = lists:reverse(F)}.
-
-decode_message_bid_request(Message, #bid_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #bid_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#bid_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#bid_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#bid_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#bid_request{sending_time = V};
-    ({bid_id,V}, Rec) -> Rec#bid_request{bid_id = V};
-    ({client_bid_id,V}, Rec) -> Rec#bid_request{client_bid_id = V};
-    ({bid_request_trans_type,V}, Rec) -> Rec#bid_request{bid_request_trans_type = V};
-    ({list_name,V}, Rec) -> Rec#bid_request{list_name = V};
-    ({tot_no_related_sym,V}, Rec) -> Rec#bid_request{tot_no_related_sym = fix:parse_num(V)};
-    ({bid_type,V}, Rec) -> Rec#bid_request{bid_type = fix:parse_num(V)};
-    ({num_tickets,V}, Rec) -> Rec#bid_request{num_tickets = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#bid_request{currency = V};
-    ({side_value1,V}, Rec) -> Rec#bid_request{side_value1 = V};
-    ({side_value2,V}, Rec) -> Rec#bid_request{side_value2 = V};
-    ({bid_descriptor_type,V}, Rec) -> Rec#bid_request{bid_descriptor_type = fix:parse_num(V)};
-    ({bid_descriptor,V}, Rec) -> Rec#bid_request{bid_descriptor = V};
-    ({side_value_ind,V}, Rec) -> Rec#bid_request{side_value_ind = fix:parse_num(V)};
-    ({liquidity_value,V}, Rec) -> Rec#bid_request{liquidity_value = V};
-    ({liquidity_num_securities,V}, Rec) -> Rec#bid_request{liquidity_num_securities = fix:parse_num(V)};
-    ({liquidity_pct_low,V}, Rec) -> Rec#bid_request{liquidity_pct_low = V};
-    ({liquidity_pct_high,V}, Rec) -> Rec#bid_request{liquidity_pct_high = V};
-    ({efp_tracking_error,V}, Rec) -> Rec#bid_request{efp_tracking_error = V};
-    ({fair_value,V}, Rec) -> Rec#bid_request{fair_value = V};
-    ({outside_index_pct,V}, Rec) -> Rec#bid_request{outside_index_pct = V};
-    ({value_of_futures,V}, Rec) -> Rec#bid_request{value_of_futures = V};
-    ({list_id,V}, Rec) -> Rec#bid_request{list_id = V};
-    ({side,V}, Rec) -> Rec#bid_request{side = V};
-    ({trading_session_id,V}, Rec) -> Rec#bid_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#bid_request{trading_session_sub_id = V};
-    ({net_gross_ind,V}, Rec) -> Rec#bid_request{net_gross_ind = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#bid_request{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#bid_request{settl_date = V};
-    ({account,V}, Rec) -> Rec#bid_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#bid_request{acct_id_source = fix:parse_num(V)};
-    ({liquidity_ind_type,V}, Rec) -> Rec#bid_request{liquidity_ind_type = fix:parse_num(V)};
-    ({wt_average_liquidity,V}, Rec) -> Rec#bid_request{wt_average_liquidity = V};
-    ({exchange_for_physical,V}, Rec) -> Rec#bid_request{exchange_for_physical = V == <<"Y">>};
-    ({out_main_cntry_u_index,V}, Rec) -> Rec#bid_request{out_main_cntry_u_index = V};
-    ({cross_percent,V}, Rec) -> Rec#bid_request{cross_percent = V};
-    ({prog_rpt_reqs,V}, Rec) -> Rec#bid_request{prog_rpt_reqs = fix:parse_num(V)};
-    ({prog_period_interval,V}, Rec) -> Rec#bid_request{prog_period_interval = fix:parse_num(V)};
-    ({inc_tax_ind,V}, Rec) -> Rec#bid_request{inc_tax_ind = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#bid_request{forex_req = V == <<"Y">>};
-    ({num_bidders,V}, Rec) -> Rec#bid_request{num_bidders = fix:parse_num(V)};
-    ({trade_date,V}, Rec) -> Rec#bid_request{trade_date = V};
-    ({bid_trade_type,V}, Rec) -> Rec#bid_request{bid_trade_type = V};
-    ({basis_px_type,V}, Rec) -> Rec#bid_request{basis_px_type = V};
-    ({strike_time,V}, Rec) -> Rec#bid_request{strike_time = V};
-    ({text,V}, Rec) -> Rec#bid_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#bid_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#bid_request{encoded_text = V};
-    ({K,V}, #bid_request{fields = F} = Rec) -> Rec#bid_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#bid_request{fields = lists:reverse(F)}.
-
-decode_message_bid_response(Message, #bid_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #bid_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#bid_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#bid_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#bid_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#bid_response{sending_time = V};
-    ({bid_id,V}, Rec) -> Rec#bid_response{bid_id = V};
-    ({client_bid_id,V}, Rec) -> Rec#bid_response{client_bid_id = V};
-    ({list_id,V}, Rec) -> Rec#bid_response{list_id = V};
-    ({country,V}, Rec) -> Rec#bid_response{country = V};
-    ({side,V}, Rec) -> Rec#bid_response{side = V};
-    ({price,V}, Rec) -> Rec#bid_response{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#bid_response{price_type = fix:parse_num(V)};
-    ({fair_value,V}, Rec) -> Rec#bid_response{fair_value = V};
-    ({net_gross_ind,V}, Rec) -> Rec#bid_response{net_gross_ind = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#bid_response{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#bid_response{settl_date = V};
-    ({trading_session_id,V}, Rec) -> Rec#bid_response{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#bid_response{trading_session_sub_id = V};
-    ({text,V}, Rec) -> Rec#bid_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#bid_response{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#bid_response{encoded_text = V};
-    ({K,V}, #bid_response{fields = F} = Rec) -> Rec#bid_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#bid_response{fields = lists:reverse(F)}.
-
-decode_message_list_strike_price(Message, #list_strike_price{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #list_strike_price{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#list_strike_price{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#list_strike_price{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#list_strike_price{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#list_strike_price{sending_time = V};
-    ({list_id,V}, Rec) -> Rec#list_strike_price{list_id = V};
-    ({tot_no_strikes,V}, Rec) -> Rec#list_strike_price{tot_no_strikes = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#list_strike_price{last_fragment = V == <<"Y">>};
-    ({prev_close_px,V}, Rec) -> Rec#list_strike_price{prev_close_px = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#list_strike_price{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#list_strike_price{secondary_cl_ord_id = V};
-    ({side,V}, Rec) -> Rec#list_strike_price{side = V};
-    ({price,V}, Rec) -> Rec#list_strike_price{price = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#list_strike_price{currency = V};
-    ({text,V}, Rec) -> Rec#list_strike_price{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#list_strike_price{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#list_strike_price{encoded_text = V};
-    ({K,V}, #list_strike_price{fields = F} = Rec) -> Rec#list_strike_price{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#list_strike_price{fields = lists:reverse(F)}.
-
-decode_message_registration_instructions(Message, #registration_instructions{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #registration_instructions{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#registration_instructions{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#registration_instructions{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#registration_instructions{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#registration_instructions{sending_time = V};
-    ({regist_id,V}, Rec) -> Rec#registration_instructions{regist_id = V};
-    ({regist_trans_type,V}, Rec) -> Rec#registration_instructions{regist_trans_type = V};
-    ({regist_ref_id,V}, Rec) -> Rec#registration_instructions{regist_ref_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#registration_instructions{cl_ord_id = V};
-    ({account,V}, Rec) -> Rec#registration_instructions{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#registration_instructions{acct_id_source = fix:parse_num(V)};
-    ({regist_acct_type,V}, Rec) -> Rec#registration_instructions{regist_acct_type = V};
-    ({tax_advantage_type,V}, Rec) -> Rec#registration_instructions{tax_advantage_type = fix:parse_num(V)};
-    ({ownership_type,V}, Rec) -> Rec#registration_instructions{ownership_type = V};
-    ({regist_dtls,V}, Rec) -> Rec#registration_instructions{regist_dtls = V};
-    ({regist_email,V}, Rec) -> Rec#registration_instructions{regist_email = V};
-    ({mailing_dtls,V}, Rec) -> Rec#registration_instructions{mailing_dtls = V};
-    ({mailing_inst,V}, Rec) -> Rec#registration_instructions{mailing_inst = V};
-    ({owner_type,V}, Rec) -> Rec#registration_instructions{owner_type = fix:parse_num(V)};
-    ({date_of_birth,V}, Rec) -> Rec#registration_instructions{date_of_birth = V};
-    ({investor_country_of_residence,V}, Rec) -> Rec#registration_instructions{investor_country_of_residence = V};
-    ({distrib_payment_method,V}, Rec) -> Rec#registration_instructions{distrib_payment_method = fix:parse_num(V)};
-    ({distrib_percentage,V}, Rec) -> Rec#registration_instructions{distrib_percentage = V};
-    ({cash_distrib_curr,V}, Rec) -> Rec#registration_instructions{cash_distrib_curr = V};
-    ({cash_distrib_agent_name,V}, Rec) -> Rec#registration_instructions{cash_distrib_agent_name = V};
-    ({cash_distrib_agent_code,V}, Rec) -> Rec#registration_instructions{cash_distrib_agent_code = V};
-    ({cash_distrib_agent_acct_number,V}, Rec) -> Rec#registration_instructions{cash_distrib_agent_acct_number = V};
-    ({cash_distrib_pay_ref,V}, Rec) -> Rec#registration_instructions{cash_distrib_pay_ref = V};
-    ({cash_distrib_agent_acct_name,V}, Rec) -> Rec#registration_instructions{cash_distrib_agent_acct_name = V};
-    ({K,V}, #registration_instructions{fields = F} = Rec) -> Rec#registration_instructions{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#registration_instructions{fields = lists:reverse(F)}.
-
-decode_message_registration_instructions_response(Message, #registration_instructions_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #registration_instructions_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#registration_instructions_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#registration_instructions_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#registration_instructions_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#registration_instructions_response{sending_time = V};
-    ({regist_id,V}, Rec) -> Rec#registration_instructions_response{regist_id = V};
-    ({regist_trans_type,V}, Rec) -> Rec#registration_instructions_response{regist_trans_type = V};
-    ({regist_ref_id,V}, Rec) -> Rec#registration_instructions_response{regist_ref_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#registration_instructions_response{cl_ord_id = V};
-    ({account,V}, Rec) -> Rec#registration_instructions_response{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#registration_instructions_response{acct_id_source = fix:parse_num(V)};
-    ({regist_status,V}, Rec) -> Rec#registration_instructions_response{regist_status = V};
-    ({regist_rej_reason_code,V}, Rec) -> Rec#registration_instructions_response{regist_rej_reason_code = fix:parse_num(V)};
-    ({regist_rej_reason_text,V}, Rec) -> Rec#registration_instructions_response{regist_rej_reason_text = V};
-    ({K,V}, #registration_instructions_response{fields = F} = Rec) -> Rec#registration_instructions_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#registration_instructions_response{fields = lists:reverse(F)}.
-
-decode_message_order_mass_cancel_request(Message, #order_mass_cancel_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_mass_cancel_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_mass_cancel_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_mass_cancel_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_mass_cancel_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_mass_cancel_request{sending_time = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_request{secondary_cl_ord_id = V};
-    ({mass_cancel_request_type,V}, Rec) -> Rec#order_mass_cancel_request{mass_cancel_request_type = V};
-    ({trading_session_id,V}, Rec) -> Rec#order_mass_cancel_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#order_mass_cancel_request{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#order_mass_cancel_request{side = V};
-    ({transact_time,V}, Rec) -> Rec#order_mass_cancel_request{transact_time = V};
-    ({text,V}, Rec) -> Rec#order_mass_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#order_mass_cancel_request{encoded_text = V};
-    ({K,V}, #order_mass_cancel_request{fields = F} = Rec) -> Rec#order_mass_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_mass_cancel_request{fields = lists:reverse(F)}.
-
-decode_message_order_mass_cancel_report(Message, #order_mass_cancel_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_mass_cancel_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_mass_cancel_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_mass_cancel_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_mass_cancel_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_mass_cancel_report{sending_time = V};
-    ({cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{secondary_cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#order_mass_cancel_report{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#order_mass_cancel_report{secondary_order_id = V};
-    ({mass_cancel_request_type,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_request_type = V};
-    ({mass_cancel_response,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_response = V};
-    ({mass_cancel_reject_reason,V}, Rec) -> Rec#order_mass_cancel_report{mass_cancel_reject_reason = V};
-    ({total_affected_orders,V}, Rec) -> Rec#order_mass_cancel_report{total_affected_orders = fix:parse_num(V)};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#order_mass_cancel_report{orig_cl_ord_id = V};
-    ({affected_order_id,V}, Rec) -> Rec#order_mass_cancel_report{affected_order_id = V};
-    ({affected_secondary_order_id,V}, Rec) -> Rec#order_mass_cancel_report{affected_secondary_order_id = V};
-    ({trading_session_id,V}, Rec) -> Rec#order_mass_cancel_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#order_mass_cancel_report{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#order_mass_cancel_report{side = V};
-    ({transact_time,V}, Rec) -> Rec#order_mass_cancel_report{transact_time = V};
-    ({text,V}, Rec) -> Rec#order_mass_cancel_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#order_mass_cancel_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#order_mass_cancel_report{encoded_text = V};
-    ({K,V}, #order_mass_cancel_report{fields = F} = Rec) -> Rec#order_mass_cancel_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_mass_cancel_report{fields = lists:reverse(F)}.
-
-decode_message_new_order_cross(Message, #new_order_cross{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #new_order_cross{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#new_order_cross{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#new_order_cross{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#new_order_cross{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#new_order_cross{sending_time = V};
-    ({cross_id,V}, Rec) -> Rec#new_order_cross{cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#new_order_cross{cross_type = fix:parse_num(V)};
-    ({cross_prioritization,V}, Rec) -> Rec#new_order_cross{cross_prioritization = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#new_order_cross{side = V};
-    ({cl_ord_id,V}, Rec) -> Rec#new_order_cross{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_cross{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#new_order_cross{cl_ord_link_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#new_order_cross{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#new_order_cross{trade_date = V};
-    ({account,V}, Rec) -> Rec#new_order_cross{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_cross{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#new_order_cross{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#new_order_cross{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#new_order_cross{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#new_order_cross{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#new_order_cross{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#new_order_cross{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_cross{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#new_order_cross{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#new_order_cross{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_cross{alloc_qty = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#new_order_cross{qty_type = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#new_order_cross{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#new_order_cross{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_cross{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#new_order_cross{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#new_order_cross{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_cross{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#new_order_cross{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_cross{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#new_order_cross{encoded_text = V};
-    ({position_effect,V}, Rec) -> Rec#new_order_cross{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_cross{covered_or_uncovered = fix:parse_num(V)};
-    ({cash_margin,V}, Rec) -> Rec#new_order_cross{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_cross{clearing_fee_indicator = V};
-    ({solicited_flag,V}, Rec) -> Rec#new_order_cross{solicited_flag = V == <<"Y">>};
-    ({side_compliance_id,V}, Rec) -> Rec#new_order_cross{side_compliance_id = V};
-    ({settl_type,V}, Rec) -> Rec#new_order_cross{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#new_order_cross{settl_date = V};
-    ({handl_inst,V}, Rec) -> Rec#new_order_cross{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#new_order_cross{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_cross{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#new_order_cross{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#new_order_cross{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#new_order_cross{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#new_order_cross{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#new_order_cross{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_cross{prev_close_px = fix:parse_num(V)};
-    ({locate_reqd,V}, Rec) -> Rec#new_order_cross{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#new_order_cross{transact_time = V};
-    ({ord_type,V}, Rec) -> Rec#new_order_cross{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_cross{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#new_order_cross{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#new_order_cross{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#new_order_cross{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#new_order_cross{compliance_id = V};
-    ({ioi_id,V}, Rec) -> Rec#new_order_cross{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#new_order_cross{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#new_order_cross{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#new_order_cross{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#new_order_cross{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#new_order_cross{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_cross{gt_booking_inst = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#new_order_cross{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#new_order_cross{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#new_order_cross{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#new_order_cross{participation_rate = V};
-    ({cancellation_rights,V}, Rec) -> Rec#new_order_cross{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#new_order_cross{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#new_order_cross{regist_id = V};
-    ({designation,V}, Rec) -> Rec#new_order_cross{designation = V};
-    ({K,V}, #new_order_cross{fields = F} = Rec) -> Rec#new_order_cross{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#new_order_cross{fields = lists:reverse(F)}.
-
-decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_replace_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #cross_order_cancel_replace_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#cross_order_cancel_replace_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_id = V};
-    ({cross_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_id = V};
-    ({orig_cross_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_type = fix:parse_num(V)};
-    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_replace_request{cross_prioritization = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#cross_order_cancel_replace_request{side = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{orig_cl_ord_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{cl_ord_link_id = V};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{orig_ord_mod_time = V};
-    ({trade_origination_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{trade_date = V};
-    ({account,V}, Rec) -> Rec#cross_order_cancel_replace_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#cross_order_cancel_replace_request{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#cross_order_cancel_replace_request{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{alloc_qty = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{qty_type = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#cross_order_cancel_replace_request{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#cross_order_cancel_replace_request{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#cross_order_cancel_replace_request{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#cross_order_cancel_replace_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_replace_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#cross_order_cancel_replace_request{encoded_text = V};
-    ({position_effect,V}, Rec) -> Rec#cross_order_cancel_replace_request{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#cross_order_cancel_replace_request{covered_or_uncovered = fix:parse_num(V)};
-    ({cash_margin,V}, Rec) -> Rec#cross_order_cancel_replace_request{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#cross_order_cancel_replace_request{clearing_fee_indicator = V};
-    ({solicited_flag,V}, Rec) -> Rec#cross_order_cancel_replace_request{solicited_flag = V == <<"Y">>};
-    ({side_compliance_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{side_compliance_id = V};
-    ({settl_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{settl_date = V};
-    ({handl_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#cross_order_cancel_replace_request{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#cross_order_cancel_replace_request{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#cross_order_cancel_replace_request{process_code = V};
-    ({prev_close_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{prev_close_px = fix:parse_num(V)};
-    ({locate_reqd,V}, Rec) -> Rec#cross_order_cancel_replace_request{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{transact_time = V};
-    ({ord_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#cross_order_cancel_replace_request{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#cross_order_cancel_replace_request{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#cross_order_cancel_replace_request{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#cross_order_cancel_replace_request{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{compliance_id = V};
-    ({ioi_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#cross_order_cancel_replace_request{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#cross_order_cancel_replace_request{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#cross_order_cancel_replace_request{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#cross_order_cancel_replace_request{gt_booking_inst = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#cross_order_cancel_replace_request{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#cross_order_cancel_replace_request{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#cross_order_cancel_replace_request{participation_rate = V};
-    ({cancellation_rights,V}, Rec) -> Rec#cross_order_cancel_replace_request{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#cross_order_cancel_replace_request{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#cross_order_cancel_replace_request{regist_id = V};
-    ({designation,V}, Rec) -> Rec#cross_order_cancel_replace_request{designation = V};
-    ({K,V}, #cross_order_cancel_replace_request{fields = F} = Rec) -> Rec#cross_order_cancel_replace_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#cross_order_cancel_replace_request{fields = lists:reverse(F)}.
-
-decode_message_cross_order_cancel_request(Message, #cross_order_cancel_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #cross_order_cancel_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#cross_order_cancel_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#cross_order_cancel_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#cross_order_cancel_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#cross_order_cancel_request{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#cross_order_cancel_request{order_id = V};
-    ({cross_id,V}, Rec) -> Rec#cross_order_cancel_request{cross_id = V};
-    ({orig_cross_id,V}, Rec) -> Rec#cross_order_cancel_request{orig_cross_id = V};
-    ({cross_type,V}, Rec) -> Rec#cross_order_cancel_request{cross_type = fix:parse_num(V)};
-    ({cross_prioritization,V}, Rec) -> Rec#cross_order_cancel_request{cross_prioritization = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#cross_order_cancel_request{side = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_request{orig_cl_ord_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_request{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#cross_order_cancel_request{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#cross_order_cancel_request{cl_ord_link_id = V};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#cross_order_cancel_request{orig_ord_mod_time = V};
-    ({trade_origination_date,V}, Rec) -> Rec#cross_order_cancel_request{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#cross_order_cancel_request{trade_date = V};
-    ({compliance_id,V}, Rec) -> Rec#cross_order_cancel_request{compliance_id = V};
-    ({text,V}, Rec) -> Rec#cross_order_cancel_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#cross_order_cancel_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#cross_order_cancel_request{encoded_text = V};
-    ({transact_time,V}, Rec) -> Rec#cross_order_cancel_request{transact_time = V};
-    ({K,V}, #cross_order_cancel_request{fields = F} = Rec) -> Rec#cross_order_cancel_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#cross_order_cancel_request{fields = lists:reverse(F)}.
-
-decode_message_security_type_request(Message, #security_type_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_type_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_type_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_type_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_type_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_type_request{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_type_request{security_req_id = V};
-    ({text,V}, Rec) -> Rec#security_type_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_type_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_type_request{encoded_text = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_type_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_type_request{trading_session_sub_id = V};
-    ({product,V}, Rec) -> Rec#security_type_request{product = fix:parse_num(V)};
-    ({security_type,V}, Rec) -> Rec#security_type_request{security_type = V};
-    ({security_sub_type,V}, Rec) -> Rec#security_type_request{security_sub_type = V};
-    ({K,V}, #security_type_request{fields = F} = Rec) -> Rec#security_type_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_type_request{fields = lists:reverse(F)}.
-
-decode_message_security_types(Message, #security_types{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_types{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_types{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_types{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_types{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_types{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_types{security_req_id = V};
-    ({security_response_id,V}, Rec) -> Rec#security_types{security_response_id = V};
-    ({security_response_type,V}, Rec) -> Rec#security_types{security_response_type = fix:parse_num(V)};
-    ({tot_no_security_types,V}, Rec) -> Rec#security_types{tot_no_security_types = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#security_types{last_fragment = V == <<"Y">>};
-    ({security_type,V}, Rec) -> Rec#security_types{security_type = V};
-    ({security_sub_type,V}, Rec) -> Rec#security_types{security_sub_type = V};
-    ({product,V}, Rec) -> Rec#security_types{product = fix:parse_num(V)};
-    ({cfi_code,V}, Rec) -> Rec#security_types{cfi_code = V};
-    ({text,V}, Rec) -> Rec#security_types{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_types{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_types{encoded_text = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_types{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_types{trading_session_sub_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#security_types{subscription_request_type = V};
-    ({K,V}, #security_types{fields = F} = Rec) -> Rec#security_types{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_types{fields = lists:reverse(F)}.
-
-decode_message_security_list_request(Message, #security_list_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_list_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_list_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_list_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_list_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_list_request{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_list_request{security_req_id = V};
-    ({security_list_request_type,V}, Rec) -> Rec#security_list_request{security_list_request_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#security_list_request{currency = V};
-    ({text,V}, Rec) -> Rec#security_list_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_list_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_list_request{encoded_text = V};
-    ({trading_session_id,V}, Rec) -> Rec#security_list_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_list_request{trading_session_sub_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#security_list_request{subscription_request_type = V};
-    ({K,V}, #security_list_request{fields = F} = Rec) -> Rec#security_list_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_list_request{fields = lists:reverse(F)}.
-
-decode_message_security_list(Message, #security_list{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #security_list{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#security_list{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#security_list{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#security_list{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#security_list{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#security_list{security_req_id = V};
-    ({security_response_id,V}, Rec) -> Rec#security_list{security_response_id = V};
-    ({security_request_result,V}, Rec) -> Rec#security_list{security_request_result = fix:parse_num(V)};
-    ({tot_no_related_sym,V}, Rec) -> Rec#security_list{tot_no_related_sym = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#security_list{last_fragment = V == <<"Y">>};
-    ({currency,V}, Rec) -> Rec#security_list{currency = V};
-    ({leg_swap_type,V}, Rec) -> Rec#security_list{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#security_list{leg_settl_type = V};
-    ({round_lot,V}, Rec) -> Rec#security_list{round_lot = fix:parse_num(V)};
-    ({min_trade_vol,V}, Rec) -> Rec#security_list{min_trade_vol = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#security_list{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#security_list{trading_session_sub_id = V};
-    ({expiration_cycle,V}, Rec) -> Rec#security_list{expiration_cycle = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#security_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#security_list{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#security_list{encoded_text = V};
-    ({K,V}, #security_list{fields = F} = Rec) -> Rec#security_list{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#security_list{fields = lists:reverse(F)}.
-
-decode_message_derivative_security_list_request(Message, #derivative_security_list_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #derivative_security_list_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#derivative_security_list_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#derivative_security_list_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#derivative_security_list_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#derivative_security_list_request{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#derivative_security_list_request{security_req_id = V};
-    ({security_list_request_type,V}, Rec) -> Rec#derivative_security_list_request{security_list_request_type = fix:parse_num(V)};
-    ({security_sub_type,V}, Rec) -> Rec#derivative_security_list_request{security_sub_type = V};
-    ({currency,V}, Rec) -> Rec#derivative_security_list_request{currency = V};
-    ({text,V}, Rec) -> Rec#derivative_security_list_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#derivative_security_list_request{encoded_text = V};
-    ({trading_session_id,V}, Rec) -> Rec#derivative_security_list_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#derivative_security_list_request{trading_session_sub_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#derivative_security_list_request{subscription_request_type = V};
-    ({K,V}, #derivative_security_list_request{fields = F} = Rec) -> Rec#derivative_security_list_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#derivative_security_list_request{fields = lists:reverse(F)}.
-
-decode_message_derivative_security_list(Message, #derivative_security_list{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #derivative_security_list{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#derivative_security_list{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#derivative_security_list{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#derivative_security_list{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#derivative_security_list{sending_time = V};
-    ({security_req_id,V}, Rec) -> Rec#derivative_security_list{security_req_id = V};
-    ({security_response_id,V}, Rec) -> Rec#derivative_security_list{security_response_id = V};
-    ({security_request_result,V}, Rec) -> Rec#derivative_security_list{security_request_result = fix:parse_num(V)};
-    ({tot_no_related_sym,V}, Rec) -> Rec#derivative_security_list{tot_no_related_sym = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#derivative_security_list{last_fragment = V == <<"Y">>};
-    ({currency,V}, Rec) -> Rec#derivative_security_list{currency = V};
-    ({expiration_cycle,V}, Rec) -> Rec#derivative_security_list{expiration_cycle = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#derivative_security_list{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#derivative_security_list{trading_session_sub_id = V};
-    ({text,V}, Rec) -> Rec#derivative_security_list{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#derivative_security_list{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#derivative_security_list{encoded_text = V};
-    ({K,V}, #derivative_security_list{fields = F} = Rec) -> Rec#derivative_security_list{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#derivative_security_list{fields = lists:reverse(F)}.
-
-decode_message_new_order_multileg(Message, #new_order_multileg{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #new_order_multileg{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#new_order_multileg{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#new_order_multileg{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#new_order_multileg{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#new_order_multileg{sending_time = V};
-    ({cl_ord_id,V}, Rec) -> Rec#new_order_multileg{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#new_order_multileg{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#new_order_multileg{cl_ord_link_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#new_order_multileg{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#new_order_multileg{trade_date = V};
-    ({account,V}, Rec) -> Rec#new_order_multileg{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#new_order_multileg{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#new_order_multileg{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#new_order_multileg{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#new_order_multileg{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#new_order_multileg{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#new_order_multileg{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#new_order_multileg{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#new_order_multileg{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#new_order_multileg{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#new_order_multileg{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#new_order_multileg{alloc_qty = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#new_order_multileg{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#new_order_multileg{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#new_order_multileg{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#new_order_multileg{clearing_fee_indicator = V};
-    ({handl_inst,V}, Rec) -> Rec#new_order_multileg{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#new_order_multileg{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#new_order_multileg{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#new_order_multileg{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#new_order_multileg{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#new_order_multileg{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#new_order_multileg{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#new_order_multileg{process_code = V};
-    ({side,V}, Rec) -> Rec#new_order_multileg{side = V};
-    ({prev_close_px,V}, Rec) -> Rec#new_order_multileg{prev_close_px = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#new_order_multileg{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#new_order_multileg{leg_swap_type = fix:parse_num(V)};
-    ({leg_alloc_account,V}, Rec) -> Rec#new_order_multileg{leg_alloc_account = V};
-    ({leg_individual_alloc_id,V}, Rec) -> Rec#new_order_multileg{leg_individual_alloc_id = V};
-    ({leg_alloc_qty,V}, Rec) -> Rec#new_order_multileg{leg_alloc_qty = fix:parse_num(V)};
-    ({leg_alloc_acct_id_source,V}, Rec) -> Rec#new_order_multileg{leg_alloc_acct_id_source = V};
-    ({leg_settl_currency,V}, Rec) -> Rec#new_order_multileg{leg_settl_currency = V};
-    ({leg_position_effect,V}, Rec) -> Rec#new_order_multileg{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{leg_covered_or_uncovered = fix:parse_num(V)};
-    ({leg_ref_id,V}, Rec) -> Rec#new_order_multileg{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#new_order_multileg{leg_price = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#new_order_multileg{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#new_order_multileg{leg_settl_date = V};
-    ({locate_reqd,V}, Rec) -> Rec#new_order_multileg{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#new_order_multileg{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#new_order_multileg{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#new_order_multileg{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#new_order_multileg{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#new_order_multileg{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#new_order_multileg{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#new_order_multileg{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#new_order_multileg{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#new_order_multileg{solicited_flag = V == <<"Y">>};
-    ({ioi_id,V}, Rec) -> Rec#new_order_multileg{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#new_order_multileg{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#new_order_multileg{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#new_order_multileg{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#new_order_multileg{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#new_order_multileg{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#new_order_multileg{gt_booking_inst = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#new_order_multileg{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#new_order_multileg{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#new_order_multileg{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#new_order_multileg{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#new_order_multileg{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#new_order_multileg{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#new_order_multileg{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#new_order_multileg{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#new_order_multileg{encoded_text = V};
-    ({position_effect,V}, Rec) -> Rec#new_order_multileg{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#new_order_multileg{covered_or_uncovered = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#new_order_multileg{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#new_order_multileg{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#new_order_multileg{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#new_order_multileg{participation_rate = V};
-    ({cancellation_rights,V}, Rec) -> Rec#new_order_multileg{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#new_order_multileg{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#new_order_multileg{regist_id = V};
-    ({designation,V}, Rec) -> Rec#new_order_multileg{designation = V};
-    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#new_order_multileg{multi_leg_rpt_type_req = fix:parse_num(V)};
-    ({K,V}, #new_order_multileg{fields = F} = Rec) -> Rec#new_order_multileg{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#new_order_multileg{fields = lists:reverse(F)}.
-
-decode_message_multileg_order_cancel_replace(Message, #multileg_order_cancel_replace{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #multileg_order_cancel_replace{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#multileg_order_cancel_replace{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#multileg_order_cancel_replace{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#multileg_order_cancel_replace{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#multileg_order_cancel_replace{sending_time = V};
-    ({order_id,V}, Rec) -> Rec#multileg_order_cancel_replace{order_id = V};
-    ({orig_cl_ord_id,V}, Rec) -> Rec#multileg_order_cancel_replace{orig_cl_ord_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#multileg_order_cancel_replace{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#multileg_order_cancel_replace{secondary_cl_ord_id = V};
-    ({cl_ord_link_id,V}, Rec) -> Rec#multileg_order_cancel_replace{cl_ord_link_id = V};
-    ({orig_ord_mod_time,V}, Rec) -> Rec#multileg_order_cancel_replace{orig_ord_mod_time = V};
-    ({trade_origination_date,V}, Rec) -> Rec#multileg_order_cancel_replace{trade_origination_date = V};
-    ({trade_date,V}, Rec) -> Rec#multileg_order_cancel_replace{trade_date = V};
-    ({account,V}, Rec) -> Rec#multileg_order_cancel_replace{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#multileg_order_cancel_replace{account_type = fix:parse_num(V)};
-    ({day_booking_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{day_booking_inst = V};
-    ({booking_unit,V}, Rec) -> Rec#multileg_order_cancel_replace{booking_unit = V};
-    ({prealloc_method,V}, Rec) -> Rec#multileg_order_cancel_replace{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{alloc_qty = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_date = V};
-    ({cash_margin,V}, Rec) -> Rec#multileg_order_cancel_replace{cash_margin = V};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#multileg_order_cancel_replace{clearing_fee_indicator = V};
-    ({handl_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{handl_inst = V};
-    ({exec_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{exec_inst = V};
-    ({min_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{min_qty = fix:parse_num(V)};
-    ({max_floor,V}, Rec) -> Rec#multileg_order_cancel_replace{max_floor = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#multileg_order_cancel_replace{ex_destination = V};
-    ({trading_session_id,V}, Rec) -> Rec#multileg_order_cancel_replace{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#multileg_order_cancel_replace{trading_session_sub_id = V};
-    ({process_code,V}, Rec) -> Rec#multileg_order_cancel_replace{process_code = V};
-    ({side,V}, Rec) -> Rec#multileg_order_cancel_replace{side = V};
-    ({prev_close_px,V}, Rec) -> Rec#multileg_order_cancel_replace{prev_close_px = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_swap_type = fix:parse_num(V)};
-    ({leg_alloc_account,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_account = V};
-    ({leg_individual_alloc_id,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_individual_alloc_id = V};
-    ({leg_alloc_qty,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_qty = fix:parse_num(V)};
-    ({leg_alloc_acct_id_source,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_alloc_acct_id_source = V};
-    ({leg_settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_currency = V};
-    ({leg_position_effect,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_covered_or_uncovered = fix:parse_num(V)};
-    ({leg_ref_id,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_price = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#multileg_order_cancel_replace{leg_settl_date = V};
-    ({locate_reqd,V}, Rec) -> Rec#multileg_order_cancel_replace{locate_reqd = V == <<"Y">>};
-    ({transact_time,V}, Rec) -> Rec#multileg_order_cancel_replace{transact_time = V};
-    ({qty_type,V}, Rec) -> Rec#multileg_order_cancel_replace{qty_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#multileg_order_cancel_replace{ord_type = V};
-    ({price_type,V}, Rec) -> Rec#multileg_order_cancel_replace{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#multileg_order_cancel_replace{price = fix:parse_num(V)};
-    ({stop_px,V}, Rec) -> Rec#multileg_order_cancel_replace{stop_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#multileg_order_cancel_replace{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#multileg_order_cancel_replace{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#multileg_order_cancel_replace{solicited_flag = V == <<"Y">>};
-    ({ioi_id,V}, Rec) -> Rec#multileg_order_cancel_replace{ioi_id = V};
-    ({quote_id,V}, Rec) -> Rec#multileg_order_cancel_replace{quote_id = V};
-    ({time_in_force,V}, Rec) -> Rec#multileg_order_cancel_replace{time_in_force = V};
-    ({effective_time,V}, Rec) -> Rec#multileg_order_cancel_replace{effective_time = V};
-    ({expire_date,V}, Rec) -> Rec#multileg_order_cancel_replace{expire_date = V};
-    ({expire_time,V}, Rec) -> Rec#multileg_order_cancel_replace{expire_time = V};
-    ({gt_booking_inst,V}, Rec) -> Rec#multileg_order_cancel_replace{gt_booking_inst = fix:parse_num(V)};
-    ({order_capacity,V}, Rec) -> Rec#multileg_order_cancel_replace{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#multileg_order_cancel_replace{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#multileg_order_cancel_replace{cust_order_capacity = fix:parse_num(V)};
-    ({forex_req,V}, Rec) -> Rec#multileg_order_cancel_replace{forex_req = V == <<"Y">>};
-    ({settl_currency,V}, Rec) -> Rec#multileg_order_cancel_replace{settl_currency = V};
-    ({booking_type,V}, Rec) -> Rec#multileg_order_cancel_replace{booking_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#multileg_order_cancel_replace{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#multileg_order_cancel_replace{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#multileg_order_cancel_replace{encoded_text = V};
-    ({position_effect,V}, Rec) -> Rec#multileg_order_cancel_replace{position_effect = V};
-    ({covered_or_uncovered,V}, Rec) -> Rec#multileg_order_cancel_replace{covered_or_uncovered = fix:parse_num(V)};
-    ({max_show,V}, Rec) -> Rec#multileg_order_cancel_replace{max_show = fix:parse_num(V)};
-    ({target_strategy,V}, Rec) -> Rec#multileg_order_cancel_replace{target_strategy = fix:parse_num(V)};
-    ({target_strategy_parameters,V}, Rec) -> Rec#multileg_order_cancel_replace{target_strategy_parameters = V};
-    ({participation_rate,V}, Rec) -> Rec#multileg_order_cancel_replace{participation_rate = V};
-    ({cancellation_rights,V}, Rec) -> Rec#multileg_order_cancel_replace{cancellation_rights = V};
-    ({money_laundering_status,V}, Rec) -> Rec#multileg_order_cancel_replace{money_laundering_status = V};
-    ({regist_id,V}, Rec) -> Rec#multileg_order_cancel_replace{regist_id = V};
-    ({designation,V}, Rec) -> Rec#multileg_order_cancel_replace{designation = V};
-    ({multi_leg_rpt_type_req,V}, Rec) -> Rec#multileg_order_cancel_replace{multi_leg_rpt_type_req = fix:parse_num(V)};
-    ({K,V}, #multileg_order_cancel_replace{fields = F} = Rec) -> Rec#multileg_order_cancel_replace{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#multileg_order_cancel_replace{fields = lists:reverse(F)}.
-
-decode_message_trade_capture_report_request(Message, #trade_capture_report_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trade_capture_report_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trade_capture_report_request{sending_time = V};
-    ({trade_request_id,V}, Rec) -> Rec#trade_capture_report_request{trade_request_id = V};
-    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request{trade_request_type = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_request{subscription_request_type = V};
-    ({trade_report_id,V}, Rec) -> Rec#trade_capture_report_request{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#trade_capture_report_request{secondary_trade_report_id = V};
-    ({exec_id,V}, Rec) -> Rec#trade_capture_report_request{exec_id = V};
-    ({exec_type,V}, Rec) -> Rec#trade_capture_report_request{exec_type = V};
-    ({order_id,V}, Rec) -> Rec#trade_capture_report_request{order_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#trade_capture_report_request{cl_ord_id = V};
-    ({match_status,V}, Rec) -> Rec#trade_capture_report_request{match_status = V};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report_request{trd_type = fix:parse_num(V)};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_request{trd_sub_type = fix:parse_num(V)};
-    ({transfer_reason,V}, Rec) -> Rec#trade_capture_report_request{transfer_reason = V};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_request{secondary_trd_type = fix:parse_num(V)};
-    ({trade_link_id,V}, Rec) -> Rec#trade_capture_report_request{trade_link_id = V};
-    ({trd_match_id,V}, Rec) -> Rec#trade_capture_report_request{trd_match_id = V};
-    ({trade_date,V}, Rec) -> Rec#trade_capture_report_request{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#trade_capture_report_request{transact_time = V};
-    ({clearing_business_date,V}, Rec) -> Rec#trade_capture_report_request{clearing_business_date = V};
-    ({trading_session_id,V}, Rec) -> Rec#trade_capture_report_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#trade_capture_report_request{trading_session_sub_id = V};
-    ({time_bracket,V}, Rec) -> Rec#trade_capture_report_request{time_bracket = V};
-    ({side,V}, Rec) -> Rec#trade_capture_report_request{side = V};
-    ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report_request{multi_leg_reporting_type = V};
-    ({trade_input_source,V}, Rec) -> Rec#trade_capture_report_request{trade_input_source = V};
-    ({trade_input_device,V}, Rec) -> Rec#trade_capture_report_request{trade_input_device = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#trade_capture_report_request{response_destination = V};
-    ({text,V}, Rec) -> Rec#trade_capture_report_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#trade_capture_report_request{encoded_text = V};
-    ({K,V}, #trade_capture_report_request{fields = F} = Rec) -> Rec#trade_capture_report_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trade_capture_report_request{fields = lists:reverse(F)}.
-
-decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trade_capture_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trade_capture_report{sending_time = V};
-    ({trade_report_id,V}, Rec) -> Rec#trade_capture_report{trade_report_id = V};
-    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report{trade_report_trans_type = fix:parse_num(V)};
-    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report{trade_report_type = fix:parse_num(V)};
-    ({trade_request_id,V}, Rec) -> Rec#trade_capture_report{trade_request_id = V};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report{trd_type = fix:parse_num(V)};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report{trd_sub_type = fix:parse_num(V)};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report{secondary_trd_type = fix:parse_num(V)};
-    ({transfer_reason,V}, Rec) -> Rec#trade_capture_report{transfer_reason = V};
-    ({exec_type,V}, Rec) -> Rec#trade_capture_report{exec_type = V};
-    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report{tot_num_trade_reports = fix:parse_num(V)};
-    ({last_rpt_requested,V}, Rec) -> Rec#trade_capture_report{last_rpt_requested = V == <<"Y">>};
-    ({unsolicited_indicator,V}, Rec) -> Rec#trade_capture_report{unsolicited_indicator = V == <<"Y">>};
-    ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report{subscription_request_type = V};
-    ({trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report{trade_report_ref_id = V};
-    ({secondary_trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report{secondary_trade_report_ref_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#trade_capture_report{secondary_trade_report_id = V};
-    ({trade_link_id,V}, Rec) -> Rec#trade_capture_report{trade_link_id = V};
-    ({trd_match_id,V}, Rec) -> Rec#trade_capture_report{trd_match_id = V};
-    ({exec_id,V}, Rec) -> Rec#trade_capture_report{exec_id = V};
-    ({ord_status,V}, Rec) -> Rec#trade_capture_report{ord_status = V};
-    ({secondary_exec_id,V}, Rec) -> Rec#trade_capture_report{secondary_exec_id = V};
-    ({exec_restatement_reason,V}, Rec) -> Rec#trade_capture_report{exec_restatement_reason = fix:parse_num(V)};
-    ({previously_reported,V}, Rec) -> Rec#trade_capture_report{previously_reported = V == <<"Y">>};
-    ({price_type,V}, Rec) -> Rec#trade_capture_report{price_type = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#trade_capture_report{qty_type = fix:parse_num(V)};
-    ({underlying_trading_session_id,V}, Rec) -> Rec#trade_capture_report{underlying_trading_session_id = V};
-    ({underlying_trading_session_sub_id,V}, Rec) -> Rec#trade_capture_report{underlying_trading_session_sub_id = V};
-    ({last_qty,V}, Rec) -> Rec#trade_capture_report{last_qty = fix:parse_num(V)};
-    ({last_px,V}, Rec) -> Rec#trade_capture_report{last_px = fix:parse_num(V)};
-    ({last_par_px,V}, Rec) -> Rec#trade_capture_report{last_par_px = fix:parse_num(V)};
-    ({last_spot_rate,V}, Rec) -> Rec#trade_capture_report{last_spot_rate = fix:parse_num(V)};
-    ({last_forward_points,V}, Rec) -> Rec#trade_capture_report{last_forward_points = V};
-    ({last_mkt,V}, Rec) -> Rec#trade_capture_report{last_mkt = V};
-    ({trade_date,V}, Rec) -> Rec#trade_capture_report{trade_date = V};
-    ({clearing_business_date,V}, Rec) -> Rec#trade_capture_report{clearing_business_date = V};
-    ({avg_px,V}, Rec) -> Rec#trade_capture_report{avg_px = fix:parse_num(V)};
-    ({avg_px_indicator,V}, Rec) -> Rec#trade_capture_report{avg_px_indicator = fix:parse_num(V)};
-    ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report{multi_leg_reporting_type = V};
-    ({trade_leg_ref_id,V}, Rec) -> Rec#trade_capture_report{trade_leg_ref_id = V};
-    ({leg_qty,V}, Rec) -> Rec#trade_capture_report{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report{leg_swap_type = fix:parse_num(V)};
-    ({leg_position_effect,V}, Rec) -> Rec#trade_capture_report{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report{leg_covered_or_uncovered = fix:parse_num(V)};
-    ({leg_ref_id,V}, Rec) -> Rec#trade_capture_report{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#trade_capture_report{leg_price = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#trade_capture_report{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#trade_capture_report{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report{leg_last_px = fix:parse_num(V)};
-    ({transact_time,V}, Rec) -> Rec#trade_capture_report{transact_time = V};
-    ({settl_type,V}, Rec) -> Rec#trade_capture_report{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#trade_capture_report{settl_date = V};
-    ({match_status,V}, Rec) -> Rec#trade_capture_report{match_status = V};
-    ({match_type,V}, Rec) -> Rec#trade_capture_report{match_type = V};
-    ({side,V}, Rec) -> Rec#trade_capture_report{side = V};
-    ({order_id,V}, Rec) -> Rec#trade_capture_report{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#trade_capture_report{secondary_order_id = V};
-    ({cl_ord_id,V}, Rec) -> Rec#trade_capture_report{cl_ord_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#trade_capture_report{secondary_cl_ord_id = V};
-    ({list_id,V}, Rec) -> Rec#trade_capture_report{list_id = V};
-    ({account,V}, Rec) -> Rec#trade_capture_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#trade_capture_report{account_type = fix:parse_num(V)};
-    ({process_code,V}, Rec) -> Rec#trade_capture_report{process_code = V};
-    ({odd_lot,V}, Rec) -> Rec#trade_capture_report{odd_lot = V == <<"Y">>};
-    ({clearing_instruction,V}, Rec) -> Rec#trade_capture_report{clearing_instruction = fix:parse_num(V)};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#trade_capture_report{clearing_fee_indicator = V};
-    ({trade_input_source,V}, Rec) -> Rec#trade_capture_report{trade_input_source = V};
-    ({trade_input_device,V}, Rec) -> Rec#trade_capture_report{trade_input_device = V};
-    ({order_input_device,V}, Rec) -> Rec#trade_capture_report{order_input_device = V};
-    ({currency,V}, Rec) -> Rec#trade_capture_report{currency = V};
-    ({compliance_id,V}, Rec) -> Rec#trade_capture_report{compliance_id = V};
-    ({solicited_flag,V}, Rec) -> Rec#trade_capture_report{solicited_flag = V == <<"Y">>};
-    ({order_capacity,V}, Rec) -> Rec#trade_capture_report{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#trade_capture_report{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report{cust_order_capacity = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#trade_capture_report{ord_type = V};
-    ({exec_inst,V}, Rec) -> Rec#trade_capture_report{exec_inst = V};
-    ({trans_bkd_time,V}, Rec) -> Rec#trade_capture_report{trans_bkd_time = V};
-    ({trading_session_id,V}, Rec) -> Rec#trade_capture_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#trade_capture_report{trading_session_sub_id = V};
-    ({time_bracket,V}, Rec) -> Rec#trade_capture_report{time_bracket = V};
-    ({gross_trade_amt,V}, Rec) -> Rec#trade_capture_report{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#trade_capture_report{num_days_interest = fix:parse_num(V)};
-    ({ex_date,V}, Rec) -> Rec#trade_capture_report{ex_date = V};
-    ({accrued_interest_rate,V}, Rec) -> Rec#trade_capture_report{accrued_interest_rate = V};
-    ({accrued_interest_amt,V}, Rec) -> Rec#trade_capture_report{accrued_interest_amt = V};
-    ({interest_at_maturity,V}, Rec) -> Rec#trade_capture_report{interest_at_maturity = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#trade_capture_report{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#trade_capture_report{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#trade_capture_report{end_cash = V};
-    ({concession,V}, Rec) -> Rec#trade_capture_report{concession = V};
-    ({total_takedown,V}, Rec) -> Rec#trade_capture_report{total_takedown = V};
-    ({net_money,V}, Rec) -> Rec#trade_capture_report{net_money = V};
-    ({settl_curr_amt,V}, Rec) -> Rec#trade_capture_report{settl_curr_amt = V};
-    ({settl_currency,V}, Rec) -> Rec#trade_capture_report{settl_currency = V};
-    ({settl_curr_fx_rate,V}, Rec) -> Rec#trade_capture_report{settl_curr_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#trade_capture_report{settl_curr_fx_rate_calc = V};
-    ({position_effect,V}, Rec) -> Rec#trade_capture_report{position_effect = V};
-    ({text,V}, Rec) -> Rec#trade_capture_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#trade_capture_report{encoded_text = V};
-    ({side_multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report{side_multi_leg_reporting_type = fix:parse_num(V)};
-    ({cont_amt_type,V}, Rec) -> Rec#trade_capture_report{cont_amt_type = fix:parse_num(V)};
-    ({cont_amt_value,V}, Rec) -> Rec#trade_capture_report{cont_amt_value = V};
-    ({cont_amt_curr,V}, Rec) -> Rec#trade_capture_report{cont_amt_curr = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#trade_capture_report{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#trade_capture_report{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#trade_capture_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#trade_capture_report{misc_fee_basis = fix:parse_num(V)};
-    ({exchange_rule,V}, Rec) -> Rec#trade_capture_report{exchange_rule = V};
-    ({trade_alloc_indicator,V}, Rec) -> Rec#trade_capture_report{trade_alloc_indicator = fix:parse_num(V)};
-    ({prealloc_method,V}, Rec) -> Rec#trade_capture_report{prealloc_method = V};
-    ({alloc_id,V}, Rec) -> Rec#trade_capture_report{alloc_id = V};
-    ({alloc_account,V}, Rec) -> Rec#trade_capture_report{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#trade_capture_report{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#trade_capture_report{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report{alloc_qty = fix:parse_num(V)};
-    ({copy_msg_indicator,V}, Rec) -> Rec#trade_capture_report{copy_msg_indicator = V == <<"Y">>};
-    ({publish_trd_indicator,V}, Rec) -> Rec#trade_capture_report{publish_trd_indicator = V == <<"Y">>};
-    ({short_sale_reason,V}, Rec) -> Rec#trade_capture_report{short_sale_reason = fix:parse_num(V)};
-    ({K,V}, #trade_capture_report{fields = F} = Rec) -> Rec#trade_capture_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trade_capture_report{fields = lists:reverse(F)}.
-
-decode_message_order_mass_status_request(Message, #order_mass_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #order_mass_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#order_mass_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#order_mass_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#order_mass_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#order_mass_status_request{sending_time = V};
-    ({mass_status_req_id,V}, Rec) -> Rec#order_mass_status_request{mass_status_req_id = V};
-    ({mass_status_req_type,V}, Rec) -> Rec#order_mass_status_request{mass_status_req_type = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#order_mass_status_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#order_mass_status_request{acct_id_source = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#order_mass_status_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#order_mass_status_request{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#order_mass_status_request{side = V};
-    ({K,V}, #order_mass_status_request{fields = F} = Rec) -> Rec#order_mass_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#order_mass_status_request{fields = lists:reverse(F)}.
-
-decode_message_quote_request_reject(Message, #quote_request_reject{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_request_reject{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_request_reject{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_request_reject{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_request_reject{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_request_reject{sending_time = V};
-    ({quote_req_id,V}, Rec) -> Rec#quote_request_reject{quote_req_id = V};
-    ({rfq_req_id,V}, Rec) -> Rec#quote_request_reject{rfq_req_id = V};
-    ({quote_request_reject_reason,V}, Rec) -> Rec#quote_request_reject{quote_request_reject_reason = fix:parse_num(V)};
-    ({prev_close_px,V}, Rec) -> Rec#quote_request_reject{prev_close_px = fix:parse_num(V)};
-    ({quote_request_type,V}, Rec) -> Rec#quote_request_reject{quote_request_type = fix:parse_num(V)};
-    ({quote_type,V}, Rec) -> Rec#quote_request_reject{quote_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote_request_reject{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_request_reject{trading_session_sub_id = V};
-    ({trade_origination_date,V}, Rec) -> Rec#quote_request_reject{trade_origination_date = V};
-    ({side,V}, Rec) -> Rec#quote_request_reject{side = V};
-    ({qty_type,V}, Rec) -> Rec#quote_request_reject{qty_type = fix:parse_num(V)};
-    ({settl_type,V}, Rec) -> Rec#quote_request_reject{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#quote_request_reject{settl_date = V};
-    ({settl_date2,V}, Rec) -> Rec#quote_request_reject{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_request_reject{order_qty2 = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#quote_request_reject{currency = V};
-    ({account,V}, Rec) -> Rec#quote_request_reject{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_request_reject{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_request_reject{account_type = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#quote_request_reject{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_request_reject{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#quote_request_reject{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#quote_request_reject{leg_settl_date = V};
-    ({quote_qualifier,V}, Rec) -> Rec#quote_request_reject{quote_qualifier = V};
-    ({quote_price_type,V}, Rec) -> Rec#quote_request_reject{quote_price_type = fix:parse_num(V)};
-    ({ord_type,V}, Rec) -> Rec#quote_request_reject{ord_type = V};
-    ({expire_time,V}, Rec) -> Rec#quote_request_reject{expire_time = V};
-    ({transact_time,V}, Rec) -> Rec#quote_request_reject{transact_time = V};
-    ({price_type,V}, Rec) -> Rec#quote_request_reject{price_type = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#quote_request_reject{price = fix:parse_num(V)};
-    ({price2,V}, Rec) -> Rec#quote_request_reject{price2 = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#quote_request_reject{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_request_reject{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#quote_request_reject{encoded_text = V};
-    ({K,V}, #quote_request_reject{fields = F} = Rec) -> Rec#quote_request_reject{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_request_reject{fields = lists:reverse(F)}.
-
-decode_message_rfq_request(Message, #rfq_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #rfq_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#rfq_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#rfq_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#rfq_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#rfq_request{sending_time = V};
-    ({rfq_req_id,V}, Rec) -> Rec#rfq_request{rfq_req_id = V};
-    ({prev_close_px,V}, Rec) -> Rec#rfq_request{prev_close_px = fix:parse_num(V)};
-    ({quote_request_type,V}, Rec) -> Rec#rfq_request{quote_request_type = fix:parse_num(V)};
-    ({quote_type,V}, Rec) -> Rec#rfq_request{quote_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#rfq_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#rfq_request{trading_session_sub_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#rfq_request{subscription_request_type = V};
-    ({K,V}, #rfq_request{fields = F} = Rec) -> Rec#rfq_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#rfq_request{fields = lists:reverse(F)}.
-
-decode_message_quote_status_report(Message, #quote_status_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_status_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_status_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_status_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_status_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_status_report{sending_time = V};
-    ({quote_status_req_id,V}, Rec) -> Rec#quote_status_report{quote_status_req_id = V};
-    ({quote_req_id,V}, Rec) -> Rec#quote_status_report{quote_req_id = V};
-    ({quote_id,V}, Rec) -> Rec#quote_status_report{quote_id = V};
-    ({quote_resp_id,V}, Rec) -> Rec#quote_status_report{quote_resp_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote_status_report{quote_type = fix:parse_num(V)};
-    ({trading_session_id,V}, Rec) -> Rec#quote_status_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_status_report{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#quote_status_report{side = V};
-    ({settl_type,V}, Rec) -> Rec#quote_status_report{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#quote_status_report{settl_date = V};
-    ({settl_date2,V}, Rec) -> Rec#quote_status_report{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_status_report{order_qty2 = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#quote_status_report{currency = V};
-    ({account,V}, Rec) -> Rec#quote_status_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_status_report{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_status_report{account_type = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#quote_status_report{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_status_report{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#quote_status_report{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#quote_status_report{leg_settl_date = V};
-    ({quote_qualifier,V}, Rec) -> Rec#quote_status_report{quote_qualifier = V};
-    ({expire_time,V}, Rec) -> Rec#quote_status_report{expire_time = V};
-    ({price,V}, Rec) -> Rec#quote_status_report{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#quote_status_report{price_type = fix:parse_num(V)};
-    ({bid_px,V}, Rec) -> Rec#quote_status_report{bid_px = fix:parse_num(V)};
-    ({offer_px,V}, Rec) -> Rec#quote_status_report{offer_px = fix:parse_num(V)};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote_status_report{mkt_bid_px = fix:parse_num(V)};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote_status_report{mkt_offer_px = fix:parse_num(V)};
-    ({min_bid_size,V}, Rec) -> Rec#quote_status_report{min_bid_size = fix:parse_num(V)};
-    ({bid_size,V}, Rec) -> Rec#quote_status_report{bid_size = fix:parse_num(V)};
-    ({min_offer_size,V}, Rec) -> Rec#quote_status_report{min_offer_size = fix:parse_num(V)};
-    ({offer_size,V}, Rec) -> Rec#quote_status_report{offer_size = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#quote_status_report{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote_status_report{bid_spot_rate = fix:parse_num(V)};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote_status_report{offer_spot_rate = fix:parse_num(V)};
-    ({bid_forward_points,V}, Rec) -> Rec#quote_status_report{bid_forward_points = V};
-    ({offer_forward_points,V}, Rec) -> Rec#quote_status_report{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote_status_report{mid_px = fix:parse_num(V)};
-    ({bid_yield,V}, Rec) -> Rec#quote_status_report{bid_yield = V};
-    ({mid_yield,V}, Rec) -> Rec#quote_status_report{mid_yield = V};
-    ({offer_yield,V}, Rec) -> Rec#quote_status_report{offer_yield = V};
-    ({transact_time,V}, Rec) -> Rec#quote_status_report{transact_time = V};
-    ({ord_type,V}, Rec) -> Rec#quote_status_report{ord_type = V};
-    ({bid_forward_points2,V}, Rec) -> Rec#quote_status_report{bid_forward_points2 = V};
-    ({offer_forward_points2,V}, Rec) -> Rec#quote_status_report{offer_forward_points2 = V};
-    ({settl_curr_bid_fx_rate,V}, Rec) -> Rec#quote_status_report{settl_curr_bid_fx_rate = V};
-    ({settl_curr_offer_fx_rate,V}, Rec) -> Rec#quote_status_report{settl_curr_offer_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote_status_report{settl_curr_fx_rate_calc = V};
-    ({comm_type,V}, Rec) -> Rec#quote_status_report{comm_type = V};
-    ({commission,V}, Rec) -> Rec#quote_status_report{commission = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote_status_report{cust_order_capacity = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#quote_status_report{ex_destination = V};
-    ({quote_status,V}, Rec) -> Rec#quote_status_report{quote_status = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#quote_status_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_status_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#quote_status_report{encoded_text = V};
-    ({K,V}, #quote_status_report{fields = F} = Rec) -> Rec#quote_status_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_status_report{fields = lists:reverse(F)}.
-
-decode_message_quote_response(Message, #quote_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #quote_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#quote_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#quote_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#quote_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#quote_response{sending_time = V};
-    ({quote_resp_id,V}, Rec) -> Rec#quote_response{quote_resp_id = V};
-    ({quote_id,V}, Rec) -> Rec#quote_response{quote_id = V};
-    ({quote_resp_type,V}, Rec) -> Rec#quote_response{quote_resp_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#quote_response{cl_ord_id = V};
-    ({order_capacity,V}, Rec) -> Rec#quote_response{order_capacity = V};
-    ({ioi_id,V}, Rec) -> Rec#quote_response{ioi_id = V};
-    ({quote_type,V}, Rec) -> Rec#quote_response{quote_type = fix:parse_num(V)};
-    ({quote_qualifier,V}, Rec) -> Rec#quote_response{quote_qualifier = V};
-    ({trading_session_id,V}, Rec) -> Rec#quote_response{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#quote_response{trading_session_sub_id = V};
-    ({side,V}, Rec) -> Rec#quote_response{side = V};
-    ({settl_type,V}, Rec) -> Rec#quote_response{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#quote_response{settl_date = V};
-    ({settl_date2,V}, Rec) -> Rec#quote_response{settl_date2 = V};
-    ({order_qty2,V}, Rec) -> Rec#quote_response{order_qty2 = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#quote_response{currency = V};
-    ({account,V}, Rec) -> Rec#quote_response{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#quote_response{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#quote_response{account_type = fix:parse_num(V)};
-    ({leg_qty,V}, Rec) -> Rec#quote_response{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#quote_response{leg_swap_type = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#quote_response{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#quote_response{leg_settl_date = V};
-    ({leg_price_type,V}, Rec) -> Rec#quote_response{leg_price_type = fix:parse_num(V)};
-    ({leg_bid_px,V}, Rec) -> Rec#quote_response{leg_bid_px = fix:parse_num(V)};
-    ({leg_offer_px,V}, Rec) -> Rec#quote_response{leg_offer_px = fix:parse_num(V)};
-    ({bid_px,V}, Rec) -> Rec#quote_response{bid_px = fix:parse_num(V)};
-    ({offer_px,V}, Rec) -> Rec#quote_response{offer_px = fix:parse_num(V)};
-    ({mkt_bid_px,V}, Rec) -> Rec#quote_response{mkt_bid_px = fix:parse_num(V)};
-    ({mkt_offer_px,V}, Rec) -> Rec#quote_response{mkt_offer_px = fix:parse_num(V)};
-    ({min_bid_size,V}, Rec) -> Rec#quote_response{min_bid_size = fix:parse_num(V)};
-    ({bid_size,V}, Rec) -> Rec#quote_response{bid_size = fix:parse_num(V)};
-    ({min_offer_size,V}, Rec) -> Rec#quote_response{min_offer_size = fix:parse_num(V)};
-    ({offer_size,V}, Rec) -> Rec#quote_response{offer_size = fix:parse_num(V)};
-    ({valid_until_time,V}, Rec) -> Rec#quote_response{valid_until_time = V};
-    ({bid_spot_rate,V}, Rec) -> Rec#quote_response{bid_spot_rate = fix:parse_num(V)};
-    ({offer_spot_rate,V}, Rec) -> Rec#quote_response{offer_spot_rate = fix:parse_num(V)};
-    ({bid_forward_points,V}, Rec) -> Rec#quote_response{bid_forward_points = V};
-    ({offer_forward_points,V}, Rec) -> Rec#quote_response{offer_forward_points = V};
-    ({mid_px,V}, Rec) -> Rec#quote_response{mid_px = fix:parse_num(V)};
-    ({bid_yield,V}, Rec) -> Rec#quote_response{bid_yield = V};
-    ({mid_yield,V}, Rec) -> Rec#quote_response{mid_yield = V};
-    ({offer_yield,V}, Rec) -> Rec#quote_response{offer_yield = V};
-    ({transact_time,V}, Rec) -> Rec#quote_response{transact_time = V};
-    ({ord_type,V}, Rec) -> Rec#quote_response{ord_type = V};
-    ({bid_forward_points2,V}, Rec) -> Rec#quote_response{bid_forward_points2 = V};
-    ({offer_forward_points2,V}, Rec) -> Rec#quote_response{offer_forward_points2 = V};
-    ({settl_curr_bid_fx_rate,V}, Rec) -> Rec#quote_response{settl_curr_bid_fx_rate = V};
-    ({settl_curr_offer_fx_rate,V}, Rec) -> Rec#quote_response{settl_curr_offer_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#quote_response{settl_curr_fx_rate_calc = V};
-    ({commission,V}, Rec) -> Rec#quote_response{commission = V};
-    ({comm_type,V}, Rec) -> Rec#quote_response{comm_type = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#quote_response{cust_order_capacity = fix:parse_num(V)};
-    ({ex_destination,V}, Rec) -> Rec#quote_response{ex_destination = V};
-    ({text,V}, Rec) -> Rec#quote_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#quote_response{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#quote_response{encoded_text = V};
-    ({price,V}, Rec) -> Rec#quote_response{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#quote_response{price_type = fix:parse_num(V)};
-    ({K,V}, #quote_response{fields = F} = Rec) -> Rec#quote_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#quote_response{fields = lists:reverse(F)}.
-
-decode_message_confirmation(Message, #confirmation{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #confirmation{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#confirmation{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#confirmation{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#confirmation{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#confirmation{sending_time = V};
-    ({confirm_id,V}, Rec) -> Rec#confirmation{confirm_id = V};
-    ({confirm_ref_id,V}, Rec) -> Rec#confirmation{confirm_ref_id = V};
-    ({confirm_req_id,V}, Rec) -> Rec#confirmation{confirm_req_id = V};
-    ({confirm_trans_type,V}, Rec) -> Rec#confirmation{confirm_trans_type = fix:parse_num(V)};
-    ({confirm_type,V}, Rec) -> Rec#confirmation{confirm_type = fix:parse_num(V)};
-    ({copy_msg_indicator,V}, Rec) -> Rec#confirmation{copy_msg_indicator = V == <<"Y">>};
-    ({legal_confirm,V}, Rec) -> Rec#confirmation{legal_confirm = V == <<"Y">>};
-    ({confirm_status,V}, Rec) -> Rec#confirmation{confirm_status = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#confirmation{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#confirmation{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#confirmation{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#confirmation{secondary_cl_ord_id = V};
-    ({list_id,V}, Rec) -> Rec#confirmation{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#confirmation{order_qty = fix:parse_num(V)};
-    ({order_avg_px,V}, Rec) -> Rec#confirmation{order_avg_px = fix:parse_num(V)};
-    ({order_booking_qty,V}, Rec) -> Rec#confirmation{order_booking_qty = fix:parse_num(V)};
-    ({alloc_id,V}, Rec) -> Rec#confirmation{alloc_id = V};
-    ({secondary_alloc_id,V}, Rec) -> Rec#confirmation{secondary_alloc_id = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#confirmation{individual_alloc_id = V};
-    ({transact_time,V}, Rec) -> Rec#confirmation{transact_time = V};
-    ({trade_date,V}, Rec) -> Rec#confirmation{trade_date = V};
-    ({alloc_qty,V}, Rec) -> Rec#confirmation{alloc_qty = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#confirmation{qty_type = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#confirmation{side = V};
-    ({currency,V}, Rec) -> Rec#confirmation{currency = V};
-    ({last_mkt,V}, Rec) -> Rec#confirmation{last_mkt = V};
-    ({order_capacity,V}, Rec) -> Rec#confirmation{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#confirmation{order_restrictions = V};
-    ({order_capacity_qty,V}, Rec) -> Rec#confirmation{order_capacity_qty = fix:parse_num(V)};
-    ({alloc_account,V}, Rec) -> Rec#confirmation{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_account_type,V}, Rec) -> Rec#confirmation{alloc_account_type = fix:parse_num(V)};
-    ({avg_px,V}, Rec) -> Rec#confirmation{avg_px = fix:parse_num(V)};
-    ({avg_px_precision,V}, Rec) -> Rec#confirmation{avg_px_precision = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#confirmation{price_type = fix:parse_num(V)};
-    ({avg_par_px,V}, Rec) -> Rec#confirmation{avg_par_px = fix:parse_num(V)};
-    ({reported_px,V}, Rec) -> Rec#confirmation{reported_px = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#confirmation{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#confirmation{encoded_text = V};
-    ({process_code,V}, Rec) -> Rec#confirmation{process_code = V};
-    ({gross_trade_amt,V}, Rec) -> Rec#confirmation{gross_trade_amt = V};
-    ({num_days_interest,V}, Rec) -> Rec#confirmation{num_days_interest = fix:parse_num(V)};
-    ({ex_date,V}, Rec) -> Rec#confirmation{ex_date = V};
-    ({accrued_interest_rate,V}, Rec) -> Rec#confirmation{accrued_interest_rate = V};
-    ({accrued_interest_amt,V}, Rec) -> Rec#confirmation{accrued_interest_amt = V};
-    ({interest_at_maturity,V}, Rec) -> Rec#confirmation{interest_at_maturity = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#confirmation{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#confirmation{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#confirmation{end_cash = V};
-    ({concession,V}, Rec) -> Rec#confirmation{concession = V};
-    ({total_takedown,V}, Rec) -> Rec#confirmation{total_takedown = V};
-    ({net_money,V}, Rec) -> Rec#confirmation{net_money = V};
-    ({maturity_net_money,V}, Rec) -> Rec#confirmation{maturity_net_money = V};
-    ({settl_curr_amt,V}, Rec) -> Rec#confirmation{settl_curr_amt = V};
-    ({settl_currency,V}, Rec) -> Rec#confirmation{settl_currency = V};
-    ({settl_curr_fx_rate,V}, Rec) -> Rec#confirmation{settl_curr_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#confirmation{settl_curr_fx_rate_calc = V};
-    ({settl_type,V}, Rec) -> Rec#confirmation{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#confirmation{settl_date = V};
-    ({shared_commission,V}, Rec) -> Rec#confirmation{shared_commission = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#confirmation{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#confirmation{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#confirmation{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#confirmation{misc_fee_basis = fix:parse_num(V)};
-    ({K,V}, #confirmation{fields = F} = Rec) -> Rec#confirmation{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#confirmation{fields = lists:reverse(F)}.
-
-decode_message_position_maintenance_request(Message, #position_maintenance_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #position_maintenance_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#position_maintenance_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#position_maintenance_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#position_maintenance_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#position_maintenance_request{sending_time = V};
-    ({pos_req_id,V}, Rec) -> Rec#position_maintenance_request{pos_req_id = V};
-    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_request{pos_trans_type = fix:parse_num(V)};
-    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_request{pos_maint_action = fix:parse_num(V)};
-    ({orig_pos_req_ref_id,V}, Rec) -> Rec#position_maintenance_request{orig_pos_req_ref_id = V};
-    ({pos_maint_rpt_ref_id,V}, Rec) -> Rec#position_maintenance_request{pos_maint_rpt_ref_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#position_maintenance_request{clearing_business_date = V};
-    ({settl_sess_id,V}, Rec) -> Rec#position_maintenance_request{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#position_maintenance_request{settl_sess_sub_id = V};
-    ({account,V}, Rec) -> Rec#position_maintenance_request{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_request{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#position_maintenance_request{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#position_maintenance_request{currency = V};
-    ({trading_session_id,V}, Rec) -> Rec#position_maintenance_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#position_maintenance_request{trading_session_sub_id = V};
-    ({transact_time,V}, Rec) -> Rec#position_maintenance_request{transact_time = V};
-    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_request{adjustment_type = fix:parse_num(V)};
-    ({contrary_instruction_indicator,V}, Rec) -> Rec#position_maintenance_request{contrary_instruction_indicator = V == <<"Y">>};
-    ({prior_spread_indicator,V}, Rec) -> Rec#position_maintenance_request{prior_spread_indicator = V == <<"Y">>};
-    ({threshold_amount,V}, Rec) -> Rec#position_maintenance_request{threshold_amount = V};
-    ({text,V}, Rec) -> Rec#position_maintenance_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#position_maintenance_request{encoded_text = V};
-    ({K,V}, #position_maintenance_request{fields = F} = Rec) -> Rec#position_maintenance_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#position_maintenance_request{fields = lists:reverse(F)}.
-
-decode_message_position_maintenance_report(Message, #position_maintenance_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #position_maintenance_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#position_maintenance_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#position_maintenance_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#position_maintenance_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#position_maintenance_report{sending_time = V};
-    ({pos_maint_rpt_id,V}, Rec) -> Rec#position_maintenance_report{pos_maint_rpt_id = V};
-    ({pos_trans_type,V}, Rec) -> Rec#position_maintenance_report{pos_trans_type = fix:parse_num(V)};
-    ({pos_req_id,V}, Rec) -> Rec#position_maintenance_report{pos_req_id = V};
-    ({pos_maint_action,V}, Rec) -> Rec#position_maintenance_report{pos_maint_action = fix:parse_num(V)};
-    ({orig_pos_req_ref_id,V}, Rec) -> Rec#position_maintenance_report{orig_pos_req_ref_id = V};
-    ({pos_maint_status,V}, Rec) -> Rec#position_maintenance_report{pos_maint_status = fix:parse_num(V)};
-    ({pos_maint_result,V}, Rec) -> Rec#position_maintenance_report{pos_maint_result = fix:parse_num(V)};
-    ({clearing_business_date,V}, Rec) -> Rec#position_maintenance_report{clearing_business_date = V};
-    ({settl_sess_id,V}, Rec) -> Rec#position_maintenance_report{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#position_maintenance_report{settl_sess_sub_id = V};
-    ({account,V}, Rec) -> Rec#position_maintenance_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_maintenance_report{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#position_maintenance_report{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#position_maintenance_report{currency = V};
-    ({trading_session_id,V}, Rec) -> Rec#position_maintenance_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#position_maintenance_report{trading_session_sub_id = V};
-    ({transact_time,V}, Rec) -> Rec#position_maintenance_report{transact_time = V};
-    ({adjustment_type,V}, Rec) -> Rec#position_maintenance_report{adjustment_type = fix:parse_num(V)};
-    ({threshold_amount,V}, Rec) -> Rec#position_maintenance_report{threshold_amount = V};
-    ({text,V}, Rec) -> Rec#position_maintenance_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_maintenance_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#position_maintenance_report{encoded_text = V};
-    ({K,V}, #position_maintenance_report{fields = F} = Rec) -> Rec#position_maintenance_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#position_maintenance_report{fields = lists:reverse(F)}.
-
-decode_message_request_for_positions(Message, #request_for_positions{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #request_for_positions{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#request_for_positions{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#request_for_positions{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#request_for_positions{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#request_for_positions{sending_time = V};
-    ({pos_req_id,V}, Rec) -> Rec#request_for_positions{pos_req_id = V};
-    ({pos_req_type,V}, Rec) -> Rec#request_for_positions{pos_req_type = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#request_for_positions{match_status = V};
-    ({subscription_request_type,V}, Rec) -> Rec#request_for_positions{subscription_request_type = V};
-    ({account,V}, Rec) -> Rec#request_for_positions{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#request_for_positions{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#request_for_positions{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#request_for_positions{currency = V};
-    ({clearing_business_date,V}, Rec) -> Rec#request_for_positions{clearing_business_date = V};
-    ({settl_sess_id,V}, Rec) -> Rec#request_for_positions{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#request_for_positions{settl_sess_sub_id = V};
-    ({trading_session_id,V}, Rec) -> Rec#request_for_positions{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#request_for_positions{trading_session_sub_id = V};
-    ({transact_time,V}, Rec) -> Rec#request_for_positions{transact_time = V};
-    ({response_transport_type,V}, Rec) -> Rec#request_for_positions{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#request_for_positions{response_destination = V};
-    ({text,V}, Rec) -> Rec#request_for_positions{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#request_for_positions{encoded_text = V};
-    ({K,V}, #request_for_positions{fields = F} = Rec) -> Rec#request_for_positions{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#request_for_positions{fields = lists:reverse(F)}.
-
-decode_message_request_for_positions_ack(Message, #request_for_positions_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #request_for_positions_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#request_for_positions_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#request_for_positions_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#request_for_positions_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#request_for_positions_ack{sending_time = V};
-    ({pos_maint_rpt_id,V}, Rec) -> Rec#request_for_positions_ack{pos_maint_rpt_id = V};
-    ({pos_req_id,V}, Rec) -> Rec#request_for_positions_ack{pos_req_id = V};
-    ({total_num_pos_reports,V}, Rec) -> Rec#request_for_positions_ack{total_num_pos_reports = fix:parse_num(V)};
-    ({unsolicited_indicator,V}, Rec) -> Rec#request_for_positions_ack{unsolicited_indicator = V == <<"Y">>};
-    ({pos_req_result,V}, Rec) -> Rec#request_for_positions_ack{pos_req_result = fix:parse_num(V)};
-    ({pos_req_status,V}, Rec) -> Rec#request_for_positions_ack{pos_req_status = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#request_for_positions_ack{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#request_for_positions_ack{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#request_for_positions_ack{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#request_for_positions_ack{currency = V};
-    ({response_transport_type,V}, Rec) -> Rec#request_for_positions_ack{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#request_for_positions_ack{response_destination = V};
-    ({text,V}, Rec) -> Rec#request_for_positions_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#request_for_positions_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#request_for_positions_ack{encoded_text = V};
-    ({K,V}, #request_for_positions_ack{fields = F} = Rec) -> Rec#request_for_positions_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#request_for_positions_ack{fields = lists:reverse(F)}.
-
-decode_message_position_report(Message, #position_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #position_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#position_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#position_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#position_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#position_report{sending_time = V};
-    ({pos_maint_rpt_id,V}, Rec) -> Rec#position_report{pos_maint_rpt_id = V};
-    ({pos_req_id,V}, Rec) -> Rec#position_report{pos_req_id = V};
-    ({pos_req_type,V}, Rec) -> Rec#position_report{pos_req_type = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#position_report{subscription_request_type = V};
-    ({total_num_pos_reports,V}, Rec) -> Rec#position_report{total_num_pos_reports = fix:parse_num(V)};
-    ({unsolicited_indicator,V}, Rec) -> Rec#position_report{unsolicited_indicator = V == <<"Y">>};
-    ({pos_req_result,V}, Rec) -> Rec#position_report{pos_req_result = fix:parse_num(V)};
-    ({clearing_business_date,V}, Rec) -> Rec#position_report{clearing_business_date = V};
-    ({settl_sess_id,V}, Rec) -> Rec#position_report{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#position_report{settl_sess_sub_id = V};
-    ({account,V}, Rec) -> Rec#position_report{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#position_report{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#position_report{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#position_report{currency = V};
-    ({settl_price,V}, Rec) -> Rec#position_report{settl_price = fix:parse_num(V)};
-    ({settl_price_type,V}, Rec) -> Rec#position_report{settl_price_type = fix:parse_num(V)};
-    ({prior_settl_price,V}, Rec) -> Rec#position_report{prior_settl_price = fix:parse_num(V)};
-    ({underlying_settl_price,V}, Rec) -> Rec#position_report{underlying_settl_price = fix:parse_num(V)};
-    ({underlying_settl_price_type,V}, Rec) -> Rec#position_report{underlying_settl_price_type = fix:parse_num(V)};
-    ({regist_status,V}, Rec) -> Rec#position_report{regist_status = V};
-    ({delivery_date,V}, Rec) -> Rec#position_report{delivery_date = V};
-    ({text,V}, Rec) -> Rec#position_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#position_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#position_report{encoded_text = V};
-    ({K,V}, #position_report{fields = F} = Rec) -> Rec#position_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#position_report{fields = lists:reverse(F)}.
-
-decode_message_trade_capture_report_request_ack(Message, #trade_capture_report_request_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trade_capture_report_request_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_request_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_request_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_request_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trade_capture_report_request_ack{sending_time = V};
-    ({trade_request_id,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_id = V};
-    ({trade_request_type,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_type = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_request_ack{subscription_request_type = V};
-    ({tot_num_trade_reports,V}, Rec) -> Rec#trade_capture_report_request_ack{tot_num_trade_reports = fix:parse_num(V)};
-    ({trade_request_result,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_result = fix:parse_num(V)};
-    ({trade_request_status,V}, Rec) -> Rec#trade_capture_report_request_ack{trade_request_status = fix:parse_num(V)};
-    ({multi_leg_reporting_type,V}, Rec) -> Rec#trade_capture_report_request_ack{multi_leg_reporting_type = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_request_ack{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#trade_capture_report_request_ack{response_destination = V};
-    ({text,V}, Rec) -> Rec#trade_capture_report_request_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_request_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#trade_capture_report_request_ack{encoded_text = V};
-    ({K,V}, #trade_capture_report_request_ack{fields = F} = Rec) -> Rec#trade_capture_report_request_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trade_capture_report_request_ack{fields = lists:reverse(F)}.
-
-decode_message_trade_capture_report_ack(Message, #trade_capture_report_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #trade_capture_report_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#trade_capture_report_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#trade_capture_report_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#trade_capture_report_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#trade_capture_report_ack{sending_time = V};
-    ({trade_report_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_id = V};
-    ({trade_report_trans_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_trans_type = fix:parse_num(V)};
-    ({trade_report_type,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_type = fix:parse_num(V)};
-    ({trd_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_type = fix:parse_num(V)};
-    ({trd_sub_type,V}, Rec) -> Rec#trade_capture_report_ack{trd_sub_type = fix:parse_num(V)};
-    ({secondary_trd_type,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trd_type = fix:parse_num(V)};
-    ({transfer_reason,V}, Rec) -> Rec#trade_capture_report_ack{transfer_reason = V};
-    ({exec_type,V}, Rec) -> Rec#trade_capture_report_ack{exec_type = V};
-    ({trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_ref_id = V};
-    ({secondary_trade_report_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trade_report_ref_id = V};
-    ({trd_rpt_status,V}, Rec) -> Rec#trade_capture_report_ack{trd_rpt_status = fix:parse_num(V)};
-    ({trade_report_reject_reason,V}, Rec) -> Rec#trade_capture_report_ack{trade_report_reject_reason = fix:parse_num(V)};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_trade_report_id = V};
-    ({subscription_request_type,V}, Rec) -> Rec#trade_capture_report_ack{subscription_request_type = V};
-    ({trade_link_id,V}, Rec) -> Rec#trade_capture_report_ack{trade_link_id = V};
-    ({trd_match_id,V}, Rec) -> Rec#trade_capture_report_ack{trd_match_id = V};
-    ({exec_id,V}, Rec) -> Rec#trade_capture_report_ack{exec_id = V};
-    ({secondary_exec_id,V}, Rec) -> Rec#trade_capture_report_ack{secondary_exec_id = V};
-    ({transact_time,V}, Rec) -> Rec#trade_capture_report_ack{transact_time = V};
-    ({response_transport_type,V}, Rec) -> Rec#trade_capture_report_ack{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#trade_capture_report_ack{response_destination = V};
-    ({text,V}, Rec) -> Rec#trade_capture_report_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#trade_capture_report_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#trade_capture_report_ack{encoded_text = V};
-    ({leg_qty,V}, Rec) -> Rec#trade_capture_report_ack{leg_qty = fix:parse_num(V)};
-    ({leg_swap_type,V}, Rec) -> Rec#trade_capture_report_ack{leg_swap_type = fix:parse_num(V)};
-    ({leg_position_effect,V}, Rec) -> Rec#trade_capture_report_ack{leg_position_effect = V};
-    ({leg_covered_or_uncovered,V}, Rec) -> Rec#trade_capture_report_ack{leg_covered_or_uncovered = fix:parse_num(V)};
-    ({leg_ref_id,V}, Rec) -> Rec#trade_capture_report_ack{leg_ref_id = V};
-    ({leg_price,V}, Rec) -> Rec#trade_capture_report_ack{leg_price = fix:parse_num(V)};
-    ({leg_settl_type,V}, Rec) -> Rec#trade_capture_report_ack{leg_settl_type = V};
-    ({leg_settl_date,V}, Rec) -> Rec#trade_capture_report_ack{leg_settl_date = V};
-    ({leg_last_px,V}, Rec) -> Rec#trade_capture_report_ack{leg_last_px = fix:parse_num(V)};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#trade_capture_report_ack{clearing_fee_indicator = V};
-    ({order_capacity,V}, Rec) -> Rec#trade_capture_report_ack{order_capacity = V};
-    ({order_restrictions,V}, Rec) -> Rec#trade_capture_report_ack{order_restrictions = V};
-    ({cust_order_capacity,V}, Rec) -> Rec#trade_capture_report_ack{cust_order_capacity = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#trade_capture_report_ack{account = V};
-    ({acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{acct_id_source = fix:parse_num(V)};
-    ({account_type,V}, Rec) -> Rec#trade_capture_report_ack{account_type = fix:parse_num(V)};
-    ({position_effect,V}, Rec) -> Rec#trade_capture_report_ack{position_effect = V};
-    ({prealloc_method,V}, Rec) -> Rec#trade_capture_report_ack{prealloc_method = V};
-    ({alloc_account,V}, Rec) -> Rec#trade_capture_report_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#trade_capture_report_ack{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_settl_currency,V}, Rec) -> Rec#trade_capture_report_ack{alloc_settl_currency = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#trade_capture_report_ack{individual_alloc_id = V};
-    ({alloc_qty,V}, Rec) -> Rec#trade_capture_report_ack{alloc_qty = fix:parse_num(V)};
-    ({K,V}, #trade_capture_report_ack{fields = F} = Rec) -> Rec#trade_capture_report_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#trade_capture_report_ack{fields = lists:reverse(F)}.
-
-decode_message_allocation_report(Message, #allocation_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #allocation_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#allocation_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#allocation_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#allocation_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#allocation_report{sending_time = V};
-    ({alloc_report_id,V}, Rec) -> Rec#allocation_report{alloc_report_id = V};
-    ({alloc_id,V}, Rec) -> Rec#allocation_report{alloc_id = V};
-    ({alloc_trans_type,V}, Rec) -> Rec#allocation_report{alloc_trans_type = V};
-    ({alloc_report_ref_id,V}, Rec) -> Rec#allocation_report{alloc_report_ref_id = V};
-    ({alloc_canc_replace_reason,V}, Rec) -> Rec#allocation_report{alloc_canc_replace_reason = fix:parse_num(V)};
-    ({secondary_alloc_id,V}, Rec) -> Rec#allocation_report{secondary_alloc_id = V};
-    ({alloc_report_type,V}, Rec) -> Rec#allocation_report{alloc_report_type = fix:parse_num(V)};
-    ({alloc_status,V}, Rec) -> Rec#allocation_report{alloc_status = fix:parse_num(V)};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report{alloc_rej_code = fix:parse_num(V)};
-    ({ref_alloc_id,V}, Rec) -> Rec#allocation_report{ref_alloc_id = V};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report{alloc_intermed_req_type = fix:parse_num(V)};
-    ({alloc_link_id,V}, Rec) -> Rec#allocation_report{alloc_link_id = V};
-    ({alloc_link_type,V}, Rec) -> Rec#allocation_report{alloc_link_type = fix:parse_num(V)};
-    ({booking_ref_id,V}, Rec) -> Rec#allocation_report{booking_ref_id = V};
-    ({alloc_no_orders_type,V}, Rec) -> Rec#allocation_report{alloc_no_orders_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#allocation_report{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#allocation_report{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#allocation_report{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#allocation_report{secondary_cl_ord_id = V};
-    ({list_id,V}, Rec) -> Rec#allocation_report{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#allocation_report{order_qty = fix:parse_num(V)};
-    ({order_avg_px,V}, Rec) -> Rec#allocation_report{order_avg_px = fix:parse_num(V)};
-    ({order_booking_qty,V}, Rec) -> Rec#allocation_report{order_booking_qty = fix:parse_num(V)};
-    ({last_qty,V}, Rec) -> Rec#allocation_report{last_qty = fix:parse_num(V)};
-    ({exec_id,V}, Rec) -> Rec#allocation_report{exec_id = V};
-    ({secondary_exec_id,V}, Rec) -> Rec#allocation_report{secondary_exec_id = V};
-    ({last_px,V}, Rec) -> Rec#allocation_report{last_px = fix:parse_num(V)};
-    ({last_par_px,V}, Rec) -> Rec#allocation_report{last_par_px = fix:parse_num(V)};
-    ({last_capacity,V}, Rec) -> Rec#allocation_report{last_capacity = V};
-    ({previously_reported,V}, Rec) -> Rec#allocation_report{previously_reported = V == <<"Y">>};
-    ({reversal_indicator,V}, Rec) -> Rec#allocation_report{reversal_indicator = V == <<"Y">>};
-    ({match_type,V}, Rec) -> Rec#allocation_report{match_type = V};
-    ({side,V}, Rec) -> Rec#allocation_report{side = V};
-    ({quantity,V}, Rec) -> Rec#allocation_report{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#allocation_report{qty_type = fix:parse_num(V)};
-    ({last_mkt,V}, Rec) -> Rec#allocation_report{last_mkt = V};
-    ({trade_origination_date,V}, Rec) -> Rec#allocation_report{trade_origination_date = V};
-    ({trading_session_id,V}, Rec) -> Rec#allocation_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#allocation_report{trading_session_sub_id = V};
-    ({price_type,V}, Rec) -> Rec#allocation_report{price_type = fix:parse_num(V)};
-    ({avg_px,V}, Rec) -> Rec#allocation_report{avg_px = fix:parse_num(V)};
-    ({avg_par_px,V}, Rec) -> Rec#allocation_report{avg_par_px = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#allocation_report{currency = V};
-    ({avg_px_precision,V}, Rec) -> Rec#allocation_report{avg_px_precision = fix:parse_num(V)};
-    ({trade_date,V}, Rec) -> Rec#allocation_report{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#allocation_report{transact_time = V};
-    ({settl_type,V}, Rec) -> Rec#allocation_report{settl_type = V};
-    ({settl_date,V}, Rec) -> Rec#allocation_report{settl_date = V};
-    ({booking_type,V}, Rec) -> Rec#allocation_report{booking_type = fix:parse_num(V)};
-    ({gross_trade_amt,V}, Rec) -> Rec#allocation_report{gross_trade_amt = V};
-    ({concession,V}, Rec) -> Rec#allocation_report{concession = V};
-    ({total_takedown,V}, Rec) -> Rec#allocation_report{total_takedown = V};
-    ({net_money,V}, Rec) -> Rec#allocation_report{net_money = V};
-    ({position_effect,V}, Rec) -> Rec#allocation_report{position_effect = V};
-    ({auto_accept_indicator,V}, Rec) -> Rec#allocation_report{auto_accept_indicator = V == <<"Y">>};
-    ({text,V}, Rec) -> Rec#allocation_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#allocation_report{encoded_text = V};
-    ({num_days_interest,V}, Rec) -> Rec#allocation_report{num_days_interest = fix:parse_num(V)};
-    ({accrued_interest_rate,V}, Rec) -> Rec#allocation_report{accrued_interest_rate = V};
-    ({accrued_interest_amt,V}, Rec) -> Rec#allocation_report{accrued_interest_amt = V};
-    ({total_accrued_interest_amt,V}, Rec) -> Rec#allocation_report{total_accrued_interest_amt = V};
-    ({interest_at_maturity,V}, Rec) -> Rec#allocation_report{interest_at_maturity = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#allocation_report{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#allocation_report{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#allocation_report{end_cash = V};
-    ({legal_confirm,V}, Rec) -> Rec#allocation_report{legal_confirm = V == <<"Y">>};
-    ({tot_no_allocs,V}, Rec) -> Rec#allocation_report{tot_no_allocs = fix:parse_num(V)};
-    ({last_fragment,V}, Rec) -> Rec#allocation_report{last_fragment = V == <<"Y">>};
-    ({alloc_account,V}, Rec) -> Rec#allocation_report{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report{alloc_acct_id_source = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#allocation_report{match_status = V};
-    ({alloc_price,V}, Rec) -> Rec#allocation_report{alloc_price = fix:parse_num(V)};
-    ({alloc_qty,V}, Rec) -> Rec#allocation_report{alloc_qty = fix:parse_num(V)};
-    ({individual_alloc_id,V}, Rec) -> Rec#allocation_report{individual_alloc_id = V};
-    ({process_code,V}, Rec) -> Rec#allocation_report{process_code = V};
-    ({notify_broker_of_credit,V}, Rec) -> Rec#allocation_report{notify_broker_of_credit = V == <<"Y">>};
-    ({alloc_handl_inst,V}, Rec) -> Rec#allocation_report{alloc_handl_inst = fix:parse_num(V)};
-    ({alloc_text,V}, Rec) -> Rec#allocation_report{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report{encoded_alloc_text_len = fix:parse_num(V)};
-    ({encoded_alloc_text,V}, Rec) -> Rec#allocation_report{encoded_alloc_text = V};
-    ({alloc_avg_px,V}, Rec) -> Rec#allocation_report{alloc_avg_px = fix:parse_num(V)};
-    ({alloc_net_money,V}, Rec) -> Rec#allocation_report{alloc_net_money = V};
-    ({settl_curr_amt,V}, Rec) -> Rec#allocation_report{settl_curr_amt = V};
-    ({alloc_settl_curr_amt,V}, Rec) -> Rec#allocation_report{alloc_settl_curr_amt = V};
-    ({settl_currency,V}, Rec) -> Rec#allocation_report{settl_currency = V};
-    ({alloc_settl_currency,V}, Rec) -> Rec#allocation_report{alloc_settl_currency = V};
-    ({settl_curr_fx_rate,V}, Rec) -> Rec#allocation_report{settl_curr_fx_rate = V};
-    ({settl_curr_fx_rate_calc,V}, Rec) -> Rec#allocation_report{settl_curr_fx_rate_calc = V};
-    ({alloc_accrued_interest_amt,V}, Rec) -> Rec#allocation_report{alloc_accrued_interest_amt = V};
-    ({alloc_interest_at_maturity,V}, Rec) -> Rec#allocation_report{alloc_interest_at_maturity = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#allocation_report{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#allocation_report{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#allocation_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#allocation_report{misc_fee_basis = fix:parse_num(V)};
-    ({clearing_instruction,V}, Rec) -> Rec#allocation_report{clearing_instruction = fix:parse_num(V)};
-    ({clearing_fee_indicator,V}, Rec) -> Rec#allocation_report{clearing_fee_indicator = V};
-    ({alloc_settl_inst_type,V}, Rec) -> Rec#allocation_report{alloc_settl_inst_type = fix:parse_num(V)};
-    ({K,V}, #allocation_report{fields = F} = Rec) -> Rec#allocation_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#allocation_report{fields = lists:reverse(F)}.
-
-decode_message_allocation_report_ack(Message, #allocation_report_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #allocation_report_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#allocation_report_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#allocation_report_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#allocation_report_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#allocation_report_ack{sending_time = V};
-    ({alloc_report_id,V}, Rec) -> Rec#allocation_report_ack{alloc_report_id = V};
-    ({alloc_id,V}, Rec) -> Rec#allocation_report_ack{alloc_id = V};
-    ({secondary_alloc_id,V}, Rec) -> Rec#allocation_report_ack{secondary_alloc_id = V};
-    ({trade_date,V}, Rec) -> Rec#allocation_report_ack{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#allocation_report_ack{transact_time = V};
-    ({alloc_status,V}, Rec) -> Rec#allocation_report_ack{alloc_status = fix:parse_num(V)};
-    ({alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{alloc_rej_code = fix:parse_num(V)};
-    ({alloc_report_type,V}, Rec) -> Rec#allocation_report_ack{alloc_report_type = fix:parse_num(V)};
-    ({alloc_intermed_req_type,V}, Rec) -> Rec#allocation_report_ack{alloc_intermed_req_type = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#allocation_report_ack{match_status = V};
-    ({product,V}, Rec) -> Rec#allocation_report_ack{product = fix:parse_num(V)};
-    ({security_type,V}, Rec) -> Rec#allocation_report_ack{security_type = V};
-    ({text,V}, Rec) -> Rec#allocation_report_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#allocation_report_ack{encoded_text = V};
-    ({alloc_account,V}, Rec) -> Rec#allocation_report_ack{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#allocation_report_ack{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_price,V}, Rec) -> Rec#allocation_report_ack{alloc_price = fix:parse_num(V)};
-    ({individual_alloc_id,V}, Rec) -> Rec#allocation_report_ack{individual_alloc_id = V};
-    ({individual_alloc_rej_code,V}, Rec) -> Rec#allocation_report_ack{individual_alloc_rej_code = fix:parse_num(V)};
-    ({alloc_text,V}, Rec) -> Rec#allocation_report_ack{alloc_text = V};
-    ({encoded_alloc_text_len,V}, Rec) -> Rec#allocation_report_ack{encoded_alloc_text_len = fix:parse_num(V)};
-    ({encoded_alloc_text,V}, Rec) -> Rec#allocation_report_ack{encoded_alloc_text = V};
-    ({K,V}, #allocation_report_ack{fields = F} = Rec) -> Rec#allocation_report_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#allocation_report_ack{fields = lists:reverse(F)}.
-
-decode_message_confirmation_ack(Message, #confirmation_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #confirmation_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#confirmation_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#confirmation_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#confirmation_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#confirmation_ack{sending_time = V};
-    ({confirm_id,V}, Rec) -> Rec#confirmation_ack{confirm_id = V};
-    ({trade_date,V}, Rec) -> Rec#confirmation_ack{trade_date = V};
-    ({transact_time,V}, Rec) -> Rec#confirmation_ack{transact_time = V};
-    ({affirm_status,V}, Rec) -> Rec#confirmation_ack{affirm_status = fix:parse_num(V)};
-    ({confirm_rej_reason,V}, Rec) -> Rec#confirmation_ack{confirm_rej_reason = fix:parse_num(V)};
-    ({match_status,V}, Rec) -> Rec#confirmation_ack{match_status = V};
-    ({text,V}, Rec) -> Rec#confirmation_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#confirmation_ack{encoded_text = V};
-    ({K,V}, #confirmation_ack{fields = F} = Rec) -> Rec#confirmation_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#confirmation_ack{fields = lists:reverse(F)}.
-
-decode_message_settlement_instruction_request(Message, #settlement_instruction_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #settlement_instruction_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#settlement_instruction_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#settlement_instruction_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#settlement_instruction_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#settlement_instruction_request{sending_time = V};
-    ({settl_inst_req_id,V}, Rec) -> Rec#settlement_instruction_request{settl_inst_req_id = V};
-    ({transact_time,V}, Rec) -> Rec#settlement_instruction_request{transact_time = V};
-    ({alloc_account,V}, Rec) -> Rec#settlement_instruction_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#settlement_instruction_request{alloc_acct_id_source = fix:parse_num(V)};
-    ({side,V}, Rec) -> Rec#settlement_instruction_request{side = V};
-    ({product,V}, Rec) -> Rec#settlement_instruction_request{product = fix:parse_num(V)};
-    ({security_type,V}, Rec) -> Rec#settlement_instruction_request{security_type = V};
-    ({cfi_code,V}, Rec) -> Rec#settlement_instruction_request{cfi_code = V};
-    ({effective_time,V}, Rec) -> Rec#settlement_instruction_request{effective_time = V};
-    ({expire_time,V}, Rec) -> Rec#settlement_instruction_request{expire_time = V};
-    ({last_update_time,V}, Rec) -> Rec#settlement_instruction_request{last_update_time = V};
-    ({stand_inst_db_type,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_type = fix:parse_num(V)};
-    ({stand_inst_db_name,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_name = V};
-    ({stand_inst_db_id,V}, Rec) -> Rec#settlement_instruction_request{stand_inst_db_id = V};
-    ({K,V}, #settlement_instruction_request{fields = F} = Rec) -> Rec#settlement_instruction_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#settlement_instruction_request{fields = lists:reverse(F)}.
-
-decode_message_assignment_report(Message, #assignment_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #assignment_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#assignment_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#assignment_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#assignment_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#assignment_report{sending_time = V};
-    ({asgn_rpt_id,V}, Rec) -> Rec#assignment_report{asgn_rpt_id = V};
-    ({tot_num_assignment_reports,V}, Rec) -> Rec#assignment_report{tot_num_assignment_reports = fix:parse_num(V)};
-    ({last_rpt_requested,V}, Rec) -> Rec#assignment_report{last_rpt_requested = V == <<"Y">>};
-    ({account,V}, Rec) -> Rec#assignment_report{account = V};
-    ({account_type,V}, Rec) -> Rec#assignment_report{account_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#assignment_report{currency = V};
-    ({threshold_amount,V}, Rec) -> Rec#assignment_report{threshold_amount = V};
-    ({settl_price,V}, Rec) -> Rec#assignment_report{settl_price = fix:parse_num(V)};
-    ({settl_price_type,V}, Rec) -> Rec#assignment_report{settl_price_type = fix:parse_num(V)};
-    ({underlying_settl_price,V}, Rec) -> Rec#assignment_report{underlying_settl_price = fix:parse_num(V)};
-    ({expire_date,V}, Rec) -> Rec#assignment_report{expire_date = V};
-    ({assignment_method,V}, Rec) -> Rec#assignment_report{assignment_method = V};
-    ({assignment_unit,V}, Rec) -> Rec#assignment_report{assignment_unit = fix:parse_num(V)};
-    ({open_interest,V}, Rec) -> Rec#assignment_report{open_interest = V};
-    ({exercise_method,V}, Rec) -> Rec#assignment_report{exercise_method = V};
-    ({settl_sess_id,V}, Rec) -> Rec#assignment_report{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#assignment_report{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#assignment_report{clearing_business_date = V};
-    ({text,V}, Rec) -> Rec#assignment_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#assignment_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#assignment_report{encoded_text = V};
-    ({K,V}, #assignment_report{fields = F} = Rec) -> Rec#assignment_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#assignment_report{fields = lists:reverse(F)}.
-
-decode_message_collateral_request(Message, #collateral_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_request{sending_time = V};
-    ({coll_req_id,V}, Rec) -> Rec#collateral_request{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_request{coll_asgn_reason = fix:parse_num(V)};
-    ({transact_time,V}, Rec) -> Rec#collateral_request{transact_time = V};
-    ({expire_time,V}, Rec) -> Rec#collateral_request{expire_time = V};
-    ({account,V}, Rec) -> Rec#collateral_request{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_request{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_request{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_request{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_request{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_request{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_request{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_request{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_request{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_request{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_request{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_request{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_request{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_request{coll_action = fix:parse_num(V)};
-    ({margin_excess,V}, Rec) -> Rec#collateral_request{margin_excess = V};
-    ({total_net_value,V}, Rec) -> Rec#collateral_request{total_net_value = V};
-    ({cash_outstanding,V}, Rec) -> Rec#collateral_request{cash_outstanding = V};
-    ({side,V}, Rec) -> Rec#collateral_request{side = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#collateral_request{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#collateral_request{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#collateral_request{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_request{misc_fee_basis = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#collateral_request{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#collateral_request{price_type = fix:parse_num(V)};
-    ({accrued_interest_amt,V}, Rec) -> Rec#collateral_request{accrued_interest_amt = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_request{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#collateral_request{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#collateral_request{end_cash = V};
-    ({trading_session_id,V}, Rec) -> Rec#collateral_request{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#collateral_request{trading_session_sub_id = V};
-    ({settl_sess_id,V}, Rec) -> Rec#collateral_request{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_request{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#collateral_request{clearing_business_date = V};
-    ({text,V}, Rec) -> Rec#collateral_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_request{encoded_text = V};
-    ({K,V}, #collateral_request{fields = F} = Rec) -> Rec#collateral_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_request{fields = lists:reverse(F)}.
-
-decode_message_collateral_assignment(Message, #collateral_assignment{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_assignment{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_assignment{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_assignment{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_assignment{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_assignment{sending_time = V};
-    ({coll_asgn_id,V}, Rec) -> Rec#collateral_assignment{coll_asgn_id = V};
-    ({coll_req_id,V}, Rec) -> Rec#collateral_assignment{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_assignment{coll_asgn_reason = fix:parse_num(V)};
-    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_assignment{coll_asgn_trans_type = fix:parse_num(V)};
-    ({coll_asgn_ref_id,V}, Rec) -> Rec#collateral_assignment{coll_asgn_ref_id = V};
-    ({transact_time,V}, Rec) -> Rec#collateral_assignment{transact_time = V};
-    ({expire_time,V}, Rec) -> Rec#collateral_assignment{expire_time = V};
-    ({account,V}, Rec) -> Rec#collateral_assignment{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_assignment{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_assignment{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_assignment{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_assignment{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_assignment{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_assignment{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_assignment{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_assignment{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_assignment{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_assignment{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_assignment{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_assignment{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_assignment{coll_action = fix:parse_num(V)};
-    ({margin_excess,V}, Rec) -> Rec#collateral_assignment{margin_excess = V};
-    ({total_net_value,V}, Rec) -> Rec#collateral_assignment{total_net_value = V};
-    ({cash_outstanding,V}, Rec) -> Rec#collateral_assignment{cash_outstanding = V};
-    ({side,V}, Rec) -> Rec#collateral_assignment{side = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#collateral_assignment{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#collateral_assignment{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#collateral_assignment{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_assignment{misc_fee_basis = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#collateral_assignment{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#collateral_assignment{price_type = fix:parse_num(V)};
-    ({accrued_interest_amt,V}, Rec) -> Rec#collateral_assignment{accrued_interest_amt = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_assignment{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#collateral_assignment{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#collateral_assignment{end_cash = V};
-    ({trading_session_id,V}, Rec) -> Rec#collateral_assignment{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#collateral_assignment{trading_session_sub_id = V};
-    ({settl_sess_id,V}, Rec) -> Rec#collateral_assignment{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_assignment{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#collateral_assignment{clearing_business_date = V};
-    ({text,V}, Rec) -> Rec#collateral_assignment{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_assignment{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_assignment{encoded_text = V};
-    ({K,V}, #collateral_assignment{fields = F} = Rec) -> Rec#collateral_assignment{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_assignment{fields = lists:reverse(F)}.
-
-decode_message_collateral_response(Message, #collateral_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_response{sending_time = V};
-    ({coll_resp_id,V}, Rec) -> Rec#collateral_response{coll_resp_id = V};
-    ({coll_asgn_id,V}, Rec) -> Rec#collateral_response{coll_asgn_id = V};
-    ({coll_req_id,V}, Rec) -> Rec#collateral_response{coll_req_id = V};
-    ({coll_asgn_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reason = fix:parse_num(V)};
-    ({coll_asgn_trans_type,V}, Rec) -> Rec#collateral_response{coll_asgn_trans_type = fix:parse_num(V)};
-    ({coll_asgn_resp_type,V}, Rec) -> Rec#collateral_response{coll_asgn_resp_type = fix:parse_num(V)};
-    ({coll_asgn_reject_reason,V}, Rec) -> Rec#collateral_response{coll_asgn_reject_reason = fix:parse_num(V)};
-    ({transact_time,V}, Rec) -> Rec#collateral_response{transact_time = V};
-    ({account,V}, Rec) -> Rec#collateral_response{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_response{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_response{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_response{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_response{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_response{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_response{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_response{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_response{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_response{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_response{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_response{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_response{currency = V};
-    ({coll_action,V}, Rec) -> Rec#collateral_response{coll_action = fix:parse_num(V)};
-    ({margin_excess,V}, Rec) -> Rec#collateral_response{margin_excess = V};
-    ({total_net_value,V}, Rec) -> Rec#collateral_response{total_net_value = V};
-    ({cash_outstanding,V}, Rec) -> Rec#collateral_response{cash_outstanding = V};
-    ({side,V}, Rec) -> Rec#collateral_response{side = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#collateral_response{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#collateral_response{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#collateral_response{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_response{misc_fee_basis = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#collateral_response{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#collateral_response{price_type = fix:parse_num(V)};
-    ({accrued_interest_amt,V}, Rec) -> Rec#collateral_response{accrued_interest_amt = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_response{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#collateral_response{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#collateral_response{end_cash = V};
-    ({text,V}, Rec) -> Rec#collateral_response{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_response{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_response{encoded_text = V};
-    ({K,V}, #collateral_response{fields = F} = Rec) -> Rec#collateral_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_response{fields = lists:reverse(F)}.
-
-decode_message_collateral_report(Message, #collateral_report{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_report{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_report{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_report{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_report{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_report{sending_time = V};
-    ({coll_rpt_id,V}, Rec) -> Rec#collateral_report{coll_rpt_id = V};
-    ({coll_inquiry_id,V}, Rec) -> Rec#collateral_report{coll_inquiry_id = V};
-    ({coll_status,V}, Rec) -> Rec#collateral_report{coll_status = fix:parse_num(V)};
-    ({tot_num_reports,V}, Rec) -> Rec#collateral_report{tot_num_reports = fix:parse_num(V)};
-    ({last_rpt_requested,V}, Rec) -> Rec#collateral_report{last_rpt_requested = V == <<"Y">>};
-    ({account,V}, Rec) -> Rec#collateral_report{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_report{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_report{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_report{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_report{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_report{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_report{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_report{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_report{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_report{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_report{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_report{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_report{currency = V};
-    ({margin_excess,V}, Rec) -> Rec#collateral_report{margin_excess = V};
-    ({total_net_value,V}, Rec) -> Rec#collateral_report{total_net_value = V};
-    ({cash_outstanding,V}, Rec) -> Rec#collateral_report{cash_outstanding = V};
-    ({side,V}, Rec) -> Rec#collateral_report{side = V};
-    ({misc_fee_amt,V}, Rec) -> Rec#collateral_report{misc_fee_amt = V};
-    ({misc_fee_curr,V}, Rec) -> Rec#collateral_report{misc_fee_curr = V};
-    ({misc_fee_type,V}, Rec) -> Rec#collateral_report{misc_fee_type = V};
-    ({misc_fee_basis,V}, Rec) -> Rec#collateral_report{misc_fee_basis = fix:parse_num(V)};
-    ({price,V}, Rec) -> Rec#collateral_report{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#collateral_report{price_type = fix:parse_num(V)};
-    ({accrued_interest_amt,V}, Rec) -> Rec#collateral_report{accrued_interest_amt = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_report{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#collateral_report{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#collateral_report{end_cash = V};
-    ({trading_session_id,V}, Rec) -> Rec#collateral_report{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#collateral_report{trading_session_sub_id = V};
-    ({settl_sess_id,V}, Rec) -> Rec#collateral_report{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_report{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#collateral_report{clearing_business_date = V};
-    ({text,V}, Rec) -> Rec#collateral_report{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_report{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_report{encoded_text = V};
-    ({K,V}, #collateral_report{fields = F} = Rec) -> Rec#collateral_report{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_report{fields = lists:reverse(F)}.
-
-decode_message_collateral_inquiry(Message, #collateral_inquiry{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_inquiry{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_inquiry{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_inquiry{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_inquiry{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_inquiry{sending_time = V};
-    ({coll_inquiry_id,V}, Rec) -> Rec#collateral_inquiry{coll_inquiry_id = V};
-    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry{coll_inquiry_qualifier = fix:parse_num(V)};
-    ({subscription_request_type,V}, Rec) -> Rec#collateral_inquiry{subscription_request_type = V};
-    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#collateral_inquiry{response_destination = V};
-    ({account,V}, Rec) -> Rec#collateral_inquiry{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_inquiry{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_inquiry{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_inquiry{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_inquiry{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_inquiry{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_inquiry{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_inquiry{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_inquiry{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_inquiry{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_inquiry{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_inquiry{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_inquiry{currency = V};
-    ({margin_excess,V}, Rec) -> Rec#collateral_inquiry{margin_excess = V};
-    ({total_net_value,V}, Rec) -> Rec#collateral_inquiry{total_net_value = V};
-    ({cash_outstanding,V}, Rec) -> Rec#collateral_inquiry{cash_outstanding = V};
-    ({side,V}, Rec) -> Rec#collateral_inquiry{side = V};
-    ({price,V}, Rec) -> Rec#collateral_inquiry{price = fix:parse_num(V)};
-    ({price_type,V}, Rec) -> Rec#collateral_inquiry{price_type = fix:parse_num(V)};
-    ({accrued_interest_amt,V}, Rec) -> Rec#collateral_inquiry{accrued_interest_amt = V};
-    ({end_accrued_interest_amt,V}, Rec) -> Rec#collateral_inquiry{end_accrued_interest_amt = V};
-    ({start_cash,V}, Rec) -> Rec#collateral_inquiry{start_cash = V};
-    ({end_cash,V}, Rec) -> Rec#collateral_inquiry{end_cash = V};
-    ({trading_session_id,V}, Rec) -> Rec#collateral_inquiry{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#collateral_inquiry{trading_session_sub_id = V};
-    ({settl_sess_id,V}, Rec) -> Rec#collateral_inquiry{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_inquiry{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#collateral_inquiry{clearing_business_date = V};
-    ({text,V}, Rec) -> Rec#collateral_inquiry{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_inquiry{encoded_text = V};
-    ({K,V}, #collateral_inquiry{fields = F} = Rec) -> Rec#collateral_inquiry{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_inquiry{fields = lists:reverse(F)}.
-
-decode_message_network_counterparty_system_status_request(Message, #network_counterparty_system_status_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #network_counterparty_system_status_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#network_counterparty_system_status_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#network_counterparty_system_status_request{sending_time = V};
-    ({network_request_type,V}, Rec) -> Rec#network_counterparty_system_status_request{network_request_type = fix:parse_num(V)};
-    ({network_request_id,V}, Rec) -> Rec#network_counterparty_system_status_request{network_request_id = V};
-    ({ref_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_request{ref_comp_id = V};
-    ({ref_sub_id,V}, Rec) -> Rec#network_counterparty_system_status_request{ref_sub_id = V};
-    ({location_id,V}, Rec) -> Rec#network_counterparty_system_status_request{location_id = V};
-    ({desk_id,V}, Rec) -> Rec#network_counterparty_system_status_request{desk_id = V};
-    ({K,V}, #network_counterparty_system_status_request{fields = F} = Rec) -> Rec#network_counterparty_system_status_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#network_counterparty_system_status_request{fields = lists:reverse(F)}.
-
-decode_message_network_counterparty_system_status_response(Message, #network_counterparty_system_status_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #network_counterparty_system_status_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#network_counterparty_system_status_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#network_counterparty_system_status_response{sending_time = V};
-    ({network_status_response_type,V}, Rec) -> Rec#network_counterparty_system_status_response{network_status_response_type = fix:parse_num(V)};
-    ({network_request_id,V}, Rec) -> Rec#network_counterparty_system_status_response{network_request_id = V};
-    ({network_response_id,V}, Rec) -> Rec#network_counterparty_system_status_response{network_response_id = V};
-    ({last_network_response_id,V}, Rec) -> Rec#network_counterparty_system_status_response{last_network_response_id = V};
-    ({ref_comp_id,V}, Rec) -> Rec#network_counterparty_system_status_response{ref_comp_id = V};
-    ({ref_sub_id,V}, Rec) -> Rec#network_counterparty_system_status_response{ref_sub_id = V};
-    ({location_id,V}, Rec) -> Rec#network_counterparty_system_status_response{location_id = V};
-    ({desk_id,V}, Rec) -> Rec#network_counterparty_system_status_response{desk_id = V};
-    ({status_value,V}, Rec) -> Rec#network_counterparty_system_status_response{status_value = fix:parse_num(V)};
-    ({status_text,V}, Rec) -> Rec#network_counterparty_system_status_response{status_text = V};
-    ({K,V}, #network_counterparty_system_status_response{fields = F} = Rec) -> Rec#network_counterparty_system_status_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#network_counterparty_system_status_response{fields = lists:reverse(F)}.
-
-decode_message_user_request(Message, #user_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #user_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#user_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#user_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#user_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#user_request{sending_time = V};
-    ({user_request_id,V}, Rec) -> Rec#user_request{user_request_id = V};
-    ({user_request_type,V}, Rec) -> Rec#user_request{user_request_type = fix:parse_num(V)};
-    ({username,V}, Rec) -> Rec#user_request{username = V};
-    ({password,V}, Rec) -> Rec#user_request{password = V};
-    ({new_password,V}, Rec) -> Rec#user_request{new_password = V};
-    ({raw_data_length,V}, Rec) -> Rec#user_request{raw_data_length = fix:parse_num(V)};
-    ({raw_data,V}, Rec) -> Rec#user_request{raw_data = V};
-    ({K,V}, #user_request{fields = F} = Rec) -> Rec#user_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#user_request{fields = lists:reverse(F)}.
-
-decode_message_user_response(Message, #user_response{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #user_response{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#user_response{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#user_response{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#user_response{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#user_response{sending_time = V};
-    ({user_request_id,V}, Rec) -> Rec#user_response{user_request_id = V};
-    ({username,V}, Rec) -> Rec#user_response{username = V};
-    ({user_status,V}, Rec) -> Rec#user_response{user_status = fix:parse_num(V)};
-    ({user_status_text,V}, Rec) -> Rec#user_response{user_status_text = V};
-    ({K,V}, #user_response{fields = F} = Rec) -> Rec#user_response{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#user_response{fields = lists:reverse(F)}.
-
-decode_message_collateral_inquiry_ack(Message, #collateral_inquiry_ack{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #collateral_inquiry_ack{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#collateral_inquiry_ack{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#collateral_inquiry_ack{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#collateral_inquiry_ack{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#collateral_inquiry_ack{sending_time = V};
-    ({coll_inquiry_id,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_id = V};
-    ({coll_inquiry_status,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_status = fix:parse_num(V)};
-    ({coll_inquiry_result,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_result = fix:parse_num(V)};
-    ({coll_inquiry_qualifier,V}, Rec) -> Rec#collateral_inquiry_ack{coll_inquiry_qualifier = fix:parse_num(V)};
-    ({tot_num_reports,V}, Rec) -> Rec#collateral_inquiry_ack{tot_num_reports = fix:parse_num(V)};
-    ({account,V}, Rec) -> Rec#collateral_inquiry_ack{account = V};
-    ({account_type,V}, Rec) -> Rec#collateral_inquiry_ack{account_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#collateral_inquiry_ack{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#collateral_inquiry_ack{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#collateral_inquiry_ack{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#collateral_inquiry_ack{secondary_cl_ord_id = V};
-    ({exec_id,V}, Rec) -> Rec#collateral_inquiry_ack{exec_id = V};
-    ({trade_report_id,V}, Rec) -> Rec#collateral_inquiry_ack{trade_report_id = V};
-    ({secondary_trade_report_id,V}, Rec) -> Rec#collateral_inquiry_ack{secondary_trade_report_id = V};
-    ({settl_date,V}, Rec) -> Rec#collateral_inquiry_ack{settl_date = V};
-    ({quantity,V}, Rec) -> Rec#collateral_inquiry_ack{quantity = fix:parse_num(V)};
-    ({qty_type,V}, Rec) -> Rec#collateral_inquiry_ack{qty_type = fix:parse_num(V)};
-    ({currency,V}, Rec) -> Rec#collateral_inquiry_ack{currency = V};
-    ({trading_session_id,V}, Rec) -> Rec#collateral_inquiry_ack{trading_session_id = V};
-    ({trading_session_sub_id,V}, Rec) -> Rec#collateral_inquiry_ack{trading_session_sub_id = V};
-    ({settl_sess_id,V}, Rec) -> Rec#collateral_inquiry_ack{settl_sess_id = V};
-    ({settl_sess_sub_id,V}, Rec) -> Rec#collateral_inquiry_ack{settl_sess_sub_id = V};
-    ({clearing_business_date,V}, Rec) -> Rec#collateral_inquiry_ack{clearing_business_date = V};
-    ({response_transport_type,V}, Rec) -> Rec#collateral_inquiry_ack{response_transport_type = fix:parse_num(V)};
-    ({response_destination,V}, Rec) -> Rec#collateral_inquiry_ack{response_destination = V};
-    ({text,V}, Rec) -> Rec#collateral_inquiry_ack{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#collateral_inquiry_ack{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#collateral_inquiry_ack{encoded_text = V};
-    ({K,V}, #collateral_inquiry_ack{fields = F} = Rec) -> Rec#collateral_inquiry_ack{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#collateral_inquiry_ack{fields = lists:reverse(F)}.
-
-decode_message_confirmation_request(Message, #confirmation_request{} = Record) ->
-  Fields = [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    {field_by_number(K),V}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],
-  Record1 = #confirmation_request{fields = F} = lists:foldl(fun
-    ({sender_comp_id,V}, Rec) -> Rec#confirmation_request{sender_comp_id = V};
-    ({target_comp_id,V}, Rec) -> Rec#confirmation_request{target_comp_id = V};
-    ({msg_seq_num,V}, Rec) -> Rec#confirmation_request{msg_seq_num = fix:parse_num(V)};
-    ({sending_time,V}, Rec) -> Rec#confirmation_request{sending_time = V};
-    ({confirm_req_id,V}, Rec) -> Rec#confirmation_request{confirm_req_id = V};
-    ({confirm_type,V}, Rec) -> Rec#confirmation_request{confirm_type = fix:parse_num(V)};
-    ({cl_ord_id,V}, Rec) -> Rec#confirmation_request{cl_ord_id = V};
-    ({order_id,V}, Rec) -> Rec#confirmation_request{order_id = V};
-    ({secondary_order_id,V}, Rec) -> Rec#confirmation_request{secondary_order_id = V};
-    ({secondary_cl_ord_id,V}, Rec) -> Rec#confirmation_request{secondary_cl_ord_id = V};
-    ({list_id,V}, Rec) -> Rec#confirmation_request{list_id = V};
-    ({order_qty,V}, Rec) -> Rec#confirmation_request{order_qty = fix:parse_num(V)};
-    ({order_avg_px,V}, Rec) -> Rec#confirmation_request{order_avg_px = fix:parse_num(V)};
-    ({order_booking_qty,V}, Rec) -> Rec#confirmation_request{order_booking_qty = fix:parse_num(V)};
-    ({alloc_id,V}, Rec) -> Rec#confirmation_request{alloc_id = V};
-    ({secondary_alloc_id,V}, Rec) -> Rec#confirmation_request{secondary_alloc_id = V};
-    ({individual_alloc_id,V}, Rec) -> Rec#confirmation_request{individual_alloc_id = V};
-    ({transact_time,V}, Rec) -> Rec#confirmation_request{transact_time = V};
-    ({alloc_account,V}, Rec) -> Rec#confirmation_request{alloc_account = V};
-    ({alloc_acct_id_source,V}, Rec) -> Rec#confirmation_request{alloc_acct_id_source = fix:parse_num(V)};
-    ({alloc_account_type,V}, Rec) -> Rec#confirmation_request{alloc_account_type = fix:parse_num(V)};
-    ({text,V}, Rec) -> Rec#confirmation_request{text = V};
-    ({encoded_text_len,V}, Rec) -> Rec#confirmation_request{encoded_text_len = fix:parse_num(V)};
-    ({encoded_text,V}, Rec) -> Rec#confirmation_request{encoded_text = V};
-    ({K,V}, #confirmation_request{fields = F} = Rec) -> Rec#confirmation_request{fields = [{K,decode_typed_field(K,V)}|F]}
-  end, Record, Fields),
-  Record1#confirmation_request{fields = lists:reverse(F)}.
+decode_message_heartbeat(Message, #heartbeat{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{test_req_id, 6},{signature, 7}], 8),
+  Message1.
+
+decode_message_test_request(Message, #test_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{test_req_id, 6},{signature, 7}], 8),
+  Message1.
+
+decode_message_resend_request(Message, #resend_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{begin_seq_no, 6},{end_seq_no, 7},{signature, 8}], 9),
+  Message1.
+
+decode_message_reject(Message, #reject{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{ref_seq_num, 6},{ref_tag_id, 7},{ref_msg_type, 8},{session_reject_reason, 9},{text, 10},{encoded_text, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_sequence_reset(Message, #sequence_reset{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{gap_fill_flag, 6},{new_seq_no, 7},{signature, 8}], 9),
+  Message1.
+
+decode_message_logout(Message, #logout{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{text, 6},{encoded_text, 7},{signature, 8}], 9),
+  Message1.
+
+decode_message_ioi(Message, #ioi{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{ioi_id, 6},{ioi_trans_type, 7},{ioi_ref_id, 8},{side, 9},{qty_type, 10},{ioi_qty, 11},{currency, 12},{leg_ioi_qty, 13},{price_type, 14},{price, 15},{valid_until_time, 16},{ioi_qlty_ind, 17},{ioi_natural_flag, 18},{ioi_qualifier, 19},{text, 20},{encoded_text, 21},{transact_time, 22},{url_link, 23},{routing_type, 24},{routing_id, 25},{signature, 26}], 27),
+  Message1.
+
+decode_message_advertisement(Message, #advertisement{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{adv_id, 6},{adv_trans_type, 7},{adv_ref_id, 8},{adv_side, 9},{quantity, 10},{qty_type, 11},{price, 12},{currency, 13},{trade_date, 14},{transact_time, 15},{text, 16},{encoded_text, 17},{url_link, 18},{last_mkt, 19},{trading_session_id, 20},{trading_session_sub_id, 21},{signature, 22}], 23),
+  Message1.
+
+decode_message_execution_report(Message, #execution_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{secondary_order_id, 7},{secondary_cl_ord_id, 8},{secondary_exec_id, 9},{cl_ord_id, 10},{orig_cl_ord_id, 11},{cl_ord_link_id, 12},{quote_resp_id, 13},{ord_status_req_id, 14},{mass_status_req_id, 15},{tot_num_reports, 16},{last_rpt_requested, 17},{trade_origination_date, 18},{contra_broker, 19},{contra_trader, 20},{contra_trade_qty, 21},{contra_trade_time, 22},{contra_leg_ref_id, 23},{list_id, 24},{cross_id, 25},{orig_cross_id, 26},{cross_type, 27},{exec_id, 28},{exec_ref_id, 29},{exec_type, 30},{ord_status, 31},{working_indicator, 32},{ord_rej_reason, 33},{exec_restatement_reason, 34},{account, 35},{acct_id_source, 36},{account_type, 37},{day_booking_inst, 38},{booking_unit, 39},{prealloc_method, 40},{settl_type, 41},{settl_date, 42},{cash_margin, 43},{clearing_fee_indicator, 44},{side, 45},{qty_type, 46},{ord_type, 47},{price_type, 48},{price, 49},{stop_px, 50},{pegged_price, 51},{discretion_price, 52},{target_strategy, 53},{target_strategy_parameters, 54},{participation_rate, 55},{target_strategy_performance, 56},{currency, 57},{compliance_id, 58},{solicited_flag, 59},{time_in_force, 60},{effective_time, 61},{expire_date, 62},{expire_time, 63},{exec_inst, 64},{order_capacity, 65},{order_restrictions, 66},{cust_order_capacity, 67},{last_qty, 68},{underlying_last_qty, 69},{last_px, 70},{underlying_last_px, 71},{last_par_px, 72},{last_spot_rate, 73},{last_forward_points, 74},{last_mkt, 75},{trading_session_id, 76},{trading_session_sub_id, 77},{time_bracket, 78},{last_capacity, 79},{leaves_qty, 80},{cum_qty, 81},{avg_px, 82},{day_order_qty, 83},{day_cum_qty, 84},{day_avg_px, 85},{gt_booking_inst, 86},{trade_date, 87},{transact_time, 88},{report_to_exch, 89},{gross_trade_amt, 90},{num_days_interest, 91},{ex_date, 92},{accrued_interest_rate, 93},{accrued_interest_amt, 94},{interest_at_maturity, 95},{end_accrued_interest_amt, 96},{start_cash, 97},{end_cash, 98},{traded_flat_switch, 99},{basis_feature_date, 100},{basis_feature_price, 101},{concession, 102},{total_takedown, 103},{net_money, 104},{settl_curr_amt, 105},{settl_currency, 106},{settl_curr_fx_rate, 107},{settl_curr_fx_rate_calc, 108},{handl_inst, 109},{min_qty, 110},{max_floor, 111},{position_effect, 112},{max_show, 113},{booking_type, 114},{text, 115},{encoded_text, 116},{settl_date2, 117},{order_qty2, 118},{last_forward_points2, 119},{multi_leg_reporting_type, 120},{cancellation_rights, 121},{money_laundering_status, 122},{regist_id, 123},{designation, 124},{trans_bkd_time, 125},{exec_valuation_point, 126},{exec_price_type, 127},{exec_price_adjustment, 128},{priority_indicator, 129},{price_improvement, 130},{last_liquidity_ind, 131},{cont_amt_type, 132},{cont_amt_value, 133},{cont_amt_curr, 134},{leg_qty, 135},{leg_swap_type, 136},{leg_position_effect, 137},{leg_covered_or_uncovered, 138},{leg_ref_id, 139},{leg_price, 140},{leg_settl_type, 141},{leg_settl_date, 142},{leg_last_px, 143},{copy_msg_indicator, 144},{misc_fee_amt, 145},{misc_fee_curr, 146},{misc_fee_type, 147},{misc_fee_basis, 148},{signature, 149}], 150),
+  Message1.
+
+decode_message_order_cancel_reject(Message, #order_cancel_reject{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{secondary_order_id, 7},{secondary_cl_ord_id, 8},{cl_ord_id, 9},{cl_ord_link_id, 10},{orig_cl_ord_id, 11},{ord_status, 12},{working_indicator, 13},{orig_ord_mod_time, 14},{list_id, 15},{account, 16},{acct_id_source, 17},{account_type, 18},{trade_origination_date, 19},{trade_date, 20},{transact_time, 21},{cxl_rej_response_to, 22},{cxl_rej_reason, 23},{text, 24},{encoded_text, 25},{signature, 26}], 27),
+  Message1.
+
+decode_message_logon(Message, #logon{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{encrypt_method, 6},{heart_bt_int, 7},{raw_data, 8},{reset_seq_num_flag, 9},{next_expected_msg_seq_num, 10},{ref_msg_type, 11},{msg_direction, 12},{test_message_indicator, 13},{username, 14},{password, 15},{signature, 16}], 17),
+  Message1.
+
+decode_message_news(Message, #news{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{orig_time, 6},{urgency, 7},{headline, 8},{encoded_headline, 9},{routing_type, 10},{routing_id, 11},{text, 12},{encoded_text, 13},{url_link, 14},{raw_data, 15},{signature, 16}], 17),
+  Message1.
+
+decode_message_email(Message, #email{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{email_thread_id, 6},{email_type, 7},{orig_time, 8},{subject, 9},{encoded_subject, 10},{routing_type, 11},{routing_id, 12},{order_id, 13},{cl_ord_id, 14},{text, 15},{encoded_text, 16},{raw_data, 17},{signature, 18}], 19),
+  Message1.
+
+decode_message_new_order_single(Message, #new_order_single{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{cl_ord_id, 6},{secondary_cl_ord_id, 7},{cl_ord_link_id, 8},{trade_origination_date, 9},{trade_date, 10},{account, 11},{acct_id_source, 12},{account_type, 13},{day_booking_inst, 14},{booking_unit, 15},{prealloc_method, 16},{alloc_id, 17},{alloc_account, 18},{alloc_acct_id_source, 19},{alloc_settl_currency, 20},{individual_alloc_id, 21},{alloc_qty, 22},{settl_type, 23},{settl_date, 24},{cash_margin, 25},{clearing_fee_indicator, 26},{handl_inst, 27},{exec_inst, 28},{min_qty, 29},{max_floor, 30},{ex_destination, 31},{trading_session_id, 32},{trading_session_sub_id, 33},{process_code, 34},{prev_close_px, 35},{side, 36},{locate_reqd, 37},{transact_time, 38},{qty_type, 39},{ord_type, 40},{price_type, 41},{price, 42},{stop_px, 43},{currency, 44},{compliance_id, 45},{solicited_flag, 46},{ioi_id, 47},{quote_id, 48},{time_in_force, 49},{effective_time, 50},{expire_date, 51},{expire_time, 52},{gt_booking_inst, 53},{order_capacity, 54},{order_restrictions, 55},{cust_order_capacity, 56},{forex_req, 57},{settl_currency, 58},{booking_type, 59},{text, 60},{encoded_text, 61},{settl_date2, 62},{order_qty2, 63},{price2, 64},{position_effect, 65},{covered_or_uncovered, 66},{max_show, 67},{target_strategy, 68},{target_strategy_parameters, 69},{participation_rate, 70},{cancellation_rights, 71},{money_laundering_status, 72},{regist_id, 73},{designation, 74},{signature, 75}], 76),
+  Message1.
+
+decode_message_new_order_list(Message, #new_order_list{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{bid_id, 7},{client_bid_id, 8},{prog_rpt_reqs, 9},{bid_type, 10},{prog_period_interval, 11},{cancellation_rights, 12},{money_laundering_status, 13},{regist_id, 14},{list_exec_inst_type, 15},{list_exec_inst, 16},{encoded_list_exec_inst, 17},{allowable_one_sidedness_pct, 18},{allowable_one_sidedness_value, 19},{allowable_one_sidedness_curr, 20},{tot_no_orders, 21},{last_fragment, 22},{cl_ord_id, 23},{secondary_cl_ord_id, 24},{list_seq_no, 25},{cl_ord_link_id, 26},{settl_inst_mode, 27},{trade_origination_date, 28},{trade_date, 29},{account, 30},{acct_id_source, 31},{account_type, 32},{day_booking_inst, 33},{booking_unit, 34},{alloc_id, 35},{prealloc_method, 36},{alloc_account, 37},{alloc_acct_id_source, 38},{alloc_settl_currency, 39},{individual_alloc_id, 40},{alloc_qty, 41},{settl_type, 42},{settl_date, 43},{cash_margin, 44},{clearing_fee_indicator, 45},{handl_inst, 46},{exec_inst, 47},{min_qty, 48},{max_floor, 49},{ex_destination, 50},{trading_session_id, 51},{trading_session_sub_id, 52},{process_code, 53},{prev_close_px, 54},{side, 55},{side_value_ind, 56},{locate_reqd, 57},{transact_time, 58},{qty_type, 59},{ord_type, 60},{price_type, 61},{price, 62},{stop_px, 63},{currency, 64},{compliance_id, 65},{solicited_flag, 66},{ioi_id, 67},{quote_id, 68},{time_in_force, 69},{effective_time, 70},{expire_date, 71},{expire_time, 72},{gt_booking_inst, 73},{order_capacity, 74},{order_restrictions, 75},{cust_order_capacity, 76},{forex_req, 77},{settl_currency, 78},{booking_type, 79},{text, 80},{encoded_text, 81},{settl_date2, 82},{order_qty2, 83},{price2, 84},{position_effect, 85},{covered_or_uncovered, 86},{max_show, 87},{target_strategy, 88},{target_strategy_parameters, 89},{participation_rate, 90},{designation, 91},{signature, 92}], 93),
+  Message1.
+
+decode_message_order_cancel_request(Message, #order_cancel_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{orig_cl_ord_id, 6},{order_id, 7},{cl_ord_id, 8},{secondary_cl_ord_id, 9},{cl_ord_link_id, 10},{list_id, 11},{orig_ord_mod_time, 12},{account, 13},{acct_id_source, 14},{account_type, 15},{side, 16},{transact_time, 17},{compliance_id, 18},{text, 19},{encoded_text, 20},{signature, 21}], 22),
+  Message1.
+
+decode_message_order_cancel_replace_request(Message, #order_cancel_replace_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{trade_origination_date, 7},{trade_date, 8},{orig_cl_ord_id, 9},{cl_ord_id, 10},{secondary_cl_ord_id, 11},{cl_ord_link_id, 12},{list_id, 13},{orig_ord_mod_time, 14},{account, 15},{acct_id_source, 16},{account_type, 17},{day_booking_inst, 18},{booking_unit, 19},{prealloc_method, 20},{alloc_id, 21},{alloc_account, 22},{alloc_acct_id_source, 23},{alloc_settl_currency, 24},{individual_alloc_id, 25},{alloc_qty, 26},{settl_type, 27},{settl_date, 28},{cash_margin, 29},{clearing_fee_indicator, 30},{handl_inst, 31},{exec_inst, 32},{min_qty, 33},{max_floor, 34},{ex_destination, 35},{trading_session_id, 36},{trading_session_sub_id, 37},{side, 38},{transact_time, 39},{qty_type, 40},{ord_type, 41},{price_type, 42},{price, 43},{stop_px, 44},{target_strategy, 45},{target_strategy_parameters, 46},{participation_rate, 47},{compliance_id, 48},{solicited_flag, 49},{currency, 50},{time_in_force, 51},{effective_time, 52},{expire_date, 53},{expire_time, 54},{gt_booking_inst, 55},{order_capacity, 56},{order_restrictions, 57},{cust_order_capacity, 58},{forex_req, 59},{settl_currency, 60},{booking_type, 61},{text, 62},{encoded_text, 63},{settl_date2, 64},{order_qty2, 65},{price2, 66},{position_effect, 67},{covered_or_uncovered, 68},{max_show, 69},{locate_reqd, 70},{cancellation_rights, 71},{money_laundering_status, 72},{regist_id, 73},{designation, 74},{signature, 75}], 76),
+  Message1.
+
+decode_message_order_status_request(Message, #order_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{cl_ord_id, 7},{secondary_cl_ord_id, 8},{cl_ord_link_id, 9},{ord_status_req_id, 10},{account, 11},{acct_id_source, 12},{side, 13},{signature, 14}], 15),
+  Message1.
+
+decode_message_allocation_instruction(Message, #allocation_instruction{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{alloc_id, 6},{alloc_trans_type, 7},{alloc_type, 8},{secondary_alloc_id, 9},{ref_alloc_id, 10},{alloc_canc_replace_reason, 11},{alloc_intermed_req_type, 12},{alloc_link_id, 13},{alloc_link_type, 14},{booking_ref_id, 15},{alloc_no_orders_type, 16},{cl_ord_id, 17},{order_id, 18},{secondary_order_id, 19},{secondary_cl_ord_id, 20},{list_id, 21},{order_qty, 22},{order_avg_px, 23},{order_booking_qty, 24},{last_qty, 25},{exec_id, 26},{secondary_exec_id, 27},{last_px, 28},{last_par_px, 29},{last_capacity, 30},{previously_reported, 31},{reversal_indicator, 32},{match_type, 33},{side, 34},{quantity, 35},{qty_type, 36},{last_mkt, 37},{trade_origination_date, 38},{trading_session_id, 39},{trading_session_sub_id, 40},{price_type, 41},{avg_px, 42},{avg_par_px, 43},{currency, 44},{avg_px_precision, 45},{trade_date, 46},{transact_time, 47},{settl_type, 48},{settl_date, 49},{booking_type, 50},{gross_trade_amt, 51},{concession, 52},{total_takedown, 53},{net_money, 54},{position_effect, 55},{auto_accept_indicator, 56},{text, 57},{encoded_text, 58},{num_days_interest, 59},{accrued_interest_rate, 60},{accrued_interest_amt, 61},{total_accrued_interest_amt, 62},{interest_at_maturity, 63},{end_accrued_interest_amt, 64},{start_cash, 65},{end_cash, 66},{legal_confirm, 67},{tot_no_allocs, 68},{last_fragment, 69},{alloc_account, 70},{alloc_acct_id_source, 71},{match_status, 72},{alloc_price, 73},{alloc_qty, 74},{individual_alloc_id, 75},{process_code, 76},{notify_broker_of_credit, 77},{alloc_handl_inst, 78},{alloc_text, 79},{encoded_alloc_text, 80},{alloc_avg_px, 81},{alloc_net_money, 82},{settl_curr_amt, 83},{alloc_settl_curr_amt, 84},{settl_currency, 85},{alloc_settl_currency, 86},{settl_curr_fx_rate, 87},{settl_curr_fx_rate_calc, 88},{alloc_accrued_interest_amt, 89},{alloc_interest_at_maturity, 90},{misc_fee_amt, 91},{misc_fee_curr, 92},{misc_fee_type, 93},{misc_fee_basis, 94},{clearing_instruction, 95},{clearing_fee_indicator, 96},{alloc_settl_inst_type, 97},{signature, 98}], 99),
+  Message1.
+
+decode_message_list_cancel_request(Message, #list_cancel_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{transact_time, 7},{trade_origination_date, 8},{trade_date, 9},{text, 10},{encoded_text, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_list_execute(Message, #list_execute{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{client_bid_id, 7},{bid_id, 8},{transact_time, 9},{text, 10},{encoded_text, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_list_status_request(Message, #list_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{text, 7},{encoded_text, 8},{signature, 9}], 10),
+  Message1.
+
+decode_message_list_status(Message, #list_status{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{list_status_type, 7},{no_rpts, 8},{list_order_status, 9},{rpt_seq, 10},{list_status_text, 11},{encoded_list_status_text, 12},{transact_time, 13},{tot_no_orders, 14},{last_fragment, 15},{cl_ord_id, 16},{secondary_cl_ord_id, 17},{cum_qty, 18},{ord_status, 19},{working_indicator, 20},{leaves_qty, 21},{cxl_qty, 22},{avg_px, 23},{ord_rej_reason, 24},{text, 25},{encoded_text, 26},{signature, 27}], 28),
+  Message1.
+
+decode_message_allocation_instruction_ack(Message, #allocation_instruction_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{alloc_id, 6},{secondary_alloc_id, 7},{trade_date, 8},{transact_time, 9},{alloc_status, 10},{alloc_rej_code, 11},{alloc_type, 12},{alloc_intermed_req_type, 13},{match_status, 14},{product, 15},{security_type, 16},{text, 17},{encoded_text, 18},{alloc_account, 19},{alloc_acct_id_source, 20},{alloc_price, 21},{individual_alloc_id, 22},{individual_alloc_rej_code, 23},{alloc_text, 24},{encoded_alloc_text, 25},{signature, 26}], 27),
+  Message1.
+
+decode_message_dont_know_trade(Message, #dont_know_trade{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{secondary_order_id, 7},{exec_id, 8},{dk_reason, 9},{side, 10},{last_qty, 11},{last_px, 12},{text, 13},{encoded_text, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_quote_request(Message, #quote_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{rfq_req_id, 7},{cl_ord_id, 8},{order_capacity, 9},{prev_close_px, 10},{quote_request_type, 11},{quote_type, 12},{trading_session_id, 13},{trading_session_sub_id, 14},{trade_origination_date, 15},{side, 16},{qty_type, 17},{settl_type, 18},{settl_date, 19},{settl_date2, 20},{order_qty2, 21},{currency, 22},{account, 23},{acct_id_source, 24},{account_type, 25},{leg_qty, 26},{leg_swap_type, 27},{leg_settl_type, 28},{leg_settl_date, 29},{quote_qualifier, 30},{quote_price_type, 31},{ord_type, 32},{valid_until_time, 33},{expire_time, 34},{transact_time, 35},{price_type, 36},{price, 37},{price2, 38},{text, 39},{encoded_text, 40},{signature, 41}], 42),
+  Message1.
+
+decode_message_quote(Message, #quote{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{quote_id, 7},{quote_resp_id, 8},{quote_type, 9},{quote_qualifier, 10},{quote_response_level, 11},{trading_session_id, 12},{trading_session_sub_id, 13},{side, 14},{settl_type, 15},{settl_date, 16},{settl_date2, 17},{order_qty2, 18},{currency, 19},{account, 20},{acct_id_source, 21},{account_type, 22},{leg_qty, 23},{leg_swap_type, 24},{leg_settl_type, 25},{leg_settl_date, 26},{leg_price_type, 27},{leg_bid_px, 28},{leg_offer_px, 29},{bid_px, 30},{offer_px, 31},{mkt_bid_px, 32},{mkt_offer_px, 33},{min_bid_size, 34},{bid_size, 35},{min_offer_size, 36},{offer_size, 37},{valid_until_time, 38},{bid_spot_rate, 39},{offer_spot_rate, 40},{bid_forward_points, 41},{offer_forward_points, 42},{mid_px, 43},{bid_yield, 44},{mid_yield, 45},{offer_yield, 46},{transact_time, 47},{ord_type, 48},{bid_forward_points2, 49},{offer_forward_points2, 50},{settl_curr_bid_fx_rate, 51},{settl_curr_offer_fx_rate, 52},{settl_curr_fx_rate_calc, 53},{comm_type, 54},{commission, 55},{cust_order_capacity, 56},{ex_destination, 57},{order_capacity, 58},{price_type, 59},{text, 60},{encoded_text, 61},{signature, 62}], 63),
+  Message1.
+
+decode_message_settlement_instructions(Message, #settlement_instructions{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{settl_inst_msg_id, 6},{settl_inst_req_id, 7},{settl_inst_mode, 8},{settl_inst_req_rej_code, 9},{text, 10},{encoded_text, 11},{cl_ord_id, 12},{transact_time, 13},{settl_inst_id, 14},{settl_inst_trans_type, 15},{settl_inst_ref_id, 16},{side, 17},{product, 18},{security_type, 19},{cfi_code, 20},{effective_time, 21},{expire_time, 22},{last_update_time, 23},{payment_method, 24},{payment_ref, 25},{card_holder_name, 26},{card_number, 27},{card_start_date, 28},{card_exp_date, 29},{card_iss_num, 30},{payment_date, 31},{payment_remitter_id, 32},{signature, 33}], 34),
+  Message1.
+
+decode_message_market_data_request(Message, #market_data_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{md_req_id, 6},{subscription_request_type, 7},{market_depth, 8},{md_update_type, 9},{aggregated_book, 10},{open_close_settl_flag, 11},{scope, 12},{md_implicit_delete, 13},{md_entry_type, 14},{trading_session_id, 15},{trading_session_sub_id, 16},{appl_queue_action, 17},{appl_queue_max, 18},{signature, 19}], 20),
+  Message1.
+
+decode_message_market_data_snapshot_full_refresh(Message, #market_data_snapshot_full_refresh{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{md_req_id, 6},{financial_status, 7},{corporate_action, 8},{net_chg_prev_day, 9},{md_entry_type, 10},{md_entry_px, 11},{currency, 12},{md_entry_size, 13},{md_entry_date, 14},{md_entry_time, 15},{tick_direction, 16},{md_mkt, 17},{trading_session_id, 18},{trading_session_sub_id, 19},{quote_condition, 20},{trade_condition, 21},{md_entry_originator, 22},{location_id, 23},{desk_id, 24},{open_close_settl_flag, 25},{time_in_force, 26},{expire_date, 27},{expire_time, 28},{min_qty, 29},{exec_inst, 30},{seller_days, 31},{order_id, 32},{quote_entry_id, 33},{md_entry_buyer, 34},{md_entry_seller, 35},{number_of_orders, 36},{md_entry_position_no, 37},{scope, 38},{price_delta, 39},{text, 40},{encoded_text, 41},{appl_queue_depth, 42},{appl_queue_resolution, 43},{signature, 44}], 45),
+  Message1.
+
+decode_message_market_data_incremental_refresh(Message, #market_data_incremental_refresh{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{md_req_id, 6},{md_update_action, 7},{delete_reason, 8},{md_entry_type, 9},{md_entry_id, 10},{md_entry_ref_id, 11},{financial_status, 12},{corporate_action, 13},{md_entry_px, 14},{currency, 15},{md_entry_size, 16},{md_entry_date, 17},{md_entry_time, 18},{tick_direction, 19},{md_mkt, 20},{trading_session_id, 21},{trading_session_sub_id, 22},{quote_condition, 23},{trade_condition, 24},{md_entry_originator, 25},{location_id, 26},{desk_id, 27},{open_close_settl_flag, 28},{time_in_force, 29},{expire_date, 30},{expire_time, 31},{min_qty, 32},{exec_inst, 33},{seller_days, 34},{order_id, 35},{quote_entry_id, 36},{md_entry_buyer, 37},{md_entry_seller, 38},{number_of_orders, 39},{md_entry_position_no, 40},{scope, 41},{price_delta, 42},{net_chg_prev_day, 43},{text, 44},{encoded_text, 45},{appl_queue_depth, 46},{appl_queue_resolution, 47},{signature, 48}], 49),
+  Message1.
+
+decode_message_market_data_request_reject(Message, #market_data_request_reject{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{md_req_id, 6},{md_req_rej_reason, 7},{alt_md_source_id, 8},{text, 9},{encoded_text, 10},{signature, 11}], 12),
+  Message1.
+
+decode_message_quote_cancel(Message, #quote_cancel{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{quote_id, 7},{quote_cancel_type, 8},{quote_response_level, 9},{account, 10},{acct_id_source, 11},{account_type, 12},{trading_session_id, 13},{trading_session_sub_id, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_quote_status_request(Message, #quote_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_status_req_id, 6},{quote_id, 7},{account, 8},{acct_id_source, 9},{account_type, 10},{trading_session_id, 11},{trading_session_sub_id, 12},{subscription_request_type, 13},{signature, 14}], 15),
+  Message1.
+
+decode_message_mass_quote_acknowledgement(Message, #mass_quote_acknowledgement{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{quote_id, 7},{quote_status, 8},{quote_reject_reason, 9},{quote_response_level, 10},{quote_type, 11},{account, 12},{acct_id_source, 13},{account_type, 14},{text, 15},{encoded_text, 16},{quote_set_id, 17},{tot_no_quote_entries, 18},{last_fragment, 19},{quote_entry_id, 20},{bid_px, 21},{offer_px, 22},{bid_size, 23},{offer_size, 24},{valid_until_time, 25},{bid_spot_rate, 26},{offer_spot_rate, 27},{bid_forward_points, 28},{offer_forward_points, 29},{mid_px, 30},{bid_yield, 31},{mid_yield, 32},{offer_yield, 33},{transact_time, 34},{trading_session_id, 35},{trading_session_sub_id, 36},{settl_date, 37},{ord_type, 38},{settl_date2, 39},{order_qty2, 40},{bid_forward_points2, 41},{offer_forward_points2, 42},{currency, 43},{quote_entry_reject_reason, 44},{signature, 45}], 46),
+  Message1.
+
+decode_message_security_definition_request(Message, #security_definition_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_request_type, 7},{currency, 8},{text, 9},{encoded_text, 10},{trading_session_id, 11},{trading_session_sub_id, 12},{expiration_cycle, 13},{subscription_request_type, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_security_definition(Message, #security_definition{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_response_id, 7},{security_response_type, 8},{currency, 9},{trading_session_id, 10},{trading_session_sub_id, 11},{text, 12},{encoded_text, 13},{expiration_cycle, 14},{round_lot, 15},{min_trade_vol, 16},{signature, 17}], 18),
+  Message1.
+
+decode_message_security_status_request(Message, #security_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_status_req_id, 6},{currency, 7},{subscription_request_type, 8},{trading_session_id, 9},{trading_session_sub_id, 10},{signature, 11}], 12),
+  Message1.
+
+decode_message_security_status(Message, #security_status{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_status_req_id, 6},{currency, 7},{trading_session_id, 8},{trading_session_sub_id, 9},{unsolicited_indicator, 10},{security_trading_status, 11},{financial_status, 12},{corporate_action, 13},{halt_reason_char, 14},{in_view_of_common, 15},{due_to_related, 16},{buy_volume, 17},{sell_volume, 18},{high_px, 19},{low_px, 20},{last_px, 21},{transact_time, 22},{adjustment, 23},{text, 24},{encoded_text, 25},{signature, 26}], 27),
+  Message1.
+
+decode_message_trading_session_status_request(Message, #trading_session_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trad_ses_req_id, 6},{trading_session_id, 7},{trading_session_sub_id, 8},{trad_ses_method, 9},{trad_ses_mode, 10},{subscription_request_type, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_trading_session_status(Message, #trading_session_status{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trad_ses_req_id, 6},{trading_session_id, 7},{trading_session_sub_id, 8},{trad_ses_method, 9},{trad_ses_mode, 10},{unsolicited_indicator, 11},{trad_ses_status, 12},{trad_ses_status_rej_reason, 13},{trad_ses_start_time, 14},{trad_ses_open_time, 15},{trad_ses_pre_close_time, 16},{trad_ses_close_time, 17},{trad_ses_end_time, 18},{total_volume_traded, 19},{text, 20},{encoded_text, 21},{signature, 22}], 23),
+  Message1.
+
+decode_message_mass_quote(Message, #mass_quote{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{quote_id, 7},{quote_type, 8},{quote_response_level, 9},{account, 10},{acct_id_source, 11},{account_type, 12},{def_bid_size, 13},{def_offer_size, 14},{quote_set_id, 15},{quote_set_valid_until_time, 16},{tot_no_quote_entries, 17},{last_fragment, 18},{quote_entry_id, 19},{bid_px, 20},{offer_px, 21},{bid_size, 22},{offer_size, 23},{valid_until_time, 24},{bid_spot_rate, 25},{offer_spot_rate, 26},{bid_forward_points, 27},{offer_forward_points, 28},{mid_px, 29},{bid_yield, 30},{mid_yield, 31},{offer_yield, 32},{transact_time, 33},{trading_session_id, 34},{trading_session_sub_id, 35},{settl_date, 36},{ord_type, 37},{settl_date2, 38},{order_qty2, 39},{bid_forward_points2, 40},{offer_forward_points2, 41},{currency, 42},{signature, 43}], 44),
+  Message1.
+
+decode_message_business_message_reject(Message, #business_message_reject{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{ref_seq_num, 6},{ref_msg_type, 7},{business_reject_ref_id, 8},{business_reject_reason, 9},{text, 10},{encoded_text, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_bid_request(Message, #bid_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{bid_id, 6},{client_bid_id, 7},{bid_request_trans_type, 8},{list_name, 9},{tot_no_related_sym, 10},{bid_type, 11},{num_tickets, 12},{currency, 13},{side_value1, 14},{side_value2, 15},{bid_descriptor_type, 16},{bid_descriptor, 17},{side_value_ind, 18},{liquidity_value, 19},{liquidity_num_securities, 20},{liquidity_pct_low, 21},{liquidity_pct_high, 22},{efp_tracking_error, 23},{fair_value, 24},{outside_index_pct, 25},{value_of_futures, 26},{list_id, 27},{side, 28},{trading_session_id, 29},{trading_session_sub_id, 30},{net_gross_ind, 31},{settl_type, 32},{settl_date, 33},{account, 34},{acct_id_source, 35},{liquidity_ind_type, 36},{wt_average_liquidity, 37},{exchange_for_physical, 38},{out_main_cntry_u_index, 39},{cross_percent, 40},{prog_rpt_reqs, 41},{prog_period_interval, 42},{inc_tax_ind, 43},{forex_req, 44},{num_bidders, 45},{trade_date, 46},{bid_trade_type, 47},{basis_px_type, 48},{strike_time, 49},{text, 50},{encoded_text, 51},{signature, 52}], 53),
+  Message1.
+
+decode_message_bid_response(Message, #bid_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{bid_id, 6},{client_bid_id, 7},{list_id, 8},{country, 9},{side, 10},{price, 11},{price_type, 12},{fair_value, 13},{net_gross_ind, 14},{settl_type, 15},{settl_date, 16},{trading_session_id, 17},{trading_session_sub_id, 18},{text, 19},{encoded_text, 20},{signature, 21}], 22),
+  Message1.
+
+decode_message_list_strike_price(Message, #list_strike_price{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{list_id, 6},{tot_no_strikes, 7},{last_fragment, 8},{prev_close_px, 9},{cl_ord_id, 10},{secondary_cl_ord_id, 11},{side, 12},{price, 13},{currency, 14},{text, 15},{encoded_text, 16},{signature, 17}], 18),
+  Message1.
+
+decode_message_registration_instructions(Message, #registration_instructions{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{regist_id, 6},{regist_trans_type, 7},{regist_ref_id, 8},{cl_ord_id, 9},{account, 10},{acct_id_source, 11},{regist_acct_type, 12},{tax_advantage_type, 13},{ownership_type, 14},{regist_dtls, 15},{regist_email, 16},{mailing_dtls, 17},{mailing_inst, 18},{owner_type, 19},{date_of_birth, 20},{investor_country_of_residence, 21},{distrib_payment_method, 22},{distrib_percentage, 23},{cash_distrib_curr, 24},{cash_distrib_agent_name, 25},{cash_distrib_agent_code, 26},{cash_distrib_agent_acct_number, 27},{cash_distrib_pay_ref, 28},{cash_distrib_agent_acct_name, 29},{signature, 30}], 31),
+  Message1.
+
+decode_message_registration_instructions_response(Message, #registration_instructions_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{regist_id, 6},{regist_trans_type, 7},{regist_ref_id, 8},{cl_ord_id, 9},{account, 10},{acct_id_source, 11},{regist_status, 12},{regist_rej_reason_code, 13},{regist_rej_reason_text, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_order_mass_cancel_request(Message, #order_mass_cancel_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{cl_ord_id, 6},{secondary_cl_ord_id, 7},{mass_cancel_request_type, 8},{trading_session_id, 9},{trading_session_sub_id, 10},{side, 11},{transact_time, 12},{text, 13},{encoded_text, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_order_mass_cancel_report(Message, #order_mass_cancel_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{cl_ord_id, 6},{secondary_cl_ord_id, 7},{order_id, 8},{secondary_order_id, 9},{mass_cancel_request_type, 10},{mass_cancel_response, 11},{mass_cancel_reject_reason, 12},{total_affected_orders, 13},{orig_cl_ord_id, 14},{affected_order_id, 15},{affected_secondary_order_id, 16},{trading_session_id, 17},{trading_session_sub_id, 18},{side, 19},{transact_time, 20},{text, 21},{encoded_text, 22},{signature, 23}], 24),
+  Message1.
+
+decode_message_new_order_cross(Message, #new_order_cross{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{cross_id, 6},{cross_type, 7},{cross_prioritization, 8},{side, 9},{cl_ord_id, 10},{secondary_cl_ord_id, 11},{cl_ord_link_id, 12},{trade_origination_date, 13},{trade_date, 14},{account, 15},{acct_id_source, 16},{account_type, 17},{day_booking_inst, 18},{booking_unit, 19},{prealloc_method, 20},{alloc_id, 21},{alloc_account, 22},{alloc_acct_id_source, 23},{alloc_settl_currency, 24},{individual_alloc_id, 25},{alloc_qty, 26},{qty_type, 27},{order_capacity, 28},{order_restrictions, 29},{cust_order_capacity, 30},{forex_req, 31},{settl_currency, 32},{booking_type, 33},{text, 34},{encoded_text, 35},{position_effect, 36},{covered_or_uncovered, 37},{cash_margin, 38},{clearing_fee_indicator, 39},{solicited_flag, 40},{side_compliance_id, 41},{settl_type, 42},{settl_date, 43},{handl_inst, 44},{exec_inst, 45},{min_qty, 46},{max_floor, 47},{ex_destination, 48},{trading_session_id, 49},{trading_session_sub_id, 50},{process_code, 51},{prev_close_px, 52},{locate_reqd, 53},{transact_time, 54},{ord_type, 55},{price_type, 56},{price, 57},{stop_px, 58},{currency, 59},{compliance_id, 60},{ioi_id, 61},{quote_id, 62},{time_in_force, 63},{effective_time, 64},{expire_date, 65},{expire_time, 66},{gt_booking_inst, 67},{max_show, 68},{target_strategy, 69},{target_strategy_parameters, 70},{participation_rate, 71},{cancellation_rights, 72},{money_laundering_status, 73},{regist_id, 74},{designation, 75},{signature, 76}], 77),
+  Message1.
+
+decode_message_cross_order_cancel_replace_request(Message, #cross_order_cancel_replace_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{cross_id, 7},{orig_cross_id, 8},{cross_type, 9},{cross_prioritization, 10},{side, 11},{orig_cl_ord_id, 12},{cl_ord_id, 13},{secondary_cl_ord_id, 14},{cl_ord_link_id, 15},{orig_ord_mod_time, 16},{trade_origination_date, 17},{trade_date, 18},{account, 19},{acct_id_source, 20},{account_type, 21},{day_booking_inst, 22},{booking_unit, 23},{prealloc_method, 24},{alloc_id, 25},{alloc_account, 26},{alloc_acct_id_source, 27},{alloc_settl_currency, 28},{individual_alloc_id, 29},{alloc_qty, 30},{qty_type, 31},{order_capacity, 32},{order_restrictions, 33},{cust_order_capacity, 34},{forex_req, 35},{settl_currency, 36},{booking_type, 37},{text, 38},{encoded_text, 39},{position_effect, 40},{covered_or_uncovered, 41},{cash_margin, 42},{clearing_fee_indicator, 43},{solicited_flag, 44},{side_compliance_id, 45},{settl_type, 46},{settl_date, 47},{handl_inst, 48},{exec_inst, 49},{min_qty, 50},{max_floor, 51},{ex_destination, 52},{trading_session_id, 53},{trading_session_sub_id, 54},{process_code, 55},{prev_close_px, 56},{locate_reqd, 57},{transact_time, 58},{ord_type, 59},{price_type, 60},{price, 61},{stop_px, 62},{currency, 63},{compliance_id, 64},{ioi_id, 65},{quote_id, 66},{time_in_force, 67},{effective_time, 68},{expire_date, 69},{expire_time, 70},{gt_booking_inst, 71},{max_show, 72},{target_strategy, 73},{target_strategy_parameters, 74},{participation_rate, 75},{cancellation_rights, 76},{money_laundering_status, 77},{regist_id, 78},{designation, 79},{signature, 80}], 81),
+  Message1.
+
+decode_message_cross_order_cancel_request(Message, #cross_order_cancel_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{cross_id, 7},{orig_cross_id, 8},{cross_type, 9},{cross_prioritization, 10},{side, 11},{orig_cl_ord_id, 12},{cl_ord_id, 13},{secondary_cl_ord_id, 14},{cl_ord_link_id, 15},{orig_ord_mod_time, 16},{trade_origination_date, 17},{trade_date, 18},{compliance_id, 19},{text, 20},{encoded_text, 21},{transact_time, 22},{signature, 23}], 24),
+  Message1.
+
+decode_message_security_type_request(Message, #security_type_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{text, 7},{encoded_text, 8},{trading_session_id, 9},{trading_session_sub_id, 10},{product, 11},{security_type, 12},{security_sub_type, 13},{signature, 14}], 15),
+  Message1.
+
+decode_message_security_types(Message, #security_types{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_response_id, 7},{security_response_type, 8},{tot_no_security_types, 9},{last_fragment, 10},{security_type, 11},{security_sub_type, 12},{product, 13},{cfi_code, 14},{text, 15},{encoded_text, 16},{trading_session_id, 17},{trading_session_sub_id, 18},{subscription_request_type, 19},{signature, 20}], 21),
+  Message1.
+
+decode_message_security_list_request(Message, #security_list_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_list_request_type, 7},{currency, 8},{text, 9},{encoded_text, 10},{trading_session_id, 11},{trading_session_sub_id, 12},{subscription_request_type, 13},{signature, 14}], 15),
+  Message1.
+
+decode_message_security_list(Message, #security_list{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_response_id, 7},{security_request_result, 8},{tot_no_related_sym, 9},{last_fragment, 10},{currency, 11},{leg_swap_type, 12},{leg_settl_type, 13},{round_lot, 14},{min_trade_vol, 15},{trading_session_id, 16},{trading_session_sub_id, 17},{expiration_cycle, 18},{text, 19},{encoded_text, 20},{signature, 21}], 22),
+  Message1.
+
+decode_message_derivative_security_list_request(Message, #derivative_security_list_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_list_request_type, 7},{security_sub_type, 8},{currency, 9},{text, 10},{encoded_text, 11},{trading_session_id, 12},{trading_session_sub_id, 13},{subscription_request_type, 14},{signature, 15}], 16),
+  Message1.
+
+decode_message_derivative_security_list(Message, #derivative_security_list{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{security_req_id, 6},{security_response_id, 7},{security_request_result, 8},{tot_no_related_sym, 9},{last_fragment, 10},{currency, 11},{expiration_cycle, 12},{trading_session_id, 13},{trading_session_sub_id, 14},{text, 15},{encoded_text, 16},{signature, 17}], 18),
+  Message1.
+
+decode_message_new_order_multileg(Message, #new_order_multileg{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{cl_ord_id, 6},{secondary_cl_ord_id, 7},{cl_ord_link_id, 8},{trade_origination_date, 9},{trade_date, 10},{account, 11},{acct_id_source, 12},{account_type, 13},{day_booking_inst, 14},{booking_unit, 15},{prealloc_method, 16},{alloc_id, 17},{alloc_account, 18},{alloc_acct_id_source, 19},{alloc_settl_currency, 20},{individual_alloc_id, 21},{alloc_qty, 22},{settl_type, 23},{settl_date, 24},{cash_margin, 25},{clearing_fee_indicator, 26},{handl_inst, 27},{exec_inst, 28},{min_qty, 29},{max_floor, 30},{ex_destination, 31},{trading_session_id, 32},{trading_session_sub_id, 33},{process_code, 34},{side, 35},{prev_close_px, 36},{leg_qty, 37},{leg_swap_type, 38},{leg_alloc_account, 39},{leg_individual_alloc_id, 40},{leg_alloc_qty, 41},{leg_alloc_acct_id_source, 42},{leg_settl_currency, 43},{leg_position_effect, 44},{leg_covered_or_uncovered, 45},{leg_ref_id, 46},{leg_price, 47},{leg_settl_type, 48},{leg_settl_date, 49},{locate_reqd, 50},{transact_time, 51},{qty_type, 52},{ord_type, 53},{price_type, 54},{price, 55},{stop_px, 56},{currency, 57},{compliance_id, 58},{solicited_flag, 59},{ioi_id, 60},{quote_id, 61},{time_in_force, 62},{effective_time, 63},{expire_date, 64},{expire_time, 65},{gt_booking_inst, 66},{order_capacity, 67},{order_restrictions, 68},{cust_order_capacity, 69},{forex_req, 70},{settl_currency, 71},{booking_type, 72},{text, 73},{encoded_text, 74},{position_effect, 75},{covered_or_uncovered, 76},{max_show, 77},{target_strategy, 78},{target_strategy_parameters, 79},{participation_rate, 80},{cancellation_rights, 81},{money_laundering_status, 82},{regist_id, 83},{designation, 84},{multi_leg_rpt_type_req, 85},{signature, 86}], 87),
+  Message1.
+
+decode_message_multileg_order_cancel_replace(Message, #multileg_order_cancel_replace{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{order_id, 6},{orig_cl_ord_id, 7},{cl_ord_id, 8},{secondary_cl_ord_id, 9},{cl_ord_link_id, 10},{orig_ord_mod_time, 11},{trade_origination_date, 12},{trade_date, 13},{account, 14},{acct_id_source, 15},{account_type, 16},{day_booking_inst, 17},{booking_unit, 18},{prealloc_method, 19},{alloc_id, 20},{alloc_account, 21},{alloc_acct_id_source, 22},{alloc_settl_currency, 23},{individual_alloc_id, 24},{alloc_qty, 25},{settl_type, 26},{settl_date, 27},{cash_margin, 28},{clearing_fee_indicator, 29},{handl_inst, 30},{exec_inst, 31},{min_qty, 32},{max_floor, 33},{ex_destination, 34},{trading_session_id, 35},{trading_session_sub_id, 36},{process_code, 37},{side, 38},{prev_close_px, 39},{leg_qty, 40},{leg_swap_type, 41},{leg_alloc_account, 42},{leg_individual_alloc_id, 43},{leg_alloc_qty, 44},{leg_alloc_acct_id_source, 45},{leg_settl_currency, 46},{leg_position_effect, 47},{leg_covered_or_uncovered, 48},{leg_ref_id, 49},{leg_price, 50},{leg_settl_type, 51},{leg_settl_date, 52},{locate_reqd, 53},{transact_time, 54},{qty_type, 55},{ord_type, 56},{price_type, 57},{price, 58},{stop_px, 59},{currency, 60},{compliance_id, 61},{solicited_flag, 62},{ioi_id, 63},{quote_id, 64},{time_in_force, 65},{effective_time, 66},{expire_date, 67},{expire_time, 68},{gt_booking_inst, 69},{order_capacity, 70},{order_restrictions, 71},{cust_order_capacity, 72},{forex_req, 73},{settl_currency, 74},{booking_type, 75},{text, 76},{encoded_text, 77},{position_effect, 78},{covered_or_uncovered, 79},{max_show, 80},{target_strategy, 81},{target_strategy_parameters, 82},{participation_rate, 83},{cancellation_rights, 84},{money_laundering_status, 85},{regist_id, 86},{designation, 87},{multi_leg_rpt_type_req, 88},{signature, 89}], 90),
+  Message1.
+
+decode_message_trade_capture_report_request(Message, #trade_capture_report_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trade_request_id, 6},{trade_request_type, 7},{subscription_request_type, 8},{trade_report_id, 9},{secondary_trade_report_id, 10},{exec_id, 11},{exec_type, 12},{order_id, 13},{cl_ord_id, 14},{match_status, 15},{trd_type, 16},{trd_sub_type, 17},{transfer_reason, 18},{secondary_trd_type, 19},{trade_link_id, 20},{trd_match_id, 21},{trade_date, 22},{transact_time, 23},{clearing_business_date, 24},{trading_session_id, 25},{trading_session_sub_id, 26},{time_bracket, 27},{side, 28},{multi_leg_reporting_type, 29},{trade_input_source, 30},{trade_input_device, 31},{response_transport_type, 32},{response_destination, 33},{text, 34},{encoded_text, 35},{signature, 36}], 37),
+  Message1.
+
+decode_message_trade_capture_report(Message, #trade_capture_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trade_report_id, 6},{trade_report_trans_type, 7},{trade_report_type, 8},{trade_request_id, 9},{trd_type, 10},{trd_sub_type, 11},{secondary_trd_type, 12},{transfer_reason, 13},{exec_type, 14},{tot_num_trade_reports, 15},{last_rpt_requested, 16},{unsolicited_indicator, 17},{subscription_request_type, 18},{trade_report_ref_id, 19},{secondary_trade_report_ref_id, 20},{secondary_trade_report_id, 21},{trade_link_id, 22},{trd_match_id, 23},{exec_id, 24},{ord_status, 25},{secondary_exec_id, 26},{exec_restatement_reason, 27},{previously_reported, 28},{price_type, 29},{qty_type, 30},{underlying_trading_session_id, 31},{underlying_trading_session_sub_id, 32},{last_qty, 33},{last_px, 34},{last_par_px, 35},{last_spot_rate, 36},{last_forward_points, 37},{last_mkt, 38},{trade_date, 39},{clearing_business_date, 40},{avg_px, 41},{avg_px_indicator, 42},{multi_leg_reporting_type, 43},{trade_leg_ref_id, 44},{leg_qty, 45},{leg_swap_type, 46},{leg_position_effect, 47},{leg_covered_or_uncovered, 48},{leg_ref_id, 49},{leg_price, 50},{leg_settl_type, 51},{leg_settl_date, 52},{leg_last_px, 53},{transact_time, 54},{settl_type, 55},{settl_date, 56},{match_status, 57},{match_type, 58},{side, 59},{order_id, 60},{secondary_order_id, 61},{cl_ord_id, 62},{secondary_cl_ord_id, 63},{list_id, 64},{account, 65},{acct_id_source, 66},{account_type, 67},{process_code, 68},{odd_lot, 69},{clearing_instruction, 70},{clearing_fee_indicator, 71},{trade_input_source, 72},{trade_input_device, 73},{order_input_device, 74},{currency, 75},{compliance_id, 76},{solicited_flag, 77},{order_capacity, 78},{order_restrictions, 79},{cust_order_capacity, 80},{ord_type, 81},{exec_inst, 82},{trans_bkd_time, 83},{trading_session_id, 84},{trading_session_sub_id, 85},{time_bracket, 86},{gross_trade_amt, 87},{num_days_interest, 88},{ex_date, 89},{accrued_interest_rate, 90},{accrued_interest_amt, 91},{interest_at_maturity, 92},{end_accrued_interest_amt, 93},{start_cash, 94},{end_cash, 95},{concession, 96},{total_takedown, 97},{net_money, 98},{settl_curr_amt, 99},{settl_currency, 100},{settl_curr_fx_rate, 101},{settl_curr_fx_rate_calc, 102},{position_effect, 103},{text, 104},{encoded_text, 105},{side_multi_leg_reporting_type, 106},{cont_amt_type, 107},{cont_amt_value, 108},{cont_amt_curr, 109},{misc_fee_amt, 110},{misc_fee_curr, 111},{misc_fee_type, 112},{misc_fee_basis, 113},{exchange_rule, 114},{trade_alloc_indicator, 115},{prealloc_method, 116},{alloc_id, 117},{alloc_account, 118},{alloc_acct_id_source, 119},{alloc_settl_currency, 120},{individual_alloc_id, 121},{alloc_qty, 122},{copy_msg_indicator, 123},{publish_trd_indicator, 124},{short_sale_reason, 125},{signature, 126}], 127),
+  Message1.
+
+decode_message_order_mass_status_request(Message, #order_mass_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{mass_status_req_id, 6},{mass_status_req_type, 7},{account, 8},{acct_id_source, 9},{trading_session_id, 10},{trading_session_sub_id, 11},{side, 12},{signature, 13}], 14),
+  Message1.
+
+decode_message_quote_request_reject(Message, #quote_request_reject{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_req_id, 6},{rfq_req_id, 7},{quote_request_reject_reason, 8},{prev_close_px, 9},{quote_request_type, 10},{quote_type, 11},{trading_session_id, 12},{trading_session_sub_id, 13},{trade_origination_date, 14},{side, 15},{qty_type, 16},{settl_type, 17},{settl_date, 18},{settl_date2, 19},{order_qty2, 20},{currency, 21},{account, 22},{acct_id_source, 23},{account_type, 24},{leg_qty, 25},{leg_swap_type, 26},{leg_settl_type, 27},{leg_settl_date, 28},{quote_qualifier, 29},{quote_price_type, 30},{ord_type, 31},{expire_time, 32},{transact_time, 33},{price_type, 34},{price, 35},{price2, 36},{text, 37},{encoded_text, 38},{signature, 39}], 40),
+  Message1.
+
+decode_message_rfq_request(Message, #rfq_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{rfq_req_id, 6},{prev_close_px, 7},{quote_request_type, 8},{quote_type, 9},{trading_session_id, 10},{trading_session_sub_id, 11},{subscription_request_type, 12},{signature, 13}], 14),
+  Message1.
+
+decode_message_quote_status_report(Message, #quote_status_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_status_req_id, 6},{quote_req_id, 7},{quote_id, 8},{quote_resp_id, 9},{quote_type, 10},{trading_session_id, 11},{trading_session_sub_id, 12},{side, 13},{settl_type, 14},{settl_date, 15},{settl_date2, 16},{order_qty2, 17},{currency, 18},{account, 19},{acct_id_source, 20},{account_type, 21},{leg_qty, 22},{leg_swap_type, 23},{leg_settl_type, 24},{leg_settl_date, 25},{quote_qualifier, 26},{expire_time, 27},{price, 28},{price_type, 29},{bid_px, 30},{offer_px, 31},{mkt_bid_px, 32},{mkt_offer_px, 33},{min_bid_size, 34},{bid_size, 35},{min_offer_size, 36},{offer_size, 37},{valid_until_time, 38},{bid_spot_rate, 39},{offer_spot_rate, 40},{bid_forward_points, 41},{offer_forward_points, 42},{mid_px, 43},{bid_yield, 44},{mid_yield, 45},{offer_yield, 46},{transact_time, 47},{ord_type, 48},{bid_forward_points2, 49},{offer_forward_points2, 50},{settl_curr_bid_fx_rate, 51},{settl_curr_offer_fx_rate, 52},{settl_curr_fx_rate_calc, 53},{comm_type, 54},{commission, 55},{cust_order_capacity, 56},{ex_destination, 57},{quote_status, 58},{text, 59},{encoded_text, 60},{signature, 61}], 62),
+  Message1.
+
+decode_message_quote_response(Message, #quote_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{quote_resp_id, 6},{quote_id, 7},{quote_resp_type, 8},{cl_ord_id, 9},{order_capacity, 10},{ioi_id, 11},{quote_type, 12},{quote_qualifier, 13},{trading_session_id, 14},{trading_session_sub_id, 15},{side, 16},{settl_type, 17},{settl_date, 18},{settl_date2, 19},{order_qty2, 20},{currency, 21},{account, 22},{acct_id_source, 23},{account_type, 24},{leg_qty, 25},{leg_swap_type, 26},{leg_settl_type, 27},{leg_settl_date, 28},{leg_price_type, 29},{leg_bid_px, 30},{leg_offer_px, 31},{bid_px, 32},{offer_px, 33},{mkt_bid_px, 34},{mkt_offer_px, 35},{min_bid_size, 36},{bid_size, 37},{min_offer_size, 38},{offer_size, 39},{valid_until_time, 40},{bid_spot_rate, 41},{offer_spot_rate, 42},{bid_forward_points, 43},{offer_forward_points, 44},{mid_px, 45},{bid_yield, 46},{mid_yield, 47},{offer_yield, 48},{transact_time, 49},{ord_type, 50},{bid_forward_points2, 51},{offer_forward_points2, 52},{settl_curr_bid_fx_rate, 53},{settl_curr_offer_fx_rate, 54},{settl_curr_fx_rate_calc, 55},{commission, 56},{comm_type, 57},{cust_order_capacity, 58},{ex_destination, 59},{text, 60},{encoded_text, 61},{price, 62},{price_type, 63},{signature, 64}], 65),
+  Message1.
+
+decode_message_confirmation(Message, #confirmation{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{confirm_id, 6},{confirm_ref_id, 7},{confirm_req_id, 8},{confirm_trans_type, 9},{confirm_type, 10},{copy_msg_indicator, 11},{legal_confirm, 12},{confirm_status, 13},{cl_ord_id, 14},{order_id, 15},{secondary_order_id, 16},{secondary_cl_ord_id, 17},{list_id, 18},{order_qty, 19},{order_avg_px, 20},{order_booking_qty, 21},{alloc_id, 22},{secondary_alloc_id, 23},{individual_alloc_id, 24},{transact_time, 25},{trade_date, 26},{alloc_qty, 27},{qty_type, 28},{side, 29},{currency, 30},{last_mkt, 31},{order_capacity, 32},{order_restrictions, 33},{order_capacity_qty, 34},{alloc_account, 35},{alloc_acct_id_source, 36},{alloc_account_type, 37},{avg_px, 38},{avg_px_precision, 39},{price_type, 40},{avg_par_px, 41},{reported_px, 42},{text, 43},{encoded_text, 44},{process_code, 45},{gross_trade_amt, 46},{num_days_interest, 47},{ex_date, 48},{accrued_interest_rate, 49},{accrued_interest_amt, 50},{interest_at_maturity, 51},{end_accrued_interest_amt, 52},{start_cash, 53},{end_cash, 54},{concession, 55},{total_takedown, 56},{net_money, 57},{maturity_net_money, 58},{settl_curr_amt, 59},{settl_currency, 60},{settl_curr_fx_rate, 61},{settl_curr_fx_rate_calc, 62},{settl_type, 63},{settl_date, 64},{shared_commission, 65},{misc_fee_amt, 66},{misc_fee_curr, 67},{misc_fee_type, 68},{misc_fee_basis, 69},{signature, 70}], 71),
+  Message1.
+
+decode_message_position_maintenance_request(Message, #position_maintenance_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{pos_req_id, 6},{pos_trans_type, 7},{pos_maint_action, 8},{orig_pos_req_ref_id, 9},{pos_maint_rpt_ref_id, 10},{clearing_business_date, 11},{settl_sess_id, 12},{settl_sess_sub_id, 13},{account, 14},{acct_id_source, 15},{account_type, 16},{currency, 17},{trading_session_id, 18},{trading_session_sub_id, 19},{transact_time, 20},{adjustment_type, 21},{contrary_instruction_indicator, 22},{prior_spread_indicator, 23},{threshold_amount, 24},{text, 25},{encoded_text, 26},{signature, 27}], 28),
+  Message1.
+
+decode_message_position_maintenance_report(Message, #position_maintenance_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{pos_maint_rpt_id, 6},{pos_trans_type, 7},{pos_req_id, 8},{pos_maint_action, 9},{orig_pos_req_ref_id, 10},{pos_maint_status, 11},{pos_maint_result, 12},{clearing_business_date, 13},{settl_sess_id, 14},{settl_sess_sub_id, 15},{account, 16},{acct_id_source, 17},{account_type, 18},{currency, 19},{trading_session_id, 20},{trading_session_sub_id, 21},{transact_time, 22},{adjustment_type, 23},{threshold_amount, 24},{text, 25},{encoded_text, 26},{signature, 27}], 28),
+  Message1.
+
+decode_message_request_for_positions(Message, #request_for_positions{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{pos_req_id, 6},{pos_req_type, 7},{match_status, 8},{subscription_request_type, 9},{account, 10},{acct_id_source, 11},{account_type, 12},{currency, 13},{clearing_business_date, 14},{settl_sess_id, 15},{settl_sess_sub_id, 16},{trading_session_id, 17},{trading_session_sub_id, 18},{transact_time, 19},{response_transport_type, 20},{response_destination, 21},{text, 22},{encoded_text, 23},{signature, 24}], 25),
+  Message1.
+
+decode_message_request_for_positions_ack(Message, #request_for_positions_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{pos_maint_rpt_id, 6},{pos_req_id, 7},{total_num_pos_reports, 8},{unsolicited_indicator, 9},{pos_req_result, 10},{pos_req_status, 11},{account, 12},{acct_id_source, 13},{account_type, 14},{currency, 15},{response_transport_type, 16},{response_destination, 17},{text, 18},{encoded_text, 19},{signature, 20}], 21),
+  Message1.
+
+decode_message_position_report(Message, #position_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{pos_maint_rpt_id, 6},{pos_req_id, 7},{pos_req_type, 8},{subscription_request_type, 9},{total_num_pos_reports, 10},{unsolicited_indicator, 11},{pos_req_result, 12},{clearing_business_date, 13},{settl_sess_id, 14},{settl_sess_sub_id, 15},{account, 16},{acct_id_source, 17},{account_type, 18},{currency, 19},{settl_price, 20},{settl_price_type, 21},{prior_settl_price, 22},{underlying_settl_price, 23},{underlying_settl_price_type, 24},{regist_status, 25},{delivery_date, 26},{text, 27},{encoded_text, 28},{signature, 29}], 30),
+  Message1.
+
+decode_message_trade_capture_report_request_ack(Message, #trade_capture_report_request_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trade_request_id, 6},{trade_request_type, 7},{subscription_request_type, 8},{tot_num_trade_reports, 9},{trade_request_result, 10},{trade_request_status, 11},{multi_leg_reporting_type, 12},{response_transport_type, 13},{response_destination, 14},{text, 15},{encoded_text, 16},{signature, 17}], 18),
+  Message1.
+
+decode_message_trade_capture_report_ack(Message, #trade_capture_report_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{trade_report_id, 6},{trade_report_trans_type, 7},{trade_report_type, 8},{trd_type, 9},{trd_sub_type, 10},{secondary_trd_type, 11},{transfer_reason, 12},{exec_type, 13},{trade_report_ref_id, 14},{secondary_trade_report_ref_id, 15},{trd_rpt_status, 16},{trade_report_reject_reason, 17},{secondary_trade_report_id, 18},{subscription_request_type, 19},{trade_link_id, 20},{trd_match_id, 21},{exec_id, 22},{secondary_exec_id, 23},{transact_time, 24},{response_transport_type, 25},{response_destination, 26},{text, 27},{encoded_text, 28},{leg_qty, 29},{leg_swap_type, 30},{leg_position_effect, 31},{leg_covered_or_uncovered, 32},{leg_ref_id, 33},{leg_price, 34},{leg_settl_type, 35},{leg_settl_date, 36},{leg_last_px, 37},{clearing_fee_indicator, 38},{order_capacity, 39},{order_restrictions, 40},{cust_order_capacity, 41},{account, 42},{acct_id_source, 43},{account_type, 44},{position_effect, 45},{prealloc_method, 46},{alloc_account, 47},{alloc_acct_id_source, 48},{alloc_settl_currency, 49},{individual_alloc_id, 50},{alloc_qty, 51},{signature, 52}], 53),
+  Message1.
+
+decode_message_allocation_report(Message, #allocation_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{alloc_report_id, 6},{alloc_id, 7},{alloc_trans_type, 8},{alloc_report_ref_id, 9},{alloc_canc_replace_reason, 10},{secondary_alloc_id, 11},{alloc_report_type, 12},{alloc_status, 13},{alloc_rej_code, 14},{ref_alloc_id, 15},{alloc_intermed_req_type, 16},{alloc_link_id, 17},{alloc_link_type, 18},{booking_ref_id, 19},{alloc_no_orders_type, 20},{cl_ord_id, 21},{order_id, 22},{secondary_order_id, 23},{secondary_cl_ord_id, 24},{list_id, 25},{order_qty, 26},{order_avg_px, 27},{order_booking_qty, 28},{last_qty, 29},{exec_id, 30},{secondary_exec_id, 31},{last_px, 32},{last_par_px, 33},{last_capacity, 34},{previously_reported, 35},{reversal_indicator, 36},{match_type, 37},{side, 38},{quantity, 39},{qty_type, 40},{last_mkt, 41},{trade_origination_date, 42},{trading_session_id, 43},{trading_session_sub_id, 44},{price_type, 45},{avg_px, 46},{avg_par_px, 47},{currency, 48},{avg_px_precision, 49},{trade_date, 50},{transact_time, 51},{settl_type, 52},{settl_date, 53},{booking_type, 54},{gross_trade_amt, 55},{concession, 56},{total_takedown, 57},{net_money, 58},{position_effect, 59},{auto_accept_indicator, 60},{text, 61},{encoded_text, 62},{num_days_interest, 63},{accrued_interest_rate, 64},{accrued_interest_amt, 65},{total_accrued_interest_amt, 66},{interest_at_maturity, 67},{end_accrued_interest_amt, 68},{start_cash, 69},{end_cash, 70},{legal_confirm, 71},{tot_no_allocs, 72},{last_fragment, 73},{alloc_account, 74},{alloc_acct_id_source, 75},{match_status, 76},{alloc_price, 77},{alloc_qty, 78},{individual_alloc_id, 79},{process_code, 80},{notify_broker_of_credit, 81},{alloc_handl_inst, 82},{alloc_text, 83},{encoded_alloc_text, 84},{alloc_avg_px, 85},{alloc_net_money, 86},{settl_curr_amt, 87},{alloc_settl_curr_amt, 88},{settl_currency, 89},{alloc_settl_currency, 90},{settl_curr_fx_rate, 91},{settl_curr_fx_rate_calc, 92},{alloc_accrued_interest_amt, 93},{alloc_interest_at_maturity, 94},{misc_fee_amt, 95},{misc_fee_curr, 96},{misc_fee_type, 97},{misc_fee_basis, 98},{clearing_instruction, 99},{clearing_fee_indicator, 100},{alloc_settl_inst_type, 101},{signature, 102}], 103),
+  Message1.
+
+decode_message_allocation_report_ack(Message, #allocation_report_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{alloc_report_id, 6},{alloc_id, 7},{secondary_alloc_id, 8},{trade_date, 9},{transact_time, 10},{alloc_status, 11},{alloc_rej_code, 12},{alloc_report_type, 13},{alloc_intermed_req_type, 14},{match_status, 15},{product, 16},{security_type, 17},{text, 18},{encoded_text, 19},{alloc_account, 20},{alloc_acct_id_source, 21},{alloc_price, 22},{individual_alloc_id, 23},{individual_alloc_rej_code, 24},{alloc_text, 25},{encoded_alloc_text, 26},{signature, 27}], 28),
+  Message1.
+
+decode_message_confirmation_ack(Message, #confirmation_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{confirm_id, 6},{trade_date, 7},{transact_time, 8},{affirm_status, 9},{confirm_rej_reason, 10},{match_status, 11},{text, 12},{encoded_text, 13},{signature, 14}], 15),
+  Message1.
+
+decode_message_settlement_instruction_request(Message, #settlement_instruction_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{settl_inst_req_id, 6},{transact_time, 7},{alloc_account, 8},{alloc_acct_id_source, 9},{side, 10},{product, 11},{security_type, 12},{cfi_code, 13},{effective_time, 14},{expire_time, 15},{last_update_time, 16},{stand_inst_db_type, 17},{stand_inst_db_name, 18},{stand_inst_db_id, 19},{signature, 20}], 21),
+  Message1.
+
+decode_message_assignment_report(Message, #assignment_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{asgn_rpt_id, 6},{tot_num_assignment_reports, 7},{last_rpt_requested, 8},{account, 9},{account_type, 10},{currency, 11},{threshold_amount, 12},{settl_price, 13},{settl_price_type, 14},{underlying_settl_price, 15},{expire_date, 16},{assignment_method, 17},{assignment_unit, 18},{open_interest, 19},{exercise_method, 20},{settl_sess_id, 21},{settl_sess_sub_id, 22},{clearing_business_date, 23},{text, 24},{encoded_text, 25},{signature, 26}], 27),
+  Message1.
+
+decode_message_collateral_request(Message, #collateral_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_req_id, 6},{coll_asgn_reason, 7},{transact_time, 8},{expire_time, 9},{account, 10},{account_type, 11},{cl_ord_id, 12},{order_id, 13},{secondary_order_id, 14},{secondary_cl_ord_id, 15},{exec_id, 16},{trade_report_id, 17},{secondary_trade_report_id, 18},{settl_date, 19},{quantity, 20},{qty_type, 21},{currency, 22},{coll_action, 23},{margin_excess, 24},{total_net_value, 25},{cash_outstanding, 26},{side, 27},{misc_fee_amt, 28},{misc_fee_curr, 29},{misc_fee_type, 30},{misc_fee_basis, 31},{price, 32},{price_type, 33},{accrued_interest_amt, 34},{end_accrued_interest_amt, 35},{start_cash, 36},{end_cash, 37},{trading_session_id, 38},{trading_session_sub_id, 39},{settl_sess_id, 40},{settl_sess_sub_id, 41},{clearing_business_date, 42},{text, 43},{encoded_text, 44},{signature, 45}], 46),
+  Message1.
+
+decode_message_collateral_assignment(Message, #collateral_assignment{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_asgn_id, 6},{coll_req_id, 7},{coll_asgn_reason, 8},{coll_asgn_trans_type, 9},{coll_asgn_ref_id, 10},{transact_time, 11},{expire_time, 12},{account, 13},{account_type, 14},{cl_ord_id, 15},{order_id, 16},{secondary_order_id, 17},{secondary_cl_ord_id, 18},{exec_id, 19},{trade_report_id, 20},{secondary_trade_report_id, 21},{settl_date, 22},{quantity, 23},{qty_type, 24},{currency, 25},{coll_action, 26},{margin_excess, 27},{total_net_value, 28},{cash_outstanding, 29},{side, 30},{misc_fee_amt, 31},{misc_fee_curr, 32},{misc_fee_type, 33},{misc_fee_basis, 34},{price, 35},{price_type, 36},{accrued_interest_amt, 37},{end_accrued_interest_amt, 38},{start_cash, 39},{end_cash, 40},{trading_session_id, 41},{trading_session_sub_id, 42},{settl_sess_id, 43},{settl_sess_sub_id, 44},{clearing_business_date, 45},{text, 46},{encoded_text, 47},{signature, 48}], 49),
+  Message1.
+
+decode_message_collateral_response(Message, #collateral_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_resp_id, 6},{coll_asgn_id, 7},{coll_req_id, 8},{coll_asgn_reason, 9},{coll_asgn_trans_type, 10},{coll_asgn_resp_type, 11},{coll_asgn_reject_reason, 12},{transact_time, 13},{account, 14},{account_type, 15},{cl_ord_id, 16},{order_id, 17},{secondary_order_id, 18},{secondary_cl_ord_id, 19},{exec_id, 20},{trade_report_id, 21},{secondary_trade_report_id, 22},{settl_date, 23},{quantity, 24},{qty_type, 25},{currency, 26},{coll_action, 27},{margin_excess, 28},{total_net_value, 29},{cash_outstanding, 30},{side, 31},{misc_fee_amt, 32},{misc_fee_curr, 33},{misc_fee_type, 34},{misc_fee_basis, 35},{price, 36},{price_type, 37},{accrued_interest_amt, 38},{end_accrued_interest_amt, 39},{start_cash, 40},{end_cash, 41},{text, 42},{encoded_text, 43},{signature, 44}], 45),
+  Message1.
+
+decode_message_collateral_report(Message, #collateral_report{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_rpt_id, 6},{coll_inquiry_id, 7},{coll_status, 8},{tot_num_reports, 9},{last_rpt_requested, 10},{account, 11},{account_type, 12},{cl_ord_id, 13},{order_id, 14},{secondary_order_id, 15},{secondary_cl_ord_id, 16},{exec_id, 17},{trade_report_id, 18},{secondary_trade_report_id, 19},{settl_date, 20},{quantity, 21},{qty_type, 22},{currency, 23},{margin_excess, 24},{total_net_value, 25},{cash_outstanding, 26},{side, 27},{misc_fee_amt, 28},{misc_fee_curr, 29},{misc_fee_type, 30},{misc_fee_basis, 31},{price, 32},{price_type, 33},{accrued_interest_amt, 34},{end_accrued_interest_amt, 35},{start_cash, 36},{end_cash, 37},{trading_session_id, 38},{trading_session_sub_id, 39},{settl_sess_id, 40},{settl_sess_sub_id, 41},{clearing_business_date, 42},{text, 43},{encoded_text, 44},{signature, 45}], 46),
+  Message1.
+
+decode_message_collateral_inquiry(Message, #collateral_inquiry{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_inquiry_id, 6},{coll_inquiry_qualifier, 7},{subscription_request_type, 8},{response_transport_type, 9},{response_destination, 10},{account, 11},{account_type, 12},{cl_ord_id, 13},{order_id, 14},{secondary_order_id, 15},{secondary_cl_ord_id, 16},{exec_id, 17},{trade_report_id, 18},{secondary_trade_report_id, 19},{settl_date, 20},{quantity, 21},{qty_type, 22},{currency, 23},{margin_excess, 24},{total_net_value, 25},{cash_outstanding, 26},{side, 27},{price, 28},{price_type, 29},{accrued_interest_amt, 30},{end_accrued_interest_amt, 31},{start_cash, 32},{end_cash, 33},{trading_session_id, 34},{trading_session_sub_id, 35},{settl_sess_id, 36},{settl_sess_sub_id, 37},{clearing_business_date, 38},{text, 39},{encoded_text, 40},{signature, 41}], 42),
+  Message1.
+
+decode_message_network_counterparty_system_status_request(Message, #network_counterparty_system_status_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{network_request_type, 6},{network_request_id, 7},{ref_comp_id, 8},{ref_sub_id, 9},{location_id, 10},{desk_id, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_network_counterparty_system_status_response(Message, #network_counterparty_system_status_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{network_status_response_type, 6},{network_request_id, 7},{network_response_id, 8},{last_network_response_id, 9},{ref_comp_id, 10},{ref_sub_id, 11},{location_id, 12},{desk_id, 13},{status_value, 14},{status_text, 15},{signature, 16}], 17),
+  Message1.
+
+decode_message_user_request(Message, #user_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{user_request_id, 6},{user_request_type, 7},{username, 8},{password, 9},{new_password, 10},{raw_data, 11},{signature, 12}], 13),
+  Message1.
+
+decode_message_user_response(Message, #user_response{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{user_request_id, 6},{username, 7},{user_status, 8},{user_status_text, 9},{signature, 10}], 11),
+  Message1.
+
+decode_message_collateral_inquiry_ack(Message, #collateral_inquiry_ack{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{coll_inquiry_id, 6},{coll_inquiry_status, 7},{coll_inquiry_result, 8},{coll_inquiry_qualifier, 9},{tot_num_reports, 10},{account, 11},{account_type, 12},{cl_ord_id, 13},{order_id, 14},{secondary_order_id, 15},{secondary_cl_ord_id, 16},{exec_id, 17},{trade_report_id, 18},{secondary_trade_report_id, 19},{settl_date, 20},{quantity, 21},{qty_type, 22},{currency, 23},{trading_session_id, 24},{trading_session_sub_id, 25},{settl_sess_id, 26},{settl_sess_sub_id, 27},{clearing_business_date, 28},{response_transport_type, 29},{response_destination, 30},{text, 31},{encoded_text, 32},{signature, 33}], 34),
+  Message1.
+
+decode_message_confirmation_request(Message, #confirmation_request{} = Record) -> 
+  Message1 = decode_fields(Message, Record, [{sender_comp_id, 2},{target_comp_id, 3},{msg_seq_num, 4},{sending_time, 5},{confirm_req_id, 6},{confirm_type, 7},{cl_ord_id, 8},{order_id, 9},{secondary_order_id, 10},{secondary_cl_ord_id, 11},{list_id, 12},{order_qty, 13},{order_avg_px, 14},{order_booking_qty, 15},{alloc_id, 16},{secondary_alloc_id, 17},{individual_alloc_id, 18},{transact_time, 19},{alloc_account, 20},{alloc_acct_id_source, 21},{alloc_account_type, 22},{text, 23},{encoded_text, 24},{signature, 25}], 26),
+  Message1.
+
+decode_fields(<<"1=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(account, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"2=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(adv_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"3=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(adv_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"4=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(adv_side, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"5=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(adv_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"6=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(avg_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"7=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(begin_seq_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"8=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(begin_string, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"10=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(check_sum, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"11=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cl_ord_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"12=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(commission, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"13=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(comm_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"14=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cum_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"15=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"16=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(end_seq_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"17=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"18=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"19=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"20=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"21=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(handl_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"22=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"23=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"24=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_oth_svc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"25=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_qlty_ind, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"26=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"27=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"28=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"29=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_capacity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"30=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_mkt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"31=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"32=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"33=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_lines_of_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"34=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(msg_seq_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"35=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(msg_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"36=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(new_seq_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"37=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(order_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"38=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(order_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"39=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ord_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"40=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ord_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"41=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_cl_ord_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"42=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"43=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(poss_dup_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"44=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"45=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(ref_seq_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"46=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(relatd_sym, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"47=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(rule80a, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"48=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"49=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(sender_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"50=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(sender_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"51=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(sending_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"52=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(sending_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"53=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quantity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"54=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(side, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"55=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(symbol, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"56=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(target_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"57=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(target_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"58=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"59=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(time_in_force, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"60=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(transact_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"61=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(urgency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"62=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(valid_until_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"63=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"64=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"65=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(symbol_sfx, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"66=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(list_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"67=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(list_seq_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"68=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_orders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"69=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(list_exec_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"70=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"71=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"72=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ref_alloc_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"73=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_orders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"74=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(avg_px_precision, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"75=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"76=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_broker, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"77=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(position_effect, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"78=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_allocs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"79=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_account, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"80=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"81=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(process_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"82=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_rpts, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"83=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(rpt_seq, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"84=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cxl_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"85=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_dlvy_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"86=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(dlvy_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"87=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"88=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_rej_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"92=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(broker_of_credit, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"94=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(email_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"97=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(poss_resend, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"98=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(encrypt_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"99=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(stop_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"100=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ex_destination, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"102=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cxl_rej_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"103=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(ord_rej_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"104=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ioi_qualifier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"105=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(wave_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"106=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"107=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"108=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(heart_bt_int, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"109=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(client_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"110=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(min_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"111=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(max_floor, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"112=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(test_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"113=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(report_to_exch, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"114=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(locate_reqd, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"115=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(on_behalf_of_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"116=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(on_behalf_of_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"117=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"118=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(net_money, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"119=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_curr_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"120=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"121=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(forex_req, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"122=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_sending_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"123=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(gap_fill_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"124=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_execs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"125=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cxl_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"126=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(expire_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"127=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(dk_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"128=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(deliver_to_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"129=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(deliver_to_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"130=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(ioi_natural_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"131=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"132=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(bid_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"133=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(offer_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"134=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(bid_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"135=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(offer_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"136=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_misc_fees, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"137=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(misc_fee_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"138=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(misc_fee_curr, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"139=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(misc_fee_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"140=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(prev_close_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"141=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(reset_seq_num_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"142=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(sender_location_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"143=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(target_location_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"144=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(on_behalf_of_location_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"145=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(deliver_to_location_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"146=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_related_sym, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"147=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(subject, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"148=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(headline, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"149=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(url_link, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"150=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"151=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leaves_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"152=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cash_order_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"153=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_avg_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"154=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_net_money, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"155=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_curr_fx_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"156=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_curr_fx_rate_calc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"157=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(num_days_interest, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"158=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(accrued_interest_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"159=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(accrued_interest_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"160=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_mode, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"161=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"162=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"163=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"164=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(email_thread_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"165=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"166=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_location, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"167=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"168=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(effective_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"169=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(stand_inst_db_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"170=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(stand_inst_db_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"171=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(stand_inst_db_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"172=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_delivery_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"173=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_depository_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"174=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_brkr_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"175=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"176=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"177=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"178=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_acct_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"179=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_acct_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"180=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_contact_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"181=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_settl_agent_contact_phone, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"182=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"183=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"184=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_acct_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"185=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_acct_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"186=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_contact_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"187=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_settl_agent_contact_phone, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"188=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(bid_spot_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"189=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_forward_points, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"190=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(offer_spot_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"191=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(offer_forward_points, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"192=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(order_qty2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"193=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_date2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"194=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_spot_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"195=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_forward_points, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"196=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_link_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"197=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_link_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"198=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_order_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"199=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_ioi_qualifiers, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"200=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(maturity_month_year, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"201=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(put_or_call, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"202=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(strike_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"203=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(covered_or_uncovered, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"204=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(customer_or_firm, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"205=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(maturity_day, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"206=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(opt_attribute, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"207=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_exchange, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"208=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(notify_broker_of_credit, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"209=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_handl_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"210=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(max_show, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"211=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(peg_offset_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"214=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"215=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_routing_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"216=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(routing_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"217=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(routing_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"218=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(spread, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"219=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"220=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark_curve_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"221=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark_curve_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"222=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark_curve_point, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"223=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coupon_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"224=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coupon_payment_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"225=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(issue_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"226=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(repurchase_term, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"227=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(repurchase_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"228=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(factor, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"229=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_origination_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"230=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ex_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"231=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contract_multiplier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"232=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_stipulations, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"233=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(stipulation_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"234=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(stipulation_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"235=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(yield_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"236=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(yield, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"237=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(total_takedown, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"238=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(concession, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"239=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(repo_collateral_security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"240=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(redemption_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"241=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_coupon_payment_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"242=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_issue_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"243=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_repo_collateral_security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"244=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_repurchase_term, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"245=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_repurchase_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"246=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_factor, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"247=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_redemption_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"248=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_coupon_payment_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"249=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_issue_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"250=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_repo_collateral_security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"251=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_repurchase_term, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"252=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_repurchase_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"253=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_factor, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"254=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_redemption_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"255=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(credit_rating, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"256=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_credit_rating, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"257=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_credit_rating, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"258=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(traded_flat_switch, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"259=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(basis_feature_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"260=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(basis_feature_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"262=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"263=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(subscription_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"264=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(market_depth, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"265=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(md_update_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"266=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(aggregated_book, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"267=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_md_entry_types, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"268=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_md_entries, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"269=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"270=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(md_entry_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"271=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(md_entry_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"272=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"273=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"274=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(tick_direction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"275=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_mkt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"276=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_condition, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"277=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_condition, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"278=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"279=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_update_action, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"280=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"281=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_req_rej_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"282=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_originator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"283=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(location_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"284=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(desk_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"285=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(delete_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"286=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(open_close_settl_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"287=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(seller_days, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"288=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_buyer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"289=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(md_entry_seller, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"290=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(md_entry_position_no, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"291=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(financial_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"292=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(corporate_action, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"293=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(def_bid_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"294=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(def_offer_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"295=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_quote_entries, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"296=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_quote_sets, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"297=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"298=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_cancel_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"299=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_entry_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"300=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"301=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_response_level, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"302=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_set_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"303=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"304=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_quote_entries, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"305=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"306=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"307=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"308=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_exchange, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"309=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"310=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"311=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_symbol, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"312=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_symbol_sfx, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"313=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_maturity_month_year, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"314=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_maturity_day, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"315=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_put_or_call, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"316=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_strike_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"317=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_opt_attribute, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"318=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"319=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(ratio_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"320=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"321=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(security_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"322=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_response_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"323=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(security_response_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"324=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_status_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"325=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(unsolicited_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"326=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(security_trading_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"327=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(halt_reason_char, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"328=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(in_view_of_common, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"329=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(due_to_related, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"330=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(buy_volume, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"331=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(sell_volume, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"332=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(high_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"333=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(low_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"334=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(adjustment, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"335=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"336=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trading_session_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"337=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contra_trader, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"338=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trad_ses_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"339=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trad_ses_mode, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"340=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trad_ses_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"341=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_start_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"342=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_open_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"343=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_pre_close_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"344=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_close_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"345=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trad_ses_end_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"346=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(number_of_orders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"347=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(message_encoding, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"366=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"367=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_set_valid_until_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"368=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_entry_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"369=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_msg_seq_num_processed, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"370=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(on_behalf_of_sending_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"371=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(ref_tag_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"372=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ref_msg_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"373=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(session_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"374=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_request_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"375=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contra_broker, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"376=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(compliance_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"377=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(solicited_flag, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"378=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(exec_restatement_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"379=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(business_reject_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"380=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(business_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"381=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(gross_trade_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"382=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_contra_brokers, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"384=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_msg_types, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"385=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(msg_direction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"386=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_trading_sessions, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"387=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(total_volume_traded, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"388=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(discretion_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"389=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(discretion_offset_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"390=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"391=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(client_bid_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"392=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(list_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"393=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_related_sym, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"394=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(bid_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"395=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(num_tickets, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"396=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(side_value1, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"397=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(side_value2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"398=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_bid_descriptors, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"399=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(bid_descriptor_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"400=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_descriptor, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"401=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(side_value_ind, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"402=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(liquidity_pct_low, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"403=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(liquidity_pct_high, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"404=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(liquidity_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"405=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(efp_tracking_error, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"406=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(fair_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"407=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(outside_index_pct, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"408=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(value_of_futures, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"409=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(liquidity_ind_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"410=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(wt_average_liquidity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"411=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(exchange_for_physical, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"412=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(out_main_cntry_u_index, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"413=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cross_percent, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"414=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(prog_rpt_reqs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"415=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(prog_period_interval, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"416=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(inc_tax_ind, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"417=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(num_bidders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"418=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_trade_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"419=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(basis_px_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"420=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_bid_components, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"421=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(country, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"422=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_strikes, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"423=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"424=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(day_order_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"425=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(day_cum_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"426=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(day_avg_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"427=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(gt_booking_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"428=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_strikes, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"429=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(list_status_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"430=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(net_gross_ind, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"431=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(list_order_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"432=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(expire_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"433=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(list_exec_inst_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"434=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cxl_rej_response_to, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"435=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_coupon_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"436=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_contract_multiplier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"437=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(contra_trade_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"438=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contra_trade_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"439=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(clearing_firm, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"440=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(clearing_account, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"441=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(liquidity_num_securities, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"442=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(multi_leg_reporting_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"443=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(strike_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"444=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(list_status_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"447=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(party_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"448=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(party_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"449=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(total_volume_traded_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"450=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(total_volume_traded_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"451=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(net_chg_prev_day, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"452=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(party_role, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"453=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_party_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"454=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"455=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"456=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_alt_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"457=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_underlying_security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"458=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"459=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_alt_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"460=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(product, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"461=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cfi_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"462=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_product, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"463=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_cfi_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"464=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(test_message_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"465=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quantity_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"466=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(booking_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"467=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(individual_alloc_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"468=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(rounding_direction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"469=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(rounding_modulus, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"470=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(country_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"471=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(state_or_province_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"472=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(locale_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"473=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_regist_dtls, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"474=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mailing_dtls, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"475=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(investor_country_of_residence, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"476=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(payment_ref, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"477=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(distrib_payment_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"478=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_curr, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"479=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(comm_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"480=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cancellation_rights, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"481=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(money_laundering_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"482=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mailing_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"483=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trans_bkd_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"484=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"485=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_price_adjustment, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"486=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(date_of_birth, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"487=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_report_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"488=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(card_holder_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"489=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(card_number, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"490=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(card_exp_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"491=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(card_iss_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"492=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(payment_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"493=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_acct_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"494=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(designation, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"495=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tax_advantage_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"496=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_rej_reason_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"497=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(fund_renew_waiv, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"498=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_agent_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"499=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_agent_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"500=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_agent_acct_number, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"501=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_pay_ref, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"502=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_distrib_agent_acct_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"503=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(card_start_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"504=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(payment_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"505=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(payment_remitter_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"506=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"507=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(regist_rej_reason_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"508=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"509=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_dtls, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"510=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_distrib_insts, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"511=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_email, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"512=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(distrib_percentage, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"513=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"514=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(regist_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"515=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exec_valuation_point, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"516=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(order_percent, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"517=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ownership_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"518=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_cont_amts, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"519=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cont_amt_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"520=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cont_amt_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"521=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cont_amt_curr, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"522=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(owner_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"523=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(party_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"524=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested_party_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"525=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested_party_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"526=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_cl_ord_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"527=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_exec_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"528=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(order_capacity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"529=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(order_restrictions, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"530=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mass_cancel_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"531=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mass_cancel_response, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"532=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mass_cancel_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"533=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(total_affected_orders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"534=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_affected_orders, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"535=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(affected_order_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"536=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(affected_secondary_order_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"537=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"538=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested_party_role, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"539=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested_party_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"540=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(total_accrued_interest_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"541=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(maturity_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"542=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_maturity_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"543=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(instr_registry, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"544=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_margin, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"545=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested_party_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"546=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(scope, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"547=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(md_implicit_delete, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"548=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cross_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"549=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cross_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"550=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cross_prioritization, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"551=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_cross_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"552=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_sides, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"553=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(username, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"554=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(password, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"555=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_legs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"556=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"557=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_security_types, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"558=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_security_types, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"559=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(security_list_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"560=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(security_request_result, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"561=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(round_lot, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"562=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(min_trade_vol, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"563=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(multi_leg_rpt_type_req, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"564=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_position_effect, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"565=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_covered_or_uncovered, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"566=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"567=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trad_ses_status_rej_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"568=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_request_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"569=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"570=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(previously_reported, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"571=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_report_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"572=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_report_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"573=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(match_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"574=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(match_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"575=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(odd_lot, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"576=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_clearing_instructions, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"577=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(clearing_instruction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"578=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_input_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"579=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_input_device, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"580=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_dates, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"581=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(account_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"582=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cust_order_capacity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"583=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cl_ord_link_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"584=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mass_status_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"585=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(mass_status_req_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"586=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_ord_mod_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"587=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_settl_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"588=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_settl_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"589=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(day_booking_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"590=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(booking_unit, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"591=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(prealloc_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"592=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_country_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"593=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_state_or_province_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"594=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_locale_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"595=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_instr_registry, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"596=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_country_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"597=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_state_or_province_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"598=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_locale_of_issue, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"599=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_instr_registry, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"600=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_symbol, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"601=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_symbol_sfx, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"602=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"603=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"604=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(no_leg_security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"605=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_alt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"606=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_alt_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"607=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_product, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"608=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_cfi_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"609=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"610=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_maturity_month_year, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"611=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_maturity_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"612=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_strike_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"613=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_opt_attribute, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"614=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_contract_multiplier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"615=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_coupon_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"616=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_exchange, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"617=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"620=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"623=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_ratio_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"624=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_side, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"625=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trading_session_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"626=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"627=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_hops, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"628=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(hop_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"629=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(hop_sending_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"630=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(hop_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"631=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(mid_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"632=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_yield, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"633=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(mid_yield, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"634=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(offer_yield, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"635=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(clearing_fee_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"636=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(working_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"637=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_last_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"638=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(priority_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"639=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(price_improvement, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"640=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(price2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"641=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_forward_points2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"642=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(bid_forward_points2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"643=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(offer_forward_points2, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"644=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(rfq_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"645=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(mkt_bid_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"646=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(mkt_offer_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"647=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(min_bid_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"648=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(min_offer_size, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"649=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_status_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"650=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(legal_confirm, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"651=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_last_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"652=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_last_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"653=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(sec_def_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"654=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"655=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contra_leg_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"656=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_curr_bid_fx_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"657=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_curr_offer_fx_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"658=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_request_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"659=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(side_compliance_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"660=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(acct_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"661=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_acct_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"662=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(benchmark_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"663=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(benchmark_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"664=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(confirm_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"665=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(confirm_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"666=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(confirm_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"667=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(contract_settl_month, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"668=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(delivery_form, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"669=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_par_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"670=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_leg_allocs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"671=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_alloc_account, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"672=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_individual_alloc_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"673=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_alloc_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"674=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_alloc_acct_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"675=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_settl_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"676=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_benchmark_curve_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"677=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_benchmark_curve_name, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"678=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_benchmark_curve_point, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"679=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_benchmark_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"680=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_benchmark_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"681=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_bid_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"682=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_ioi_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"683=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_leg_stipulations, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"684=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_offer_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"685=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_order_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"686=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"687=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"688=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_stipulation_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"689=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_stipulation_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"690=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(leg_swap_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"691=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pool, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"692=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"693=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_resp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"694=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(quote_resp_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"695=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(quote_qualifier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"696=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(yield_redemption_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"697=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(yield_redemption_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"698=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(yield_redemption_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"699=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark_security_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"700=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(reversal_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"701=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(yield_calc_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"702=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_positions, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"703=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"704=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(long_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"705=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(short_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"706=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_qty_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"707=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_amt_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"708=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"709=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"710=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"711=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_underlyings, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"712=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_maint_action, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"713=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(orig_pos_req_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"714=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_maint_rpt_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"715=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(clearing_business_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"716=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_sess_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"717=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_sess_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"718=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(adjustment_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"719=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(contrary_instruction_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"720=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(prior_spread_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"721=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pos_maint_rpt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"722=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_maint_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"723=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_maint_result, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"724=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_req_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"725=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(response_transport_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"726=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(response_destination, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"727=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(total_num_pos_reports, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"728=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_req_result, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"729=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pos_req_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"730=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"731=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"732=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_settl_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"733=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_settl_price_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"734=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(prior_settl_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"735=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_quote_qualifiers, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"736=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_settl_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"737=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_settl_curr_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"738=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(interest_at_maturity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"739=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_dated_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"740=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_pool, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"741=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_interest_at_maturity, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"742=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_accrued_interest_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"743=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(delivery_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"744=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(assignment_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"745=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(assignment_unit, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"746=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(open_interest, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"747=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exercise_method, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"748=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_num_trade_reports, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"749=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_request_result, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"750=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_request_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"751=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_report_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"752=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(side_multi_leg_reporting_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"753=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_pos_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"754=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(auto_accept_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"755=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_report_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"756=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested2_party_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"757=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested2_party_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"758=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested2_party_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"759=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested2_party_role, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"760=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested2_party_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"761=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(benchmark_security_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"762=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(security_sub_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"763=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_security_sub_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"764=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_security_sub_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"765=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(allowable_one_sidedness_pct, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"766=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(allowable_one_sidedness_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"767=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(allowable_one_sidedness_curr, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"768=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_trd_reg_timestamps, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"769=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trd_reg_timestamp, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"770=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trd_reg_timestamp_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"771=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trd_reg_timestamp_origin, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"772=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(confirm_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"773=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(confirm_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"774=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(confirm_rej_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"775=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(booking_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"776=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(individual_alloc_rej_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"777=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_msg_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"778=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_settl_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"779=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_update_time, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"780=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_settl_inst_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"781=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_settl_party_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"782=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_party_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"783=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_party_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"784=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_party_role, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"785=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_party_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"786=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_party_sub_id_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"787=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(dlvy_inst_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"788=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(termination_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"789=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(next_expected_msg_seq_num, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"790=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ord_status_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"791=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(settl_inst_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"792=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(settl_inst_req_rej_code, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"793=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_alloc_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"794=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_report_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"795=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alloc_report_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"796=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_canc_replace_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"797=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(copy_msg_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"798=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_account_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"799=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(order_avg_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"800=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(order_booking_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"801=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_settl_party_sub_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"802=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_party_sub_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"803=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(party_sub_id_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"804=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested_party_sub_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"805=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested_party_sub_id_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"806=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested2_party_sub_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"807=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested2_party_sub_id_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"808=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_intermed_req_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"810=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"811=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(price_delta, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"812=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(appl_queue_max, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"813=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(appl_queue_depth, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"814=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(appl_queue_resolution, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"815=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(appl_queue_action, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"816=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_alt_md_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"817=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(alt_md_source_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"818=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_trade_report_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"819=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(avg_px_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"820=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_link_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"821=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(order_input_device, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"822=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_trading_session_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"823=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_trading_session_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"824=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trade_leg_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"825=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(exchange_rule, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"826=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_alloc_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"827=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(expiration_cycle, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"828=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trd_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"829=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trd_sub_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"830=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(transfer_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"831=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(asgn_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"832=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_num_assignment_reports, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"833=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(asgn_rpt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"834=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(threshold_amount, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"835=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(peg_move_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"836=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(peg_offset_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"837=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(peg_limit_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"838=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(peg_round_direction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"839=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(pegged_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"840=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(peg_scope, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"841=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_move_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"842=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_offset_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"843=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_limit_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"844=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_round_direction, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"845=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"846=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(discretion_scope, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"847=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(target_strategy, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"848=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(target_strategy_parameters, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"849=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(participation_rate, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"850=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(target_strategy_performance, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"851=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(last_liquidity_ind, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"852=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(publish_trd_indicator, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"853=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(short_sale_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"854=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(qty_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"855=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(secondary_trd_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"856=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trade_report_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"857=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(alloc_no_orders_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"858=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(shared_commission, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"859=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(confirm_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"860=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(avg_par_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"861=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(reported_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"862=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_capacities, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"863=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(order_capacity_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"864=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_events, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"865=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(event_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"866=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(event_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"867=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(event_px, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"868=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(event_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"869=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(pct_at_risk, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"870=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_instr_attrib, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"871=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(instr_attrib_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"872=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(instr_attrib_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"873=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(dated_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"874=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(interest_accrual_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"875=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(cp_program, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"876=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cp_reg_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"877=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_cp_program, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"878=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_cp_reg_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"879=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_qty, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"880=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(trd_match_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"881=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(secondary_trade_report_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"882=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_dirty_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"883=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(underlying_end_price, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"884=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_start_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"885=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_current_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"886=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_end_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"887=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_underlying_stips, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"888=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_stip_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"889=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_stip_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"890=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(maturity_net_money, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"891=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(misc_fee_basis, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"892=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_no_allocs, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"893=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(last_fragment, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"894=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_req_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"895=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_asgn_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"896=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_inquiry_qualifier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"897=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_trades, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"898=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(margin_ratio, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"899=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(margin_excess, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"900=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(total_net_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"901=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(cash_outstanding, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"902=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_asgn_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"903=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_asgn_trans_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"904=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_resp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"905=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_asgn_resp_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"906=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_asgn_reject_reason, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"907=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_asgn_ref_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"908=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_rpt_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"909=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(coll_inquiry_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"910=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"911=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(tot_num_reports, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"912=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue == <<"Y">>,
+  Record1 = case proplists:get_value(last_rpt_requested, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"913=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(agreement_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"914=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(agreement_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"915=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(agreement_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"916=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(start_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"917=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(end_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"918=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(agreement_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"919=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(delivery_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"920=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(end_accrued_interest_amt, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"921=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(start_cash, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"922=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(end_cash, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"923=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(user_request_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"924=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(user_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"925=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(new_password, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"926=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(user_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"927=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(user_status_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"928=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(status_value, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"929=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(status_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"930=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ref_comp_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"931=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(ref_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"932=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(network_response_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"933=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(network_request_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"934=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(last_network_response_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"935=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(network_request_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"936=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_comp_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"937=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(network_status_response_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"938=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_coll_inquiry_qualifier, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"939=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(trd_rpt_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"940=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(affirm_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"941=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(underlying_strike_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"942=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_strike_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"943=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(time_bracket, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"944=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_action, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"945=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_inquiry_status, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"946=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(coll_inquiry_result, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"947=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(strike_currency, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"948=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested3_party_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"949=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested3_party_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"950=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested3_party_id_source, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"951=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested3_party_role, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"952=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(no_nested3_party_sub_ids, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"953=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(nested3_party_sub_id, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"954=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = fix:parse_num(RawValue),
+  Record1 = case proplists:get_value(nested3_party_sub_id_type, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"955=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_contract_settl_month, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"956=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  Value = RawValue,
+  Record1 = case proplists:get_value(leg_interest_accrual_date, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_fields(<<"9=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"90=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"93=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"95=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"212=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"348=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"350=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"352=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"354=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"356=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"358=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"360=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"362=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"364=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"383=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"445=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"618=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<"621=", Message/binary>>, Record, Indexes, Default) ->
+  [RawValue, Rest] = binary:split(Message, <<1>>),
+  DataLength = fix:parse_num(RawValue),
+  decode_data_field(Rest, DataLength, Record, Indexes, Default);
+
+decode_fields(<<>>, Record, _Indexes, Default) ->
+  erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).
+
+decode_data_field(<<"89=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(signature, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"91=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(secure_data, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"96=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(raw_data, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"213=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(xml_data, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"349=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"351=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"353=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_list_exec_inst, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"355=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"357=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_subject, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"359=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_headline, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"361=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_alloc_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"363=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_underlying_issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"365=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_underlying_security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"446=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_list_status_text, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"619=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_leg_issuer, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default);
+
+decode_data_field(<<"622=", Message/binary>>, DataLength, Record, Indexes, Default) ->
+  <<Value:DataLength/binary, 1, Rest/binary>> = Message,
+  Record1 = case proplists:get_value(encoded_leg_security_desc, Indexes) of
+    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,  decode_fields(Rest, Record1, Indexes, Default).
 
 field_by_number(<<"1">>) -> account;
 field_by_number(<<"2">>) -> adv_id;
