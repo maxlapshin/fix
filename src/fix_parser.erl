@@ -2717,14 +2717,6 @@ decode_fields(<<"3=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"4=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, adv_side) of
-    undefined -> erlang:setelement(Default, Record, [{adv_side,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"5=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -2781,14 +2773,6 @@ decode_fields(<<"12=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"13=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, comm_type) of
-    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"14=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -2837,22 +2821,6 @@ decode_fields(<<"19=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"20=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, exec_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{exec_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"21=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, handl_inst) of
-    undefined -> erlang:setelement(Default, Record, [{handl_inst,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"22=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -2869,22 +2837,6 @@ decode_fields(<<"23=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"24=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ioi_oth_svc) of
-    undefined -> erlang:setelement(Default, Record, [{ioi_oth_svc,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"25=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ioi_qlty_ind) of
-    undefined -> erlang:setelement(Default, Record, [{ioi_qlty_ind,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"26=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -2898,22 +2850,6 @@ decode_fields(<<"27=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, ioi_qty) of
     undefined -> erlang:setelement(Default, Record, [{ioi_qty,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"28=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ioi_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{ioi_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"29=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, last_capacity) of
-    undefined -> erlang:setelement(Default, Record, [{last_capacity,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -2989,22 +2925,6 @@ decode_fields(<<"38=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"39=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ord_status) of
-    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"40=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ord_type) of
-    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"41=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -3050,14 +2970,6 @@ decode_fields(<<"46=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, relatd_sym) of
     undefined -> erlang:setelement(Default, Record, [{relatd_sym,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"47=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, rule80a) of
-    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -3109,14 +3021,6 @@ decode_fields(<<"53=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"54=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, side) of
-    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"55=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -3149,14 +3053,6 @@ decode_fields(<<"58=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"59=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, time_in_force) of
-    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"60=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -3165,27 +3061,11 @@ decode_fields(<<"60=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"61=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, urgency) of
-    undefined -> erlang:setelement(Default, Record, [{urgency,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"62=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, valid_until_time) of
     undefined -> erlang:setelement(Default, Record, [{valid_until_time,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"63=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_type) of
-    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -3245,14 +3125,6 @@ decode_fields(<<"70=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"71=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, alloc_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"72=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -3293,14 +3165,6 @@ decode_fields(<<"76=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"77=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, position_effect) of
-    undefined -> erlang:setelement(Default, Record, [{position_effect,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"78=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -3322,14 +3186,6 @@ decode_fields(<<"80=", Message/binary>>, Record, RecordName, Default) ->
   Value = parse_num(RawValue),
   Record1 = case field_index(RecordName, alloc_qty) of
     undefined -> erlang:setelement(Default, Record, [{alloc_qty,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"81=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, process_code) of
-    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -3397,14 +3253,6 @@ decode_fields(<<"92=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"94=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, email_type) of
-    undefined -> erlang:setelement(Default, Record, [{email_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"97=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue == <<"Y">>,
@@ -3450,14 +3298,6 @@ decode_fields(<<"103=", Message/binary>>, Record, RecordName, Default) ->
   Value = parse_num(RawValue),
   Record1 = case field_index(RecordName, ord_rej_reason) of
     undefined -> erlang:setelement(Default, Record, [{ord_rej_reason,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"104=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ioi_qualifier) of
-    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -3621,27 +3461,11 @@ decode_fields(<<"124=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"125=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, cxl_type) of
-    undefined -> erlang:setelement(Default, Record, [{cxl_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"126=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, expire_time) of
     undefined -> erlang:setelement(Default, Record, [{expire_time,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"127=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, dk_reason) of
-    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -3733,14 +3557,6 @@ decode_fields(<<"138=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"139=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, misc_fee_type) of
-    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"140=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -3821,14 +3637,6 @@ decode_fields(<<"149=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"150=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, exec_type) of
-    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"151=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -3869,14 +3677,6 @@ decode_fields(<<"155=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"156=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_curr_fx_rate_calc) of
-    undefined -> erlang:setelement(Default, Record, [{settl_curr_fx_rate_calc,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"157=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -3901,14 +3701,6 @@ decode_fields(<<"159=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"160=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_inst_mode) of
-    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"161=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -3925,27 +3717,11 @@ decode_fields(<<"162=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"163=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_inst_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{settl_inst_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"164=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, email_thread_id) of
     undefined -> erlang:setelement(Default, Record, [{email_thread_id,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"165=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_inst_source) of
-    undefined -> erlang:setelement(Default, Record, [{settl_inst_source,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -4269,14 +4045,6 @@ decode_fields(<<"205=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"206=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, opt_attribute) of
-    undefined -> erlang:setelement(Default, Record, [{opt_attribute,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"207=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -4354,14 +4122,6 @@ decode_fields(<<"218=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, spread) of
     undefined -> erlang:setelement(Default, Record, [{spread,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"219=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, benchmark) of
-    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -4701,14 +4461,6 @@ decode_fields(<<"262=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"263=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, subscription_request_type) of
-    undefined -> erlang:setelement(Default, Record, [{subscription_request_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"264=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -4749,14 +4501,6 @@ decode_fields(<<"268=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"269=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, md_entry_type) of
-    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"270=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -4786,14 +4530,6 @@ decode_fields(<<"273=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, md_entry_time) of
     undefined -> erlang:setelement(Default, Record, [{md_entry_time,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"274=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, tick_direction) of
-    undefined -> erlang:setelement(Default, Record, [{tick_direction,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -4829,27 +4565,11 @@ decode_fields(<<"278=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"279=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, md_update_action) of
-    undefined -> erlang:setelement(Default, Record, [{md_update_action,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"280=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, md_entry_ref_id) of
     undefined -> erlang:setelement(Default, Record, [{md_entry_ref_id,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"281=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, md_req_rej_reason) of
-    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -4874,14 +4594,6 @@ decode_fields(<<"284=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, desk_id) of
     undefined -> erlang:setelement(Default, Record, [{desk_id,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"285=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, delete_reason) of
-    undefined -> erlang:setelement(Default, Record, [{delete_reason,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -5133,14 +4845,6 @@ decode_fields(<<"316=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"317=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, underlying_opt_attribute) of
-    undefined -> erlang:setelement(Default, Record, [{underlying_opt_attribute,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"318=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -5210,14 +4914,6 @@ decode_fields(<<"326=", Message/binary>>, Record, RecordName, Default) ->
   Value = parse_num(RawValue),
   Record1 = case field_index(RecordName, security_trading_status) of
     undefined -> erlang:setelement(Default, Record, [{security_trading_status,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"327=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, halt_reason_char) of
-    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -5445,14 +5141,6 @@ decode_fields(<<"373=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"374=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, bid_request_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{bid_request_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"375=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -5525,14 +5213,6 @@ decode_fields(<<"384=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"385=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, msg_direction) of
-    undefined -> erlang:setelement(Default, Record, [{msg_direction,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"386=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -5546,14 +5226,6 @@ decode_fields(<<"387=", Message/binary>>, Record, RecordName, Default) ->
   Value = parse_num(RawValue),
   Record1 = case field_index(RecordName, total_volume_traded) of
     undefined -> erlang:setelement(Default, Record, [{total_volume_traded,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"388=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, discretion_inst) of
-    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -5789,22 +5461,6 @@ decode_fields(<<"417=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"418=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, bid_trade_type) of
-    undefined -> erlang:setelement(Default, Record, [{bid_trade_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"419=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, basis_px_type) of
-    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"420=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -5909,22 +5565,6 @@ decode_fields(<<"432=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"433=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, list_exec_inst_type) of
-    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"434=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, cxl_rej_response_to) of
-    undefined -> erlang:setelement(Default, Record, [{cxl_rej_response_to,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"435=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -5981,14 +5621,6 @@ decode_fields(<<"441=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"442=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, multi_leg_reporting_type) of
-    undefined -> erlang:setelement(Default, Record, [{multi_leg_reporting_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"443=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6002,14 +5634,6 @@ decode_fields(<<"444=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, list_status_text) of
     undefined -> erlang:setelement(Default, Record, [{list_status_text,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"447=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, party_id_source) of
-    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -6173,14 +5797,6 @@ decode_fields(<<"467=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"468=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, rounding_direction) of
-    undefined -> erlang:setelement(Default, Record, [{rounding_direction,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"469=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6269,22 +5885,6 @@ decode_fields(<<"479=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"480=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, cancellation_rights) of
-    undefined -> erlang:setelement(Default, Record, [{cancellation_rights,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"481=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, money_laundering_status) of
-    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"482=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6298,14 +5898,6 @@ decode_fields(<<"483=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, trans_bkd_time) of
     undefined -> erlang:setelement(Default, Record, [{trans_bkd_time,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"484=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, exec_price_type) of
-    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -6405,14 +5997,6 @@ decode_fields(<<"496=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"497=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, fund_renew_waiv) of
-    undefined -> erlang:setelement(Default, Record, [{fund_renew_waiv,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"498=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6477,14 +6061,6 @@ decode_fields(<<"505=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"506=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, regist_status) of
-    undefined -> erlang:setelement(Default, Record, [{regist_status,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"507=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -6541,14 +6117,6 @@ decode_fields(<<"513=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"514=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, regist_trans_type) of
-    undefined -> erlang:setelement(Default, Record, [{regist_trans_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"515=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6562,14 +6130,6 @@ decode_fields(<<"516=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, order_percent) of
     undefined -> erlang:setelement(Default, Record, [{order_percent,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"517=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, ownership_type) of
-    undefined -> erlang:setelement(Default, Record, [{ownership_type,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -6629,14 +6189,6 @@ decode_fields(<<"524=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"525=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, nested_party_id_source) of
-    undefined -> erlang:setelement(Default, Record, [{nested_party_id_source,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"526=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -6653,43 +6205,11 @@ decode_fields(<<"527=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"528=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, order_capacity) of
-    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"529=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, order_restrictions) of
     undefined -> erlang:setelement(Default, Record, [{order_restrictions,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"530=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, mass_cancel_request_type) of
-    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"531=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, mass_cancel_response) of
-    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"532=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
-    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -6778,14 +6298,6 @@ decode_fields(<<"543=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, instr_registry) of
     undefined -> erlang:setelement(Default, Record, [{instr_registry,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"544=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, cash_margin) of
-    undefined -> erlang:setelement(Default, Record, [{cash_margin,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -6941,14 +6453,6 @@ decode_fields(<<"563=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"564=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, leg_position_effect) of
-    undefined -> erlang:setelement(Default, Record, [{leg_position_effect,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"565=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -7010,14 +6514,6 @@ decode_fields(<<"572=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, trade_report_ref_id) of
     undefined -> erlang:setelement(Default, Record, [{trade_report_ref_id,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"573=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, match_status) of
-    undefined -> erlang:setelement(Default, Record, [{match_status,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -7125,43 +6621,11 @@ decode_fields(<<"586=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"587=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, leg_settl_type) of
-    undefined -> erlang:setelement(Default, Record, [{leg_settl_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"588=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
   Record1 = case field_index(RecordName, leg_settl_date) of
     undefined -> erlang:setelement(Default, Record, [{leg_settl_date,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"589=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, day_booking_inst) of
-    undefined -> erlang:setelement(Default, Record, [{day_booking_inst,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"590=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, booking_unit) of
-    undefined -> erlang:setelement(Default, Record, [{booking_unit,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"591=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, prealloc_method) of
-    undefined -> erlang:setelement(Default, Record, [{prealloc_method,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -7333,14 +6797,6 @@ decode_fields(<<"612=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"613=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, leg_opt_attribute) of
-    undefined -> erlang:setelement(Default, Record, [{leg_opt_attribute,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"614=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -7386,14 +6842,6 @@ decode_fields(<<"623=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, leg_ratio_qty) of
     undefined -> erlang:setelement(Default, Record, [{leg_ratio_qty,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"624=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, leg_side) of
-    undefined -> erlang:setelement(Default, Record, [{leg_side,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -7957,14 +7405,6 @@ decode_fields(<<"694=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"695=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, quote_qualifier) of
-    undefined -> erlang:setelement(Default, Record, [{quote_qualifier,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"696=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = RawValue,
@@ -8349,14 +7789,6 @@ decode_fields(<<"743=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"744=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, assignment_method) of
-    undefined -> erlang:setelement(Default, Record, [{assignment_method,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"745=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -8370,14 +7802,6 @@ decode_fields(<<"746=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, open_interest) of
     undefined -> erlang:setelement(Default, Record, [{open_interest,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"747=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, exercise_method) of
-    undefined -> erlang:setelement(Default, Record, [{exercise_method,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -8458,14 +7882,6 @@ decode_fields(<<"757=", Message/binary>>, Record, RecordName, Default) ->
   Value = RawValue,
   Record1 = case field_index(RecordName, nested2_party_id) of
     undefined -> erlang:setelement(Default, Record, [{nested2_party_id,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"758=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, nested2_party_id_source) of
-    undefined -> erlang:setelement(Default, Record, [{nested2_party_id_source,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -8661,14 +8077,6 @@ decode_fields(<<"782=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"783=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, settl_party_id_source) of
-    undefined -> erlang:setelement(Default, Record, [{settl_party_id_source,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"784=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -8690,14 +8098,6 @@ decode_fields(<<"786=", Message/binary>>, Record, RecordName, Default) ->
   Value = parse_num(RawValue),
   Record1 = case field_index(RecordName, settl_party_sub_id_type) of
     undefined -> erlang:setelement(Default, Record, [{settl_party_sub_id_type,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
-decode_fields(<<"787=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, dlvy_inst_type) of
-    undefined -> erlang:setelement(Default, Record, [{dlvy_inst_type,Value}|erlang:element(Default,Record)]);
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
@@ -9989,14 +9389,6 @@ decode_fields(<<"949=", Message/binary>>, Record, RecordName, Default) ->
     Index -> erlang:setelement(Index, Record, Value)
   end,  decode_fields(Rest, Record1, RecordName, Default);
 
-decode_fields(<<"950=", Message/binary>>, Record, RecordName, Default) ->
-  [RawValue, Rest] = binary:split(Message, <<1>>),
-  Value = RawValue,
-  Record1 = case field_index(RecordName, nested3_party_id_source) of
-    undefined -> erlang:setelement(Default, Record, [{nested3_party_id_source,Value}|erlang:element(Default,Record)]);
-    Index -> erlang:setelement(Index, Record, Value)
-  end,  decode_fields(Rest, Record1, RecordName, Default);
-
 decode_fields(<<"951=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   Value = parse_num(RawValue),
@@ -10134,6 +9526,3230 @@ decode_fields(<<"621=", Message/binary>>, Record, RecordName, Default) ->
   [RawValue, Rest] = binary:split(Message, <<1>>),
   DataLength = parse_num(RawValue),
   decode_data_field(Rest, DataLength, Record, RecordName, Default);
+
+decode_fields(<<"4=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'buy',
+  Record1 = case field_index(RecordName, adv_side) of
+    undefined -> erlang:setelement(Default, Record, [{adv_side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"4=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sell',
+  Record1 = case field_index(RecordName, adv_side) of
+    undefined -> erlang:setelement(Default, Record, [{adv_side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"4=T", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'trade',
+  Record1 = case field_index(RecordName, adv_side) of
+    undefined -> erlang:setelement(Default, Record, [{adv_side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"4=X", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cross',
+  Record1 = case field_index(RecordName, adv_side) of
+    undefined -> erlang:setelement(Default, Record, [{adv_side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'per_unit',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'percent',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'absolute',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pctwaivedcshdisc',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pctwaivedenunits',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"13=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'perbond',
+  Record1 = case field_index(RecordName, comm_type) of
+    undefined -> erlang:setelement(Default, Record, [{comm_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"20=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, exec_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"20=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, exec_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"20=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'correct',
+  Record1 = case field_index(RecordName, exec_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"20=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'status',
+  Record1 = case field_index(RecordName, exec_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"21=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'autoexecpriv',
+  Record1 = case field_index(RecordName, handl_inst) of
+    undefined -> erlang:setelement(Default, Record, [{handl_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"21=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'autoexecpub',
+  Record1 = case field_index(RecordName, handl_inst) of
+    undefined -> erlang:setelement(Default, Record, [{handl_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"21=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'manual',
+  Record1 = case field_index(RecordName, handl_inst) of
+    undefined -> erlang:setelement(Default, Record, [{handl_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"25=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'high',
+  Record1 = case field_index(RecordName, ioi_qlty_ind) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qlty_ind,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"25=L", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'low',
+  Record1 = case field_index(RecordName, ioi_qlty_ind) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qlty_ind,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"25=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'medium',
+  Record1 = case field_index(RecordName, ioi_qlty_ind) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qlty_ind,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"28=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, ioi_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"28=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, ioi_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"28=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'replace',
+  Record1 = case field_index(RecordName, ioi_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"29=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'a',
+  Record1 = case field_index(RecordName, last_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{last_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"29=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'xa',
+  Record1 = case field_index(RecordName, last_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{last_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"29=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'xp',
+  Record1 = case field_index(RecordName, last_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{last_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"29=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'p',
+  Record1 = case field_index(RecordName, last_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{last_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'partial',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'filled',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'done',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'canceled',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pending_cancel',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stopped',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rejected',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'suspended',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pendingnew',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'calculated',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'expired',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'acceptb_idding',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"39=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pendingrep',
+  Record1 = case field_index(RecordName, ord_status) of
+    undefined -> erlang:setelement(Default, Record, [{ord_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'market',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'limit',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stop',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stoplimit',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marketonclose',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'withorwithout',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'limitorbetter',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'limitwithorwithout',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'onbasis',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'onclose',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'limitonclose',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'forexmarket',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'previouslyquoted',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'previouslyindicated',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'forexlimit',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'forexswap',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'forexpreviouslyquoted',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'funari',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=J", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marketiftouched',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=K", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marketwithleftoverlimit',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=L", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'previousfundvaluationpoint',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'nextfundvaluationpoint',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"40=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pegged',
+  Record1 = case field_index(RecordName, ord_type) of
+    undefined -> erlang:setelement(Default, Record, [{ord_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'agencysingle',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextrana',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgnonindexarbmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgindexarbmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marketmaker',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextranw',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextrani',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'invinestor',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=J", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgnonindexarbinv',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=K", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgindexarbinv',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=L", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextranmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgnonindexarbothmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgindexarbothmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=O", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'competingdealer',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'principal',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'compdeale_r1',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'specialist',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=T", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'compdeale_r2',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=U", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgindexarbothagn',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=W", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'allotheragn',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=X", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextranmemwt',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=Y", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prgnonindexarbothagn',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"47=Z", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'shtextrannonmem',
+  Record1 = case field_index(RecordName, rule80a) of
+    undefined -> erlang:setelement(Default, Record, [{rule80a,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'buy',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sell',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'buymin',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sellplus',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sellsht',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sellshtex',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'undisc',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cross',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'crossshort',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'crossshortex',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'asdefined',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'opposite',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'subscribe',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'redeem',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'lendfinancing',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"54=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'borrowfinancing',
+  Record1 = case field_index(RecordName, side) of
+    undefined -> erlang:setelement(Default, Record, [{side,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'day',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'goodtillcancel',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'attheopening',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'immediateorcancel',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'fillorkill',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'goodtillcrossing',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'goodtilldate',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"59=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'attheclose',
+  Record1 = case field_index(RecordName, time_in_force) of
+    undefined -> erlang:setelement(Default, Record, [{time_in_force,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"61=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'normal',
+  Record1 = case field_index(RecordName, urgency) of
+    undefined -> erlang:setelement(Default, Record, [{urgency,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"61=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'flash',
+  Record1 = case field_index(RecordName, urgency) of
+    undefined -> erlang:setelement(Default, Record, [{urgency,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"61=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'background',
+  Record1 = case field_index(RecordName, urgency) of
+    undefined -> erlang:setelement(Default, Record, [{urgency,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'regular',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cash',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'nextday',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 't2',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 't3',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 't4',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'future',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'whenissued',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 't5',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"63=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 't1',
+  Record1 = case field_index(RecordName, settl_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'replace',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'preliminary',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'calculated',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"71=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'calculatedwithoutpreliminary',
+  Record1 = case field_index(RecordName, alloc_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{alloc_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"77=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'close',
+  Record1 = case field_index(RecordName, position_effect) of
+    undefined -> erlang:setelement(Default, Record, [{position_effect,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"77=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'fifo',
+  Record1 = case field_index(RecordName, position_effect) of
+    undefined -> erlang:setelement(Default, Record, [{position_effect,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"77=O", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'open',
+  Record1 = case field_index(RecordName, position_effect) of
+    undefined -> erlang:setelement(Default, Record, [{position_effect,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"77=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rolled',
+  Record1 = case field_index(RecordName, position_effect) of
+    undefined -> erlang:setelement(Default, Record, [{position_effect,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'regular',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'softdollar',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stepin',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stepout',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stepinsoft',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stepoutsoft',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"81=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'plansponsor',
+  Record1 = case field_index(RecordName, process_code) of
+    undefined -> erlang:setelement(Default, Record, [{process_code,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"94=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, email_type) of
+    undefined -> erlang:setelement(Default, Record, [{email_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"94=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'reply',
+  Record1 = case field_index(RecordName, email_type) of
+    undefined -> erlang:setelement(Default, Record, [{email_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"94=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'adminreply',
+  Record1 = case field_index(RecordName, email_type) of
+    undefined -> erlang:setelement(Default, Record, [{email_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'aon',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'moc',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'atclose',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwap',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'intouch',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=L", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'limit',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'morebehind',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=O", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'atopen',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'takeposition',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=Q", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'atmarket',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'readytrade',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'portshow',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=T", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'throughday',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=V", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'versus',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=W", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'indwrkaway',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=X", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'crossopp',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=Y", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'atm_id',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"104=Z", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'preopen',
+  Record1 = case field_index(RecordName, ioi_qualifier) of
+    undefined -> erlang:setelement(Default, Record, [{ioi_qualifier,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unknownsymbol',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'wrongs_ide',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'quantityexceedsorder',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'nomatch',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'priceexceedslimit',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'calculationdifference',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"127=Z", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'other',
+  Record1 = case field_index(RecordName, dk_reason) of
+    undefined -> erlang:setelement(Default, Record, [{dk_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'reg',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=10", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'transaction',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=11", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'conversion',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=12", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'agent',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tax',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'localcomm',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exchfee',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stamp',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'levy',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'other',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'markup',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"139=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'consumption',
+  Record1 = case field_index(RecordName, misc_fee_type) of
+    undefined -> erlang:setelement(Default, Record, [{misc_fee_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'done',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'canceled',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'replaced',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pendingcxl',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'stopped',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rejected',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'suspended',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pendingnew',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'calculated',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'expired',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'restated',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'pendingreplace',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'trade',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradecorrect',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradecancel',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"150=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'orderstatus',
+  Record1 = case field_index(RecordName, exec_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"156=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'multiply',
+  Record1 = case field_index(RecordName, settl_curr_fx_rate_calc) of
+    undefined -> erlang:setelement(Default, Record, [{settl_curr_fx_rate_calc,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"156=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'div_ide',
+  Record1 = case field_index(RecordName, settl_curr_fx_rate_calc) of
+    undefined -> erlang:setelement(Default, Record, [{settl_curr_fx_rate_calc,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'default',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'siprov_ided',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'accountoverr_iding',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'accountstanding',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'civordersingleacct',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"160=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'reject',
+  Record1 = case field_index(RecordName, settl_inst_mode) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_mode,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"163=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, settl_inst_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"163=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, settl_inst_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"163=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'replace',
+  Record1 = case field_index(RecordName, settl_inst_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"163=T", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'restate',
+  Record1 = case field_index(RecordName, settl_inst_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"165=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'brokerinstr',
+  Record1 = case field_index(RecordName, settl_inst_source) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"165=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'instinstr',
+  Record1 = case field_index(RecordName, settl_inst_source) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"165=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'investorciv',
+  Record1 = case field_index(RecordName, settl_inst_source) of
+    undefined -> erlang:setelement(Default, Record, [{settl_inst_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'curve',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = '5yr',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ol_d5',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = '10_yr',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ol_d10',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = '30_yr',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ol_d30',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = '3molibor',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"219=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = '6molibor',
+  Record1 = case field_index(RecordName, benchmark) of
+    undefined -> erlang:setelement(Default, Record, [{benchmark,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"263=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'snapshot',
+  Record1 = case field_index(RecordName, subscription_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{subscription_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"263=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'snapshotupdate',
+  Record1 = case field_index(RecordName, subscription_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{subscription_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"263=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsubscribe',
+  Record1 = case field_index(RecordName, subscription_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{subscription_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'bid',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'offer',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'trade',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'indexvalue',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'opening',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'closing',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'settlement',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradinghigh',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradinglow',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradingvwap',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'imbalance',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tradevolume',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"269=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'openinterest',
+  Record1 = case field_index(RecordName, md_entry_type) of
+    undefined -> erlang:setelement(Default, Record, [{md_entry_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"274=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'plus',
+  Record1 = case field_index(RecordName, tick_direction) of
+    undefined -> erlang:setelement(Default, Record, [{tick_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"274=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'zeroplus',
+  Record1 = case field_index(RecordName, tick_direction) of
+    undefined -> erlang:setelement(Default, Record, [{tick_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"274=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'minus',
+  Record1 = case field_index(RecordName, tick_direction) of
+    undefined -> erlang:setelement(Default, Record, [{tick_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"274=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'zerominus',
+  Record1 = case field_index(RecordName, tick_direction) of
+    undefined -> erlang:setelement(Default, Record, [{tick_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"279=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, md_update_action) of
+    undefined -> erlang:setelement(Default, Record, [{md_update_action,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"279=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'change',
+  Record1 = case field_index(RecordName, md_update_action) of
+    undefined -> erlang:setelement(Default, Record, [{md_update_action,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"279=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'delete',
+  Record1 = case field_index(RecordName, md_update_action) of
+    undefined -> erlang:setelement(Default, Record, [{md_update_action,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unknownsym',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'dup_id',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'insband',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'insperm',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppsub',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppmktdepth',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppmdupdate',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppaggbk',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppentry',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsupptrdsession_id',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppscope',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsupppositioneffectsettleflag',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"281=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'unsuppmdimplicitdelete',
+  Record1 = case field_index(RecordName, md_req_rej_reason) of
+    undefined -> erlang:setelement(Default, Record, [{md_req_rej_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"285=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'canceltradebust',
+  Record1 = case field_index(RecordName, delete_reason) of
+    undefined -> erlang:setelement(Default, Record, [{delete_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"285=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'error',
+  Record1 = case field_index(RecordName, delete_reason) of
+    undefined -> erlang:setelement(Default, Record, [{delete_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'newsdiss',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ordinfl',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ordimb',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'addinfo',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'newspend',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"327=X", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'equipchange',
+  Record1 = case field_index(RecordName, halt_reason_char) of
+    undefined -> erlang:setelement(Default, Record, [{halt_reason_char,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"374=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, bid_request_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_request_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"374=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'no',
+  Record1 = case field_index(RecordName, bid_request_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_request_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"385=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'receive',
+  Record1 = case field_index(RecordName, msg_direction) of
+    undefined -> erlang:setelement(Default, Record, [{msg_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"385=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'send',
+  Record1 = case field_index(RecordName, msg_direction) of
+    undefined -> erlang:setelement(Default, Record, [{msg_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'reldisppx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'relmktpx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'relprimpx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rellocprimpx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'relm_idpx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rellstpx',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"388=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'relvwap',
+  Record1 = case field_index(RecordName, discretion_inst) of
+    undefined -> erlang:setelement(Default, Record, [{discretion_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"418=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'agency',
+  Record1 = case field_index(RecordName, bid_trade_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_trade_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"418=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapguarantee',
+  Record1 = case field_index(RecordName, bid_trade_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_trade_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"418=J", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'guaranteedclose',
+  Record1 = case field_index(RecordName, bid_trade_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_trade_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"418=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'risktrade',
+  Record1 = case field_index(RecordName, bid_trade_type) of
+    undefined -> erlang:setelement(Default, Record, [{bid_trade_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'clspxmorn',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'clspx',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'currpx',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'sq',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapday',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapmorn',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapaft',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapdayxyori',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapmornxyori',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'vwapaftxyori',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'strike',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'open',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"419=Z", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'others',
+  Record1 = case field_index(RecordName, basis_px_type) of
+    undefined -> erlang:setelement(Default, Record, [{basis_px_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"433=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'immed',
+  Record1 = case field_index(RecordName, list_exec_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"433=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'wait',
+  Record1 = case field_index(RecordName, list_exec_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"433=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exchcivsell',
+  Record1 = case field_index(RecordName, list_exec_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"433=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exchcivbuytop',
+  Record1 = case field_index(RecordName, list_exec_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"433=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exchcivbuywd',
+  Record1 = case field_index(RecordName, list_exec_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{list_exec_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"434=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ordcxlreq',
+  Record1 = case field_index(RecordName, cxl_rej_response_to) of
+    undefined -> erlang:setelement(Default, Record, [{cxl_rej_response_to,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"434=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ordcxlrepreq',
+  Record1 = case field_index(RecordName, cxl_rej_response_to) of
+    undefined -> erlang:setelement(Default, Record, [{cxl_rej_response_to,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"442=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'single',
+  Record1 = case field_index(RecordName, multi_leg_reporting_type) of
+    undefined -> erlang:setelement(Default, Record, [{multi_leg_reporting_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"442=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'indivleg',
+  Record1 = case field_index(RecordName, multi_leg_reporting_type) of
+    undefined -> erlang:setelement(Default, Record, [{multi_leg_reporting_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"442=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'multileg',
+  Record1 = case field_index(RecordName, multi_leg_reporting_type) of
+    undefined -> erlang:setelement(Default, Record, [{multi_leg_reporting_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'koreaninvestor_id',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'taiwanesequalified',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'taiwanesetradingacct',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'mcdnumber',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'chinesebshare',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'uknationalinspennumber',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'ussocialsecurity',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=8", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'usemployer_idnumber',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=9", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'australianbusinessnumber',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'australiantaxfilenumber',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'bic',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'accptmarketpart',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'propcode',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'isocode',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=F", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'settlentloc',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'mic',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'csdpartcode',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"447=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'directeddefinedisitc',
+  Record1 = case field_index(RecordName, party_id_source) of
+    undefined -> erlang:setelement(Default, Record, [{party_id_source,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"468=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'roundnearest',
+  Record1 = case field_index(RecordName, rounding_direction) of
+    undefined -> erlang:setelement(Default, Record, [{rounding_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"468=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rounddown',
+  Record1 = case field_index(RecordName, rounding_direction) of
+    undefined -> erlang:setelement(Default, Record, [{rounding_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"468=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'roundup',
+  Record1 = case field_index(RecordName, rounding_direction) of
+    undefined -> erlang:setelement(Default, Record, [{rounding_direction,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"480=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'nowaiver',
+  Record1 = case field_index(RecordName, cancellation_rights) of
+    undefined -> erlang:setelement(Default, Record, [{cancellation_rights,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"480=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'noexeconly',
+  Record1 = case field_index(RecordName, cancellation_rights) of
+    undefined -> erlang:setelement(Default, Record, [{cancellation_rights,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"480=O", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'noinstit',
+  Record1 = case field_index(RecordName, cancellation_rights) of
+    undefined -> erlang:setelement(Default, Record, [{cancellation_rights,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"480=Y", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'yes',
+  Record1 = case field_index(RecordName, cancellation_rights) of
+    undefined -> erlang:setelement(Default, Record, [{cancellation_rights,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"481=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exbelowlim',
+  Record1 = case field_index(RecordName, money_laundering_status) of
+    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"481=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exclientmoneytype',
+  Record1 = case field_index(RecordName, money_laundering_status) of
+    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"481=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'exauthcredit',
+  Record1 = case field_index(RecordName, money_laundering_status) of
+    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"481=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'notchecked',
+  Record1 = case field_index(RecordName, money_laundering_status) of
+    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"481=Y", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'passed',
+  Record1 = case field_index(RecordName, money_laundering_status) of
+    undefined -> erlang:setelement(Default, Record, [{money_laundering_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=B", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'b_idprice',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'creationprice',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=D", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'creationpriceadjpct',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=E", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'creationpriceadjamt',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=O", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'offerprice',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'offerpriceminusadjpct',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=Q", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'offerpriceminusadjamt',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"484=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'singleprice',
+  Record1 = case field_index(RecordName, exec_price_type) of
+    undefined -> erlang:setelement(Default, Record, [{exec_price_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"497=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'no',
+  Record1 = case field_index(RecordName, fund_renew_waiv) of
+    undefined -> erlang:setelement(Default, Record, [{fund_renew_waiv,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"497=Y", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'yes',
+  Record1 = case field_index(RecordName, fund_renew_waiv) of
+    undefined -> erlang:setelement(Default, Record, [{fund_renew_waiv,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"506=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'accepted',
+  Record1 = case field_index(RecordName, regist_status) of
+    undefined -> erlang:setelement(Default, Record, [{regist_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"506=H", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'held',
+  Record1 = case field_index(RecordName, regist_status) of
+    undefined -> erlang:setelement(Default, Record, [{regist_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"506=N", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'reminder_ie_registration_instructions_are_still_outstanding',
+  Record1 = case field_index(RecordName, regist_status) of
+    undefined -> erlang:setelement(Default, Record, [{regist_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"506=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'rejected',
+  Record1 = case field_index(RecordName, regist_status) of
+    undefined -> erlang:setelement(Default, Record, [{regist_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"514=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'new',
+  Record1 = case field_index(RecordName, regist_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{regist_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"514=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'replace',
+  Record1 = case field_index(RecordName, regist_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{regist_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"514=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cancel',
+  Record1 = case field_index(RecordName, regist_trans_type) of
+    undefined -> erlang:setelement(Default, Record, [{regist_trans_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"517=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'joint_trustees',
+  Record1 = case field_index(RecordName, ownership_type) of
+    undefined -> erlang:setelement(Default, Record, [{ownership_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"517=J", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'joint_investors',
+  Record1 = case field_index(RecordName, ownership_type) of
+    undefined -> erlang:setelement(Default, Record, [{ownership_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"517=T", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'tenants_in_common',
+  Record1 = case field_index(RecordName, ownership_type) of
+    undefined -> erlang:setelement(Default, Record, [{ownership_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'agency',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=G", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'proprietary',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=I", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'indiv_idual',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'principal',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'risklessprincipal',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"528=W", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'agentothermember',
+  Record1 = case field_index(RecordName, order_capacity) of
+    undefined -> erlang:setelement(Default, Record, [{order_capacity,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderssecurity',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlordersunderlyingsecurity',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlordersproduct',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderscficode',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderssecuritytype',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderstrdsession',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"530=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlallorders',
+  Record1 = case field_index(RecordName, mass_cancel_request_type) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_request_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlreqrej',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderssecurity',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlordersunderlyingsecurity',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlordersproduct',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderscficode',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderssecuritytype',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlorderstrdsession',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"531=7", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cxlallorders',
+  Record1 = case field_index(RecordName, mass_cancel_response) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_response,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'masscxlnotsupported',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idsecurity',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idunderlying',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idproduct',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=4", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idcficode',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=5", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idsecuritytype',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=6", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'inval_idtrdsession',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"532=99", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'other',
+  Record1 = case field_index(RecordName, mass_cancel_reject_reason) of
+    undefined -> erlang:setelement(Default, Record, [{mass_cancel_reject_reason,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"544=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cash',
+  Record1 = case field_index(RecordName, cash_margin) of
+    undefined -> erlang:setelement(Default, Record, [{cash_margin,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"544=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marginopen',
+  Record1 = case field_index(RecordName, cash_margin) of
+    undefined -> erlang:setelement(Default, Record, [{cash_margin,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"544=3", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'marginclose',
+  Record1 = case field_index(RecordName, cash_margin) of
+    undefined -> erlang:setelement(Default, Record, [{cash_margin,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"573=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'compmataff',
+  Record1 = case field_index(RecordName, match_status) of
+    undefined -> erlang:setelement(Default, Record, [{match_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"573=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'uncompunmatunaff',
+  Record1 = case field_index(RecordName, match_status) of
+    undefined -> erlang:setelement(Default, Record, [{match_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"573=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'advalert',
+  Record1 = case field_index(RecordName, match_status) of
+    undefined -> erlang:setelement(Default, Record, [{match_status,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"589=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'can_trigger_booking_without_reference_to_the_order_initiator_auto',
+  Record1 = case field_index(RecordName, day_booking_inst) of
+    undefined -> erlang:setelement(Default, Record, [{day_booking_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"589=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'speak_with_order_initiator_before_booking_speak_first',
+  Record1 = case field_index(RecordName, day_booking_inst) of
+    undefined -> erlang:setelement(Default, Record, [{day_booking_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"589=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'accumulate',
+  Record1 = case field_index(RecordName, day_booking_inst) of
+    undefined -> erlang:setelement(Default, Record, [{day_booking_inst,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"590=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'each_partial_execution_is_a_bookable_unit',
+  Record1 = case field_index(RecordName, booking_unit) of
+    undefined -> erlang:setelement(Default, Record, [{booking_unit,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"590=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'aggregate_partial_executions_on_this_order_and_book_one_trade_per_order',
+  Record1 = case field_index(RecordName, booking_unit) of
+    undefined -> erlang:setelement(Default, Record, [{booking_unit,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"590=2", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'aggregate_executions_for_this_symbol_s_ide_and_settlement_date',
+  Record1 = case field_index(RecordName, booking_unit) of
+    undefined -> erlang:setelement(Default, Record, [{booking_unit,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"591=0", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prorata',
+  Record1 = case field_index(RecordName, prealloc_method) of
+    undefined -> erlang:setelement(Default, Record, [{prealloc_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"591=1", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'do_not_prorata_discuss_first',
+  Record1 = case field_index(RecordName, prealloc_method) of
+    undefined -> erlang:setelement(Default, Record, [{prealloc_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"744=P", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'prorata',
+  Record1 = case field_index(RecordName, assignment_method) of
+    undefined -> erlang:setelement(Default, Record, [{assignment_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"744=R", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'random',
+  Record1 = case field_index(RecordName, assignment_method) of
+    undefined -> erlang:setelement(Default, Record, [{assignment_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"747=A", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'automatic',
+  Record1 = case field_index(RecordName, exercise_method) of
+    undefined -> erlang:setelement(Default, Record, [{exercise_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"747=M", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'manual',
+  Record1 = case field_index(RecordName, exercise_method) of
+    undefined -> erlang:setelement(Default, Record, [{exercise_method,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"787=C", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'cash',
+  Record1 = case field_index(RecordName, dlvy_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{dlvy_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
+
+decode_fields(<<"787=S", 1, Message/binary>>, Record, RecordName, Default) ->
+  Value = 'securities',
+  Record1 = case field_index(RecordName, dlvy_inst_type) of
+    undefined -> erlang:setelement(Default, Record, [{dlvy_inst_type,Value}|erlang:element(Default,Record)]);
+    Index -> erlang:setelement(Index, Record, Value)
+  end,
+  decode_fields(Message, Record1, RecordName, Default);
 
 decode_fields(<<>>, Record, _RecordName, Default) ->
   erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).
@@ -11208,7 +13824,10 @@ field_by_number(Key) -> Key.
 decode_typed_field(account, V) -> V;
 decode_typed_field(adv_id, V) -> V;
 decode_typed_field(adv_ref_id, V) -> V;
-decode_typed_field(adv_side, V) -> V;
+decode_typed_field(adv_side, <<"B">>) -> 'buy';
+decode_typed_field(adv_side, <<"S">>) -> 'sell';
+decode_typed_field(adv_side, <<"T">>) -> 'trade';
+decode_typed_field(adv_side, <<"X">>) -> 'cross';
 decode_typed_field(adv_trans_type, V) -> V;
 decode_typed_field(avg_px, V) -> parse_num(V)*1.0;
 decode_typed_field(begin_seq_no, V) -> parse_num(V);
@@ -11217,23 +13836,39 @@ decode_typed_field(body_length, V) -> parse_num(V);
 decode_typed_field(check_sum, V) -> V;
 decode_typed_field(cl_ord_id, V) -> V;
 decode_typed_field(commission, V) -> V;
-decode_typed_field(comm_type, V) -> V;
+decode_typed_field(comm_type, <<"1">>) -> 'per_unit';
+decode_typed_field(comm_type, <<"2">>) -> 'percent';
+decode_typed_field(comm_type, <<"3">>) -> 'absolute';
+decode_typed_field(comm_type, <<"4">>) -> 'pctwaivedcshdisc';
+decode_typed_field(comm_type, <<"5">>) -> 'pctwaivedenunits';
+decode_typed_field(comm_type, <<"6">>) -> 'perbond';
 decode_typed_field(cum_qty, V) -> parse_num(V);
 decode_typed_field(currency, V) -> V;
 decode_typed_field(end_seq_no, V) -> parse_num(V);
 decode_typed_field(exec_id, V) -> V;
 decode_typed_field(exec_inst, V) -> V;
 decode_typed_field(exec_ref_id, V) -> V;
-decode_typed_field(exec_trans_type, V) -> V;
-decode_typed_field(handl_inst, V) -> V;
+decode_typed_field(exec_trans_type, <<"0">>) -> 'new';
+decode_typed_field(exec_trans_type, <<"1">>) -> 'cancel';
+decode_typed_field(exec_trans_type, <<"2">>) -> 'correct';
+decode_typed_field(exec_trans_type, <<"3">>) -> 'status';
+decode_typed_field(handl_inst, <<"1">>) -> 'autoexecpriv';
+decode_typed_field(handl_inst, <<"2">>) -> 'autoexecpub';
+decode_typed_field(handl_inst, <<"3">>) -> 'manual';
 decode_typed_field(security_id_source, V) -> V;
 decode_typed_field(ioi_id, V) -> V;
-decode_typed_field(ioi_oth_svc, V) -> V;
-decode_typed_field(ioi_qlty_ind, V) -> V;
+decode_typed_field(ioi_qlty_ind, <<"H">>) -> 'high';
+decode_typed_field(ioi_qlty_ind, <<"L">>) -> 'low';
+decode_typed_field(ioi_qlty_ind, <<"M">>) -> 'medium';
 decode_typed_field(ioi_ref_id, V) -> V;
 decode_typed_field(ioi_qty, V) -> V;
-decode_typed_field(ioi_trans_type, V) -> V;
-decode_typed_field(last_capacity, V) -> V;
+decode_typed_field(ioi_trans_type, <<"C">>) -> 'cancel';
+decode_typed_field(ioi_trans_type, <<"N">>) -> 'new';
+decode_typed_field(ioi_trans_type, <<"R">>) -> 'replace';
+decode_typed_field(last_capacity, <<"1">>) -> 'a';
+decode_typed_field(last_capacity, <<"2">>) -> 'xa';
+decode_typed_field(last_capacity, <<"3">>) -> 'xp';
+decode_typed_field(last_capacity, <<"4">>) -> 'p';
 decode_typed_field(last_mkt, V) -> V;
 decode_typed_field(last_px, V) -> parse_num(V)*1.0;
 decode_typed_field(last_qty, V) -> parse_num(V);
@@ -11243,31 +13878,121 @@ decode_typed_field(msg_type, V) -> message_by_number(V);
 decode_typed_field(new_seq_no, V) -> parse_num(V);
 decode_typed_field(order_id, V) -> V;
 decode_typed_field(order_qty, V) -> parse_num(V);
-decode_typed_field(ord_status, V) -> V;
-decode_typed_field(ord_type, V) -> V;
+decode_typed_field(ord_status, <<"0">>) -> 'new';
+decode_typed_field(ord_status, <<"1">>) -> 'partial';
+decode_typed_field(ord_status, <<"2">>) -> 'filled';
+decode_typed_field(ord_status, <<"3">>) -> 'done';
+decode_typed_field(ord_status, <<"4">>) -> 'canceled';
+decode_typed_field(ord_status, <<"6">>) -> 'pending_cancel';
+decode_typed_field(ord_status, <<"7">>) -> 'stopped';
+decode_typed_field(ord_status, <<"8">>) -> 'rejected';
+decode_typed_field(ord_status, <<"9">>) -> 'suspended';
+decode_typed_field(ord_status, <<"A">>) -> 'pendingnew';
+decode_typed_field(ord_status, <<"B">>) -> 'calculated';
+decode_typed_field(ord_status, <<"C">>) -> 'expired';
+decode_typed_field(ord_status, <<"D">>) -> 'acceptb_idding';
+decode_typed_field(ord_status, <<"E">>) -> 'pendingrep';
+decode_typed_field(ord_type, <<"1">>) -> 'market';
+decode_typed_field(ord_type, <<"2">>) -> 'limit';
+decode_typed_field(ord_type, <<"3">>) -> 'stop';
+decode_typed_field(ord_type, <<"4">>) -> 'stoplimit';
+decode_typed_field(ord_type, <<"5">>) -> 'marketonclose';
+decode_typed_field(ord_type, <<"6">>) -> 'withorwithout';
+decode_typed_field(ord_type, <<"7">>) -> 'limitorbetter';
+decode_typed_field(ord_type, <<"8">>) -> 'limitwithorwithout';
+decode_typed_field(ord_type, <<"9">>) -> 'onbasis';
+decode_typed_field(ord_type, <<"A">>) -> 'onclose';
+decode_typed_field(ord_type, <<"B">>) -> 'limitonclose';
+decode_typed_field(ord_type, <<"C">>) -> 'forexmarket';
+decode_typed_field(ord_type, <<"D">>) -> 'previouslyquoted';
+decode_typed_field(ord_type, <<"E">>) -> 'previouslyindicated';
+decode_typed_field(ord_type, <<"F">>) -> 'forexlimit';
+decode_typed_field(ord_type, <<"G">>) -> 'forexswap';
+decode_typed_field(ord_type, <<"H">>) -> 'forexpreviouslyquoted';
+decode_typed_field(ord_type, <<"I">>) -> 'funari';
+decode_typed_field(ord_type, <<"J">>) -> 'marketiftouched';
+decode_typed_field(ord_type, <<"K">>) -> 'marketwithleftoverlimit';
+decode_typed_field(ord_type, <<"L">>) -> 'previousfundvaluationpoint';
+decode_typed_field(ord_type, <<"M">>) -> 'nextfundvaluationpoint';
+decode_typed_field(ord_type, <<"P">>) -> 'pegged';
 decode_typed_field(orig_cl_ord_id, V) -> V;
 decode_typed_field(orig_time, V) -> V;
 decode_typed_field(poss_dup_flag, V) -> V == <<"Y">>;
 decode_typed_field(price, V) -> parse_num(V)*1.0;
 decode_typed_field(ref_seq_num, V) -> parse_num(V);
 decode_typed_field(relatd_sym, V) -> V;
-decode_typed_field(rule80a, V) -> V;
+decode_typed_field(rule80a, <<"A">>) -> 'agencysingle';
+decode_typed_field(rule80a, <<"B">>) -> 'shtextrana';
+decode_typed_field(rule80a, <<"C">>) -> 'prgnonindexarbmem';
+decode_typed_field(rule80a, <<"D">>) -> 'prgindexarbmem';
+decode_typed_field(rule80a, <<"E">>) -> 'marketmaker';
+decode_typed_field(rule80a, <<"F">>) -> 'shtextranw';
+decode_typed_field(rule80a, <<"H">>) -> 'shtextrani';
+decode_typed_field(rule80a, <<"I">>) -> 'invinestor';
+decode_typed_field(rule80a, <<"J">>) -> 'prgnonindexarbinv';
+decode_typed_field(rule80a, <<"K">>) -> 'prgindexarbinv';
+decode_typed_field(rule80a, <<"L">>) -> 'shtextranmem';
+decode_typed_field(rule80a, <<"M">>) -> 'prgnonindexarbothmem';
+decode_typed_field(rule80a, <<"N">>) -> 'prgindexarbothmem';
+decode_typed_field(rule80a, <<"O">>) -> 'competingdealer';
+decode_typed_field(rule80a, <<"P">>) -> 'principal';
+decode_typed_field(rule80a, <<"R">>) -> 'compdeale_r1';
+decode_typed_field(rule80a, <<"S">>) -> 'specialist';
+decode_typed_field(rule80a, <<"T">>) -> 'compdeale_r2';
+decode_typed_field(rule80a, <<"U">>) -> 'prgindexarbothagn';
+decode_typed_field(rule80a, <<"W">>) -> 'allotheragn';
+decode_typed_field(rule80a, <<"X">>) -> 'shtextranmemwt';
+decode_typed_field(rule80a, <<"Y">>) -> 'prgnonindexarbothagn';
+decode_typed_field(rule80a, <<"Z">>) -> 'shtextrannonmem';
 decode_typed_field(security_id, V) -> V;
 decode_typed_field(sender_comp_id, V) -> V;
 decode_typed_field(sender_sub_id, V) -> V;
 decode_typed_field(sending_date, V) -> V;
 decode_typed_field(sending_time, V) -> V;
 decode_typed_field(quantity, V) -> parse_num(V);
-decode_typed_field(side, V) -> V;
+decode_typed_field(side, <<"1">>) -> 'buy';
+decode_typed_field(side, <<"2">>) -> 'sell';
+decode_typed_field(side, <<"3">>) -> 'buymin';
+decode_typed_field(side, <<"4">>) -> 'sellplus';
+decode_typed_field(side, <<"5">>) -> 'sellsht';
+decode_typed_field(side, <<"6">>) -> 'sellshtex';
+decode_typed_field(side, <<"7">>) -> 'undisc';
+decode_typed_field(side, <<"8">>) -> 'cross';
+decode_typed_field(side, <<"9">>) -> 'crossshort';
+decode_typed_field(side, <<"A">>) -> 'crossshortex';
+decode_typed_field(side, <<"B">>) -> 'asdefined';
+decode_typed_field(side, <<"C">>) -> 'opposite';
+decode_typed_field(side, <<"D">>) -> 'subscribe';
+decode_typed_field(side, <<"E">>) -> 'redeem';
+decode_typed_field(side, <<"F">>) -> 'lendfinancing';
+decode_typed_field(side, <<"G">>) -> 'borrowfinancing';
 decode_typed_field(symbol, V) -> V;
 decode_typed_field(target_comp_id, V) -> V;
 decode_typed_field(target_sub_id, V) -> V;
 decode_typed_field(text, V) -> V;
-decode_typed_field(time_in_force, V) -> V;
+decode_typed_field(time_in_force, <<"0">>) -> 'day';
+decode_typed_field(time_in_force, <<"1">>) -> 'goodtillcancel';
+decode_typed_field(time_in_force, <<"2">>) -> 'attheopening';
+decode_typed_field(time_in_force, <<"3">>) -> 'immediateorcancel';
+decode_typed_field(time_in_force, <<"4">>) -> 'fillorkill';
+decode_typed_field(time_in_force, <<"5">>) -> 'goodtillcrossing';
+decode_typed_field(time_in_force, <<"6">>) -> 'goodtilldate';
+decode_typed_field(time_in_force, <<"7">>) -> 'attheclose';
 decode_typed_field(transact_time, V) -> V;
-decode_typed_field(urgency, V) -> V;
+decode_typed_field(urgency, <<"0">>) -> 'normal';
+decode_typed_field(urgency, <<"1">>) -> 'flash';
+decode_typed_field(urgency, <<"2">>) -> 'background';
 decode_typed_field(valid_until_time, V) -> V;
-decode_typed_field(settl_type, V) -> V;
+decode_typed_field(settl_type, <<"0">>) -> 'regular';
+decode_typed_field(settl_type, <<"1">>) -> 'cash';
+decode_typed_field(settl_type, <<"2">>) -> 'nextday';
+decode_typed_field(settl_type, <<"3">>) -> 't2';
+decode_typed_field(settl_type, <<"4">>) -> 't3';
+decode_typed_field(settl_type, <<"5">>) -> 't4';
+decode_typed_field(settl_type, <<"6">>) -> 'future';
+decode_typed_field(settl_type, <<"7">>) -> 'whenissued';
+decode_typed_field(settl_type, <<"8">>) -> 't5';
+decode_typed_field(settl_type, <<"9">>) -> 't1';
 decode_typed_field(settl_date, V) -> V;
 decode_typed_field(symbol_sfx, V) -> V;
 decode_typed_field(list_id, V) -> V;
@@ -11275,17 +14000,31 @@ decode_typed_field(list_seq_no, V) -> parse_num(V);
 decode_typed_field(tot_no_orders, V) -> parse_num(V);
 decode_typed_field(list_exec_inst, V) -> V;
 decode_typed_field(alloc_id, V) -> V;
-decode_typed_field(alloc_trans_type, V) -> V;
+decode_typed_field(alloc_trans_type, <<"0">>) -> 'new';
+decode_typed_field(alloc_trans_type, <<"1">>) -> 'replace';
+decode_typed_field(alloc_trans_type, <<"2">>) -> 'cancel';
+decode_typed_field(alloc_trans_type, <<"3">>) -> 'preliminary';
+decode_typed_field(alloc_trans_type, <<"4">>) -> 'calculated';
+decode_typed_field(alloc_trans_type, <<"5">>) -> 'calculatedwithoutpreliminary';
 decode_typed_field(ref_alloc_id, V) -> V;
 decode_typed_field(no_orders, V) -> parse_num(V);
 decode_typed_field(avg_px_precision, V) -> parse_num(V);
 decode_typed_field(trade_date, V) -> V;
 decode_typed_field(exec_broker, V) -> V;
-decode_typed_field(position_effect, V) -> V;
+decode_typed_field(position_effect, <<"C">>) -> 'close';
+decode_typed_field(position_effect, <<"F">>) -> 'fifo';
+decode_typed_field(position_effect, <<"O">>) -> 'open';
+decode_typed_field(position_effect, <<"R">>) -> 'rolled';
 decode_typed_field(no_allocs, V) -> parse_num(V);
 decode_typed_field(alloc_account, V) -> V;
 decode_typed_field(alloc_qty, V) -> parse_num(V);
-decode_typed_field(process_code, V) -> V;
+decode_typed_field(process_code, <<"0">>) -> 'regular';
+decode_typed_field(process_code, <<"1">>) -> 'softdollar';
+decode_typed_field(process_code, <<"2">>) -> 'stepin';
+decode_typed_field(process_code, <<"3">>) -> 'stepout';
+decode_typed_field(process_code, <<"4">>) -> 'stepinsoft';
+decode_typed_field(process_code, <<"5">>) -> 'stepoutsoft';
+decode_typed_field(process_code, <<"6">>) -> 'plansponsor';
 decode_typed_field(no_rpts, V) -> parse_num(V);
 decode_typed_field(rpt_seq, V) -> parse_num(V);
 decode_typed_field(cxl_qty, V) -> parse_num(V);
@@ -11298,7 +14037,9 @@ decode_typed_field(secure_data_len, V) -> parse_num(V);
 decode_typed_field(secure_data, V) -> V;
 decode_typed_field(broker_of_credit, V) -> V;
 decode_typed_field(signature_length, V) -> parse_num(V);
-decode_typed_field(email_type, V) -> V;
+decode_typed_field(email_type, <<"0">>) -> 'new';
+decode_typed_field(email_type, <<"1">>) -> 'reply';
+decode_typed_field(email_type, <<"2">>) -> 'adminreply';
 decode_typed_field(raw_data_length, V) -> parse_num(V);
 decode_typed_field(raw_data, V) -> V;
 decode_typed_field(poss_resend, V) -> V == <<"Y">>;
@@ -11307,7 +14048,24 @@ decode_typed_field(stop_px, V) -> parse_num(V)*1.0;
 decode_typed_field(ex_destination, V) -> V;
 decode_typed_field(cxl_rej_reason, V) -> parse_num(V);
 decode_typed_field(ord_rej_reason, V) -> parse_num(V);
-decode_typed_field(ioi_qualifier, V) -> V;
+decode_typed_field(ioi_qualifier, <<"A">>) -> 'aon';
+decode_typed_field(ioi_qualifier, <<"B">>) -> 'moc';
+decode_typed_field(ioi_qualifier, <<"C">>) -> 'atclose';
+decode_typed_field(ioi_qualifier, <<"D">>) -> 'vwap';
+decode_typed_field(ioi_qualifier, <<"I">>) -> 'intouch';
+decode_typed_field(ioi_qualifier, <<"L">>) -> 'limit';
+decode_typed_field(ioi_qualifier, <<"M">>) -> 'morebehind';
+decode_typed_field(ioi_qualifier, <<"O">>) -> 'atopen';
+decode_typed_field(ioi_qualifier, <<"P">>) -> 'takeposition';
+decode_typed_field(ioi_qualifier, <<"Q">>) -> 'atmarket';
+decode_typed_field(ioi_qualifier, <<"R">>) -> 'readytrade';
+decode_typed_field(ioi_qualifier, <<"S">>) -> 'portshow';
+decode_typed_field(ioi_qualifier, <<"T">>) -> 'throughday';
+decode_typed_field(ioi_qualifier, <<"V">>) -> 'versus';
+decode_typed_field(ioi_qualifier, <<"W">>) -> 'indwrkaway';
+decode_typed_field(ioi_qualifier, <<"X">>) -> 'crossopp';
+decode_typed_field(ioi_qualifier, <<"Y">>) -> 'atm_id';
+decode_typed_field(ioi_qualifier, <<"Z">>) -> 'preopen';
 decode_typed_field(wave_no, V) -> V;
 decode_typed_field(issuer, V) -> V;
 decode_typed_field(security_desc, V) -> V;
@@ -11328,9 +14086,14 @@ decode_typed_field(forex_req, V) -> V == <<"Y">>;
 decode_typed_field(orig_sending_time, V) -> V;
 decode_typed_field(gap_fill_flag, V) -> V == <<"Y">>;
 decode_typed_field(no_execs, V) -> parse_num(V);
-decode_typed_field(cxl_type, V) -> V;
 decode_typed_field(expire_time, V) -> V;
-decode_typed_field(dk_reason, V) -> V;
+decode_typed_field(dk_reason, <<"A">>) -> 'unknownsymbol';
+decode_typed_field(dk_reason, <<"B">>) -> 'wrongs_ide';
+decode_typed_field(dk_reason, <<"C">>) -> 'quantityexceedsorder';
+decode_typed_field(dk_reason, <<"D">>) -> 'nomatch';
+decode_typed_field(dk_reason, <<"E">>) -> 'priceexceedslimit';
+decode_typed_field(dk_reason, <<"F">>) -> 'calculationdifference';
+decode_typed_field(dk_reason, <<"Z">>) -> 'other';
 decode_typed_field(deliver_to_comp_id, V) -> V;
 decode_typed_field(deliver_to_sub_id, V) -> V;
 decode_typed_field(ioi_natural_flag, V) -> V == <<"Y">>;
@@ -11342,7 +14105,18 @@ decode_typed_field(offer_size, V) -> parse_num(V);
 decode_typed_field(no_misc_fees, V) -> parse_num(V);
 decode_typed_field(misc_fee_amt, V) -> V;
 decode_typed_field(misc_fee_curr, V) -> V;
-decode_typed_field(misc_fee_type, V) -> V;
+decode_typed_field(misc_fee_type, <<"1">>) -> 'reg';
+decode_typed_field(misc_fee_type, <<"10">>) -> 'transaction';
+decode_typed_field(misc_fee_type, <<"11">>) -> 'conversion';
+decode_typed_field(misc_fee_type, <<"12">>) -> 'agent';
+decode_typed_field(misc_fee_type, <<"2">>) -> 'tax';
+decode_typed_field(misc_fee_type, <<"3">>) -> 'localcomm';
+decode_typed_field(misc_fee_type, <<"4">>) -> 'exchfee';
+decode_typed_field(misc_fee_type, <<"5">>) -> 'stamp';
+decode_typed_field(misc_fee_type, <<"6">>) -> 'levy';
+decode_typed_field(misc_fee_type, <<"7">>) -> 'other';
+decode_typed_field(misc_fee_type, <<"8">>) -> 'markup';
+decode_typed_field(misc_fee_type, <<"9">>) -> 'consumption';
 decode_typed_field(prev_close_px, V) -> parse_num(V)*1.0;
 decode_typed_field(reset_seq_num_flag, V) -> V == <<"Y">>;
 decode_typed_field(sender_location_id, V) -> V;
@@ -11353,22 +14127,49 @@ decode_typed_field(no_related_sym, V) -> parse_num(V);
 decode_typed_field(subject, V) -> V;
 decode_typed_field(headline, V) -> V;
 decode_typed_field(url_link, V) -> V;
-decode_typed_field(exec_type, V) -> V;
+decode_typed_field(exec_type, <<"0">>) -> 'new';
+decode_typed_field(exec_type, <<"3">>) -> 'done';
+decode_typed_field(exec_type, <<"4">>) -> 'canceled';
+decode_typed_field(exec_type, <<"5">>) -> 'replaced';
+decode_typed_field(exec_type, <<"6">>) -> 'pendingcxl';
+decode_typed_field(exec_type, <<"7">>) -> 'stopped';
+decode_typed_field(exec_type, <<"8">>) -> 'rejected';
+decode_typed_field(exec_type, <<"9">>) -> 'suspended';
+decode_typed_field(exec_type, <<"A">>) -> 'pendingnew';
+decode_typed_field(exec_type, <<"B">>) -> 'calculated';
+decode_typed_field(exec_type, <<"C">>) -> 'expired';
+decode_typed_field(exec_type, <<"D">>) -> 'restated';
+decode_typed_field(exec_type, <<"E">>) -> 'pendingreplace';
+decode_typed_field(exec_type, <<"F">>) -> 'trade';
+decode_typed_field(exec_type, <<"G">>) -> 'tradecorrect';
+decode_typed_field(exec_type, <<"H">>) -> 'tradecancel';
+decode_typed_field(exec_type, <<"I">>) -> 'orderstatus';
 decode_typed_field(leaves_qty, V) -> parse_num(V);
 decode_typed_field(cash_order_qty, V) -> parse_num(V);
 decode_typed_field(alloc_avg_px, V) -> parse_num(V)*1.0;
 decode_typed_field(alloc_net_money, V) -> V;
 decode_typed_field(settl_curr_fx_rate, V) -> V;
-decode_typed_field(settl_curr_fx_rate_calc, V) -> V;
+decode_typed_field(settl_curr_fx_rate_calc, <<"M">>) -> 'multiply';
+decode_typed_field(settl_curr_fx_rate_calc, <<"D">>) -> 'div_ide';
 decode_typed_field(num_days_interest, V) -> parse_num(V);
 decode_typed_field(accrued_interest_rate, V) -> V;
 decode_typed_field(accrued_interest_amt, V) -> V;
-decode_typed_field(settl_inst_mode, V) -> V;
+decode_typed_field(settl_inst_mode, <<"0">>) -> 'default';
+decode_typed_field(settl_inst_mode, <<"1">>) -> 'siprov_ided';
+decode_typed_field(settl_inst_mode, <<"2">>) -> 'accountoverr_iding';
+decode_typed_field(settl_inst_mode, <<"3">>) -> 'accountstanding';
+decode_typed_field(settl_inst_mode, <<"4">>) -> 'civordersingleacct';
+decode_typed_field(settl_inst_mode, <<"5">>) -> 'reject';
 decode_typed_field(alloc_text, V) -> V;
 decode_typed_field(settl_inst_id, V) -> V;
-decode_typed_field(settl_inst_trans_type, V) -> V;
+decode_typed_field(settl_inst_trans_type, <<"C">>) -> 'cancel';
+decode_typed_field(settl_inst_trans_type, <<"N">>) -> 'new';
+decode_typed_field(settl_inst_trans_type, <<"R">>) -> 'replace';
+decode_typed_field(settl_inst_trans_type, <<"T">>) -> 'restate';
 decode_typed_field(email_thread_id, V) -> V;
-decode_typed_field(settl_inst_source, V) -> V;
+decode_typed_field(settl_inst_source, <<"1">>) -> 'brokerinstr';
+decode_typed_field(settl_inst_source, <<"2">>) -> 'instinstr';
+decode_typed_field(settl_inst_source, <<"3">>) -> 'investorciv';
 decode_typed_field(settl_location, V) -> V;
 decode_typed_field(security_type, V) -> V;
 decode_typed_field(effective_time, V) -> V;
@@ -11409,7 +14210,6 @@ decode_typed_field(strike_price, V) -> parse_num(V)*1.0;
 decode_typed_field(covered_or_uncovered, V) -> parse_num(V);
 decode_typed_field(customer_or_firm, V) -> parse_num(V);
 decode_typed_field(maturity_day, V) -> V;
-decode_typed_field(opt_attribute, V) -> V;
 decode_typed_field(security_exchange, V) -> V;
 decode_typed_field(notify_broker_of_credit, V) -> V == <<"Y">>;
 decode_typed_field(alloc_handl_inst, V) -> parse_num(V);
@@ -11422,7 +14222,15 @@ decode_typed_field(no_routing_ids, V) -> parse_num(V);
 decode_typed_field(routing_type, V) -> parse_num(V);
 decode_typed_field(routing_id, V) -> V;
 decode_typed_field(spread, V) -> V;
-decode_typed_field(benchmark, V) -> V;
+decode_typed_field(benchmark, <<"1">>) -> 'curve';
+decode_typed_field(benchmark, <<"2">>) -> '5yr';
+decode_typed_field(benchmark, <<"3">>) -> 'ol_d5';
+decode_typed_field(benchmark, <<"4">>) -> '10_yr';
+decode_typed_field(benchmark, <<"5">>) -> 'ol_d10';
+decode_typed_field(benchmark, <<"6">>) -> '30_yr';
+decode_typed_field(benchmark, <<"7">>) -> 'ol_d30';
+decode_typed_field(benchmark, <<"8">>) -> '3molibor';
+decode_typed_field(benchmark, <<"9">>) -> '6molibor';
 decode_typed_field(benchmark_curve_currency, V) -> V;
 decode_typed_field(benchmark_curve_name, V) -> V;
 decode_typed_field(benchmark_curve_point, V) -> V;
@@ -11465,29 +14273,61 @@ decode_typed_field(traded_flat_switch, V) -> V == <<"Y">>;
 decode_typed_field(basis_feature_date, V) -> V;
 decode_typed_field(basis_feature_price, V) -> parse_num(V)*1.0;
 decode_typed_field(md_req_id, V) -> V;
-decode_typed_field(subscription_request_type, V) -> V;
+decode_typed_field(subscription_request_type, <<"0">>) -> 'snapshot';
+decode_typed_field(subscription_request_type, <<"1">>) -> 'snapshotupdate';
+decode_typed_field(subscription_request_type, <<"2">>) -> 'unsubscribe';
 decode_typed_field(market_depth, V) -> parse_num(V);
 decode_typed_field(md_update_type, V) -> parse_num(V);
 decode_typed_field(aggregated_book, V) -> V == <<"Y">>;
 decode_typed_field(no_md_entry_types, V) -> parse_num(V);
 decode_typed_field(no_md_entries, V) -> parse_num(V);
-decode_typed_field(md_entry_type, V) -> V;
+decode_typed_field(md_entry_type, <<"0">>) -> 'bid';
+decode_typed_field(md_entry_type, <<"1">>) -> 'offer';
+decode_typed_field(md_entry_type, <<"2">>) -> 'trade';
+decode_typed_field(md_entry_type, <<"3">>) -> 'indexvalue';
+decode_typed_field(md_entry_type, <<"4">>) -> 'opening';
+decode_typed_field(md_entry_type, <<"5">>) -> 'closing';
+decode_typed_field(md_entry_type, <<"6">>) -> 'settlement';
+decode_typed_field(md_entry_type, <<"7">>) -> 'tradinghigh';
+decode_typed_field(md_entry_type, <<"8">>) -> 'tradinglow';
+decode_typed_field(md_entry_type, <<"9">>) -> 'tradingvwap';
+decode_typed_field(md_entry_type, <<"A">>) -> 'imbalance';
+decode_typed_field(md_entry_type, <<"B">>) -> 'tradevolume';
+decode_typed_field(md_entry_type, <<"C">>) -> 'openinterest';
 decode_typed_field(md_entry_px, V) -> parse_num(V)*1.0;
 decode_typed_field(md_entry_size, V) -> parse_num(V);
 decode_typed_field(md_entry_date, V) -> V;
 decode_typed_field(md_entry_time, V) -> V;
-decode_typed_field(tick_direction, V) -> V;
+decode_typed_field(tick_direction, <<"0">>) -> 'plus';
+decode_typed_field(tick_direction, <<"1">>) -> 'zeroplus';
+decode_typed_field(tick_direction, <<"2">>) -> 'minus';
+decode_typed_field(tick_direction, <<"3">>) -> 'zerominus';
 decode_typed_field(md_mkt, V) -> V;
 decode_typed_field(quote_condition, V) -> V;
 decode_typed_field(trade_condition, V) -> V;
 decode_typed_field(md_entry_id, V) -> V;
-decode_typed_field(md_update_action, V) -> V;
+decode_typed_field(md_update_action, <<"0">>) -> 'new';
+decode_typed_field(md_update_action, <<"1">>) -> 'change';
+decode_typed_field(md_update_action, <<"2">>) -> 'delete';
 decode_typed_field(md_entry_ref_id, V) -> V;
-decode_typed_field(md_req_rej_reason, V) -> V;
+decode_typed_field(md_req_rej_reason, <<"0">>) -> 'unknownsym';
+decode_typed_field(md_req_rej_reason, <<"1">>) -> 'dup_id';
+decode_typed_field(md_req_rej_reason, <<"2">>) -> 'insband';
+decode_typed_field(md_req_rej_reason, <<"3">>) -> 'insperm';
+decode_typed_field(md_req_rej_reason, <<"4">>) -> 'unsuppsub';
+decode_typed_field(md_req_rej_reason, <<"5">>) -> 'unsuppmktdepth';
+decode_typed_field(md_req_rej_reason, <<"6">>) -> 'unsuppmdupdate';
+decode_typed_field(md_req_rej_reason, <<"7">>) -> 'unsuppaggbk';
+decode_typed_field(md_req_rej_reason, <<"8">>) -> 'unsuppentry';
+decode_typed_field(md_req_rej_reason, <<"9">>) -> 'unsupptrdsession_id';
+decode_typed_field(md_req_rej_reason, <<"A">>) -> 'unsuppscope';
+decode_typed_field(md_req_rej_reason, <<"B">>) -> 'unsupppositioneffectsettleflag';
+decode_typed_field(md_req_rej_reason, <<"C">>) -> 'unsuppmdimplicitdelete';
 decode_typed_field(md_entry_originator, V) -> V;
 decode_typed_field(location_id, V) -> V;
 decode_typed_field(desk_id, V) -> V;
-decode_typed_field(delete_reason, V) -> V;
+decode_typed_field(delete_reason, <<"0">>) -> 'canceltradebust';
+decode_typed_field(delete_reason, <<"1">>) -> 'error';
 decode_typed_field(open_close_settl_flag, V) -> V;
 decode_typed_field(seller_days, V) -> parse_num(V);
 decode_typed_field(md_entry_buyer, V) -> V;
@@ -11519,7 +14359,6 @@ decode_typed_field(underlying_maturity_month_year, V) -> V;
 decode_typed_field(underlying_maturity_day, V) -> V;
 decode_typed_field(underlying_put_or_call, V) -> parse_num(V);
 decode_typed_field(underlying_strike_price, V) -> parse_num(V)*1.0;
-decode_typed_field(underlying_opt_attribute, V) -> V;
 decode_typed_field(underlying_currency, V) -> V;
 decode_typed_field(ratio_qty, V) -> parse_num(V);
 decode_typed_field(security_req_id, V) -> V;
@@ -11529,7 +14368,12 @@ decode_typed_field(security_response_type, V) -> parse_num(V);
 decode_typed_field(security_status_req_id, V) -> V;
 decode_typed_field(unsolicited_indicator, V) -> V == <<"Y">>;
 decode_typed_field(security_trading_status, V) -> parse_num(V);
-decode_typed_field(halt_reason_char, V) -> V;
+decode_typed_field(halt_reason_char, <<"D">>) -> 'newsdiss';
+decode_typed_field(halt_reason_char, <<"E">>) -> 'ordinfl';
+decode_typed_field(halt_reason_char, <<"I">>) -> 'ordimb';
+decode_typed_field(halt_reason_char, <<"M">>) -> 'addinfo';
+decode_typed_field(halt_reason_char, <<"P">>) -> 'newspend';
+decode_typed_field(halt_reason_char, <<"X">>) -> 'equipchange';
 decode_typed_field(in_view_of_common, V) -> V == <<"Y">>;
 decode_typed_field(due_to_related, V) -> V == <<"Y">>;
 decode_typed_field(buy_volume, V) -> parse_num(V);
@@ -11576,7 +14420,8 @@ decode_typed_field(on_behalf_of_sending_time, V) -> V;
 decode_typed_field(ref_tag_id, V) -> parse_num(V);
 decode_typed_field(ref_msg_type, V) -> V;
 decode_typed_field(session_reject_reason, V) -> parse_num(V);
-decode_typed_field(bid_request_trans_type, V) -> V;
+decode_typed_field(bid_request_trans_type, <<"C">>) -> 'cancel';
+decode_typed_field(bid_request_trans_type, <<"N">>) -> 'no';
 decode_typed_field(contra_broker, V) -> V;
 decode_typed_field(compliance_id, V) -> V;
 decode_typed_field(solicited_flag, V) -> V == <<"Y">>;
@@ -11587,10 +14432,17 @@ decode_typed_field(gross_trade_amt, V) -> V;
 decode_typed_field(no_contra_brokers, V) -> parse_num(V);
 decode_typed_field(max_message_size, V) -> parse_num(V);
 decode_typed_field(no_msg_types, V) -> parse_num(V);
-decode_typed_field(msg_direction, V) -> V;
+decode_typed_field(msg_direction, <<"R">>) -> 'receive';
+decode_typed_field(msg_direction, <<"S">>) -> 'send';
 decode_typed_field(no_trading_sessions, V) -> parse_num(V);
 decode_typed_field(total_volume_traded, V) -> parse_num(V);
-decode_typed_field(discretion_inst, V) -> V;
+decode_typed_field(discretion_inst, <<"0">>) -> 'reldisppx';
+decode_typed_field(discretion_inst, <<"1">>) -> 'relmktpx';
+decode_typed_field(discretion_inst, <<"2">>) -> 'relprimpx';
+decode_typed_field(discretion_inst, <<"3">>) -> 'rellocprimpx';
+decode_typed_field(discretion_inst, <<"4">>) -> 'relm_idpx';
+decode_typed_field(discretion_inst, <<"5">>) -> 'rellstpx';
+decode_typed_field(discretion_inst, <<"6">>) -> 'relvwap';
 decode_typed_field(discretion_offset_value, V) -> V;
 decode_typed_field(bid_id, V) -> V;
 decode_typed_field(client_bid_id, V) -> V;
@@ -11620,8 +14472,23 @@ decode_typed_field(prog_rpt_reqs, V) -> parse_num(V);
 decode_typed_field(prog_period_interval, V) -> parse_num(V);
 decode_typed_field(inc_tax_ind, V) -> parse_num(V);
 decode_typed_field(num_bidders, V) -> parse_num(V);
-decode_typed_field(bid_trade_type, V) -> V;
-decode_typed_field(basis_px_type, V) -> V;
+decode_typed_field(bid_trade_type, <<"A">>) -> 'agency';
+decode_typed_field(bid_trade_type, <<"G">>) -> 'vwapguarantee';
+decode_typed_field(bid_trade_type, <<"J">>) -> 'guaranteedclose';
+decode_typed_field(bid_trade_type, <<"R">>) -> 'risktrade';
+decode_typed_field(basis_px_type, <<"2">>) -> 'clspxmorn';
+decode_typed_field(basis_px_type, <<"3">>) -> 'clspx';
+decode_typed_field(basis_px_type, <<"4">>) -> 'currpx';
+decode_typed_field(basis_px_type, <<"5">>) -> 'sq';
+decode_typed_field(basis_px_type, <<"6">>) -> 'vwapday';
+decode_typed_field(basis_px_type, <<"7">>) -> 'vwapmorn';
+decode_typed_field(basis_px_type, <<"8">>) -> 'vwapaft';
+decode_typed_field(basis_px_type, <<"9">>) -> 'vwapdayxyori';
+decode_typed_field(basis_px_type, <<"A">>) -> 'vwapmornxyori';
+decode_typed_field(basis_px_type, <<"B">>) -> 'vwapaftxyori';
+decode_typed_field(basis_px_type, <<"C">>) -> 'strike';
+decode_typed_field(basis_px_type, <<"D">>) -> 'open';
+decode_typed_field(basis_px_type, <<"Z">>) -> 'others';
 decode_typed_field(no_bid_components, V) -> parse_num(V);
 decode_typed_field(country, V) -> V;
 decode_typed_field(tot_no_strikes, V) -> parse_num(V);
@@ -11635,8 +14502,13 @@ decode_typed_field(list_status_type, V) -> parse_num(V);
 decode_typed_field(net_gross_ind, V) -> parse_num(V);
 decode_typed_field(list_order_status, V) -> parse_num(V);
 decode_typed_field(expire_date, V) -> V;
-decode_typed_field(list_exec_inst_type, V) -> V;
-decode_typed_field(cxl_rej_response_to, V) -> V;
+decode_typed_field(list_exec_inst_type, <<"1">>) -> 'immed';
+decode_typed_field(list_exec_inst_type, <<"2">>) -> 'wait';
+decode_typed_field(list_exec_inst_type, <<"3">>) -> 'exchcivsell';
+decode_typed_field(list_exec_inst_type, <<"4">>) -> 'exchcivbuytop';
+decode_typed_field(list_exec_inst_type, <<"5">>) -> 'exchcivbuywd';
+decode_typed_field(cxl_rej_response_to, <<"1">>) -> 'ordcxlreq';
+decode_typed_field(cxl_rej_response_to, <<"2">>) -> 'ordcxlrepreq';
 decode_typed_field(underlying_coupon_rate, V) -> V;
 decode_typed_field(underlying_contract_multiplier, V) -> V;
 decode_typed_field(contra_trade_qty, V) -> parse_num(V);
@@ -11644,12 +14516,31 @@ decode_typed_field(contra_trade_time, V) -> V;
 decode_typed_field(clearing_firm, V) -> V;
 decode_typed_field(clearing_account, V) -> V;
 decode_typed_field(liquidity_num_securities, V) -> parse_num(V);
-decode_typed_field(multi_leg_reporting_type, V) -> V;
+decode_typed_field(multi_leg_reporting_type, <<"1">>) -> 'single';
+decode_typed_field(multi_leg_reporting_type, <<"2">>) -> 'indivleg';
+decode_typed_field(multi_leg_reporting_type, <<"3">>) -> 'multileg';
 decode_typed_field(strike_time, V) -> V;
 decode_typed_field(list_status_text, V) -> V;
 decode_typed_field(encoded_list_status_text_len, V) -> parse_num(V);
 decode_typed_field(encoded_list_status_text, V) -> V;
-decode_typed_field(party_id_source, V) -> V;
+decode_typed_field(party_id_source, <<"1">>) -> 'koreaninvestor_id';
+decode_typed_field(party_id_source, <<"2">>) -> 'taiwanesequalified';
+decode_typed_field(party_id_source, <<"3">>) -> 'taiwanesetradingacct';
+decode_typed_field(party_id_source, <<"4">>) -> 'mcdnumber';
+decode_typed_field(party_id_source, <<"5">>) -> 'chinesebshare';
+decode_typed_field(party_id_source, <<"6">>) -> 'uknationalinspennumber';
+decode_typed_field(party_id_source, <<"7">>) -> 'ussocialsecurity';
+decode_typed_field(party_id_source, <<"8">>) -> 'usemployer_idnumber';
+decode_typed_field(party_id_source, <<"9">>) -> 'australianbusinessnumber';
+decode_typed_field(party_id_source, <<"A">>) -> 'australiantaxfilenumber';
+decode_typed_field(party_id_source, <<"B">>) -> 'bic';
+decode_typed_field(party_id_source, <<"C">>) -> 'accptmarketpart';
+decode_typed_field(party_id_source, <<"D">>) -> 'propcode';
+decode_typed_field(party_id_source, <<"E">>) -> 'isocode';
+decode_typed_field(party_id_source, <<"F">>) -> 'settlentloc';
+decode_typed_field(party_id_source, <<"G">>) -> 'mic';
+decode_typed_field(party_id_source, <<"H">>) -> 'csdpartcode';
+decode_typed_field(party_id_source, <<"I">>) -> 'directeddefinedisitc';
 decode_typed_field(party_id, V) -> V;
 decode_typed_field(total_volume_traded_date, V) -> V;
 decode_typed_field(total_volume_traded_time, V) -> V;
@@ -11670,7 +14561,9 @@ decode_typed_field(test_message_indicator, V) -> V == <<"Y">>;
 decode_typed_field(quantity_type, V) -> parse_num(V);
 decode_typed_field(booking_ref_id, V) -> V;
 decode_typed_field(individual_alloc_id, V) -> V;
-decode_typed_field(rounding_direction, V) -> V;
+decode_typed_field(rounding_direction, <<"0">>) -> 'roundnearest';
+decode_typed_field(rounding_direction, <<"1">>) -> 'rounddown';
+decode_typed_field(rounding_direction, <<"2">>) -> 'roundup';
 decode_typed_field(rounding_modulus, V) -> V;
 decode_typed_field(country_of_issue, V) -> V;
 decode_typed_field(state_or_province_of_issue, V) -> V;
@@ -11682,11 +14575,25 @@ decode_typed_field(payment_ref, V) -> V;
 decode_typed_field(distrib_payment_method, V) -> parse_num(V);
 decode_typed_field(cash_distrib_curr, V) -> V;
 decode_typed_field(comm_currency, V) -> V;
-decode_typed_field(cancellation_rights, V) -> V;
-decode_typed_field(money_laundering_status, V) -> V;
+decode_typed_field(cancellation_rights, <<"M">>) -> 'nowaiver';
+decode_typed_field(cancellation_rights, <<"N">>) -> 'noexeconly';
+decode_typed_field(cancellation_rights, <<"O">>) -> 'noinstit';
+decode_typed_field(cancellation_rights, <<"Y">>) -> 'yes';
+decode_typed_field(money_laundering_status, <<"1">>) -> 'exbelowlim';
+decode_typed_field(money_laundering_status, <<"2">>) -> 'exclientmoneytype';
+decode_typed_field(money_laundering_status, <<"3">>) -> 'exauthcredit';
+decode_typed_field(money_laundering_status, <<"N">>) -> 'notchecked';
+decode_typed_field(money_laundering_status, <<"Y">>) -> 'passed';
 decode_typed_field(mailing_inst, V) -> V;
 decode_typed_field(trans_bkd_time, V) -> V;
-decode_typed_field(exec_price_type, V) -> V;
+decode_typed_field(exec_price_type, <<"B">>) -> 'b_idprice';
+decode_typed_field(exec_price_type, <<"C">>) -> 'creationprice';
+decode_typed_field(exec_price_type, <<"D">>) -> 'creationpriceadjpct';
+decode_typed_field(exec_price_type, <<"E">>) -> 'creationpriceadjamt';
+decode_typed_field(exec_price_type, <<"O">>) -> 'offerprice';
+decode_typed_field(exec_price_type, <<"P">>) -> 'offerpriceminusadjpct';
+decode_typed_field(exec_price_type, <<"Q">>) -> 'offerpriceminusadjamt';
+decode_typed_field(exec_price_type, <<"S">>) -> 'singleprice';
 decode_typed_field(exec_price_adjustment, V) -> V;
 decode_typed_field(date_of_birth, V) -> V;
 decode_typed_field(trade_report_trans_type, V) -> parse_num(V);
@@ -11699,7 +14606,8 @@ decode_typed_field(regist_acct_type, V) -> V;
 decode_typed_field(designation, V) -> V;
 decode_typed_field(tax_advantage_type, V) -> parse_num(V);
 decode_typed_field(regist_rej_reason_text, V) -> V;
-decode_typed_field(fund_renew_waiv, V) -> V;
+decode_typed_field(fund_renew_waiv, <<"N">>) -> 'no';
+decode_typed_field(fund_renew_waiv, <<"Y">>) -> 'yes';
 decode_typed_field(cash_distrib_agent_name, V) -> V;
 decode_typed_field(cash_distrib_agent_code, V) -> V;
 decode_typed_field(cash_distrib_agent_acct_number, V) -> V;
@@ -11708,7 +14616,10 @@ decode_typed_field(cash_distrib_agent_acct_name, V) -> V;
 decode_typed_field(card_start_date, V) -> V;
 decode_typed_field(payment_date, V) -> V;
 decode_typed_field(payment_remitter_id, V) -> V;
-decode_typed_field(regist_status, V) -> V;
+decode_typed_field(regist_status, <<"A">>) -> 'accepted';
+decode_typed_field(regist_status, <<"H">>) -> 'held';
+decode_typed_field(regist_status, <<"N">>) -> 'reminder_ie_registration_instructions_are_still_outstanding';
+decode_typed_field(regist_status, <<"R">>) -> 'rejected';
 decode_typed_field(regist_rej_reason_code, V) -> parse_num(V);
 decode_typed_field(regist_ref_id, V) -> V;
 decode_typed_field(regist_dtls, V) -> V;
@@ -11716,10 +14627,14 @@ decode_typed_field(no_distrib_insts, V) -> parse_num(V);
 decode_typed_field(regist_email, V) -> V;
 decode_typed_field(distrib_percentage, V) -> V;
 decode_typed_field(regist_id, V) -> V;
-decode_typed_field(regist_trans_type, V) -> V;
+decode_typed_field(regist_trans_type, <<"0">>) -> 'new';
+decode_typed_field(regist_trans_type, <<"1">>) -> 'replace';
+decode_typed_field(regist_trans_type, <<"2">>) -> 'cancel';
 decode_typed_field(exec_valuation_point, V) -> V;
 decode_typed_field(order_percent, V) -> V;
-decode_typed_field(ownership_type, V) -> V;
+decode_typed_field(ownership_type, <<"2">>) -> 'joint_trustees';
+decode_typed_field(ownership_type, <<"J">>) -> 'joint_investors';
+decode_typed_field(ownership_type, <<"T">>) -> 'tenants_in_common';
 decode_typed_field(no_cont_amts, V) -> parse_num(V);
 decode_typed_field(cont_amt_type, V) -> parse_num(V);
 decode_typed_field(cont_amt_value, V) -> V;
@@ -11727,14 +14642,38 @@ decode_typed_field(cont_amt_curr, V) -> V;
 decode_typed_field(owner_type, V) -> parse_num(V);
 decode_typed_field(party_sub_id, V) -> V;
 decode_typed_field(nested_party_id, V) -> V;
-decode_typed_field(nested_party_id_source, V) -> V;
 decode_typed_field(secondary_cl_ord_id, V) -> V;
 decode_typed_field(secondary_exec_id, V) -> V;
-decode_typed_field(order_capacity, V) -> V;
+decode_typed_field(order_capacity, <<"A">>) -> 'agency';
+decode_typed_field(order_capacity, <<"G">>) -> 'proprietary';
+decode_typed_field(order_capacity, <<"I">>) -> 'indiv_idual';
+decode_typed_field(order_capacity, <<"P">>) -> 'principal';
+decode_typed_field(order_capacity, <<"R">>) -> 'risklessprincipal';
+decode_typed_field(order_capacity, <<"W">>) -> 'agentothermember';
 decode_typed_field(order_restrictions, V) -> V;
-decode_typed_field(mass_cancel_request_type, V) -> V;
-decode_typed_field(mass_cancel_response, V) -> V;
-decode_typed_field(mass_cancel_reject_reason, V) -> V;
+decode_typed_field(mass_cancel_request_type, <<"1">>) -> 'cxlorderssecurity';
+decode_typed_field(mass_cancel_request_type, <<"2">>) -> 'cxlordersunderlyingsecurity';
+decode_typed_field(mass_cancel_request_type, <<"3">>) -> 'cxlordersproduct';
+decode_typed_field(mass_cancel_request_type, <<"4">>) -> 'cxlorderscficode';
+decode_typed_field(mass_cancel_request_type, <<"5">>) -> 'cxlorderssecuritytype';
+decode_typed_field(mass_cancel_request_type, <<"6">>) -> 'cxlorderstrdsession';
+decode_typed_field(mass_cancel_request_type, <<"7">>) -> 'cxlallorders';
+decode_typed_field(mass_cancel_response, <<"0">>) -> 'cxlreqrej';
+decode_typed_field(mass_cancel_response, <<"1">>) -> 'cxlorderssecurity';
+decode_typed_field(mass_cancel_response, <<"2">>) -> 'cxlordersunderlyingsecurity';
+decode_typed_field(mass_cancel_response, <<"3">>) -> 'cxlordersproduct';
+decode_typed_field(mass_cancel_response, <<"4">>) -> 'cxlorderscficode';
+decode_typed_field(mass_cancel_response, <<"5">>) -> 'cxlorderssecuritytype';
+decode_typed_field(mass_cancel_response, <<"6">>) -> 'cxlorderstrdsession';
+decode_typed_field(mass_cancel_response, <<"7">>) -> 'cxlallorders';
+decode_typed_field(mass_cancel_reject_reason, <<"0">>) -> 'masscxlnotsupported';
+decode_typed_field(mass_cancel_reject_reason, <<"1">>) -> 'inval_idsecurity';
+decode_typed_field(mass_cancel_reject_reason, <<"2">>) -> 'inval_idunderlying';
+decode_typed_field(mass_cancel_reject_reason, <<"3">>) -> 'inval_idproduct';
+decode_typed_field(mass_cancel_reject_reason, <<"4">>) -> 'inval_idcficode';
+decode_typed_field(mass_cancel_reject_reason, <<"5">>) -> 'inval_idsecuritytype';
+decode_typed_field(mass_cancel_reject_reason, <<"6">>) -> 'inval_idtrdsession';
+decode_typed_field(mass_cancel_reject_reason, <<"99">>) -> 'other';
 decode_typed_field(total_affected_orders, V) -> parse_num(V);
 decode_typed_field(no_affected_orders, V) -> parse_num(V);
 decode_typed_field(affected_order_id, V) -> V;
@@ -11746,7 +14685,9 @@ decode_typed_field(total_accrued_interest_amt, V) -> V;
 decode_typed_field(maturity_date, V) -> V;
 decode_typed_field(underlying_maturity_date, V) -> V;
 decode_typed_field(instr_registry, V) -> V;
-decode_typed_field(cash_margin, V) -> V;
+decode_typed_field(cash_margin, <<"1">>) -> 'cash';
+decode_typed_field(cash_margin, <<"2">>) -> 'marginopen';
+decode_typed_field(cash_margin, <<"3">>) -> 'marginclose';
 decode_typed_field(nested_party_sub_id, V) -> V;
 decode_typed_field(scope, V) -> V;
 decode_typed_field(md_implicit_delete, V) -> V == <<"Y">>;
@@ -11766,7 +14707,6 @@ decode_typed_field(security_request_result, V) -> parse_num(V);
 decode_typed_field(round_lot, V) -> parse_num(V);
 decode_typed_field(min_trade_vol, V) -> parse_num(V);
 decode_typed_field(multi_leg_rpt_type_req, V) -> parse_num(V);
-decode_typed_field(leg_position_effect, V) -> V;
 decode_typed_field(leg_covered_or_uncovered, V) -> parse_num(V);
 decode_typed_field(leg_price, V) -> parse_num(V)*1.0;
 decode_typed_field(trad_ses_status_rej_reason, V) -> parse_num(V);
@@ -11775,7 +14715,9 @@ decode_typed_field(trade_request_type, V) -> parse_num(V);
 decode_typed_field(previously_reported, V) -> V == <<"Y">>;
 decode_typed_field(trade_report_id, V) -> V;
 decode_typed_field(trade_report_ref_id, V) -> V;
-decode_typed_field(match_status, V) -> V;
+decode_typed_field(match_status, <<"0">>) -> 'compmataff';
+decode_typed_field(match_status, <<"1">>) -> 'uncompunmatunaff';
+decode_typed_field(match_status, <<"2">>) -> 'advalert';
 decode_typed_field(match_type, V) -> V;
 decode_typed_field(odd_lot, V) -> V == <<"Y">>;
 decode_typed_field(no_clearing_instructions, V) -> parse_num(V);
@@ -11789,11 +14731,15 @@ decode_typed_field(cl_ord_link_id, V) -> V;
 decode_typed_field(mass_status_req_id, V) -> V;
 decode_typed_field(mass_status_req_type, V) -> parse_num(V);
 decode_typed_field(orig_ord_mod_time, V) -> V;
-decode_typed_field(leg_settl_type, V) -> V;
 decode_typed_field(leg_settl_date, V) -> V;
-decode_typed_field(day_booking_inst, V) -> V;
-decode_typed_field(booking_unit, V) -> V;
-decode_typed_field(prealloc_method, V) -> V;
+decode_typed_field(day_booking_inst, <<"0">>) -> 'can_trigger_booking_without_reference_to_the_order_initiator_auto';
+decode_typed_field(day_booking_inst, <<"1">>) -> 'speak_with_order_initiator_before_booking_speak_first';
+decode_typed_field(day_booking_inst, <<"2">>) -> 'accumulate';
+decode_typed_field(booking_unit, <<"0">>) -> 'each_partial_execution_is_a_bookable_unit';
+decode_typed_field(booking_unit, <<"1">>) -> 'aggregate_partial_executions_on_this_order_and_book_one_trade_per_order';
+decode_typed_field(booking_unit, <<"2">>) -> 'aggregate_executions_for_this_symbol_s_ide_and_settlement_date';
+decode_typed_field(prealloc_method, <<"0">>) -> 'prorata';
+decode_typed_field(prealloc_method, <<"1">>) -> 'do_not_prorata_discuss_first';
 decode_typed_field(underlying_country_of_issue, V) -> V;
 decode_typed_field(underlying_state_or_province_of_issue, V) -> V;
 decode_typed_field(underlying_locale_of_issue, V) -> V;
@@ -11815,7 +14761,6 @@ decode_typed_field(leg_security_type, V) -> V;
 decode_typed_field(leg_maturity_month_year, V) -> V;
 decode_typed_field(leg_maturity_date, V) -> V;
 decode_typed_field(leg_strike_price, V) -> parse_num(V)*1.0;
-decode_typed_field(leg_opt_attribute, V) -> V;
 decode_typed_field(leg_contract_multiplier, V) -> V;
 decode_typed_field(leg_coupon_rate, V) -> V;
 decode_typed_field(leg_security_exchange, V) -> V;
@@ -11826,7 +14771,6 @@ decode_typed_field(leg_security_desc, V) -> V;
 decode_typed_field(encoded_leg_security_desc_len, V) -> parse_num(V);
 decode_typed_field(encoded_leg_security_desc, V) -> V;
 decode_typed_field(leg_ratio_qty, V) -> V;
-decode_typed_field(leg_side, V) -> V;
 decode_typed_field(trading_session_sub_id, V) -> V;
 decode_typed_field(alloc_type, V) -> parse_num(V);
 decode_typed_field(no_hops, V) -> parse_num(V);
@@ -11897,7 +14841,6 @@ decode_typed_field(pool, V) -> V;
 decode_typed_field(quote_price_type, V) -> parse_num(V);
 decode_typed_field(quote_resp_id, V) -> V;
 decode_typed_field(quote_resp_type, V) -> parse_num(V);
-decode_typed_field(quote_qualifier, V) -> V;
 decode_typed_field(yield_redemption_date, V) -> V;
 decode_typed_field(yield_redemption_price, V) -> parse_num(V)*1.0;
 decode_typed_field(yield_redemption_price_type, V) -> parse_num(V);
@@ -11946,10 +14889,12 @@ decode_typed_field(leg_pool, V) -> V;
 decode_typed_field(alloc_interest_at_maturity, V) -> V;
 decode_typed_field(alloc_accrued_interest_amt, V) -> V;
 decode_typed_field(delivery_date, V) -> V;
-decode_typed_field(assignment_method, V) -> V;
+decode_typed_field(assignment_method, <<"P">>) -> 'prorata';
+decode_typed_field(assignment_method, <<"R">>) -> 'random';
 decode_typed_field(assignment_unit, V) -> parse_num(V);
 decode_typed_field(open_interest, V) -> V;
-decode_typed_field(exercise_method, V) -> V;
+decode_typed_field(exercise_method, <<"A">>) -> 'automatic';
+decode_typed_field(exercise_method, <<"M">>) -> 'manual';
 decode_typed_field(tot_num_trade_reports, V) -> parse_num(V);
 decode_typed_field(trade_request_result, V) -> parse_num(V);
 decode_typed_field(trade_request_status, V) -> parse_num(V);
@@ -11960,7 +14905,6 @@ decode_typed_field(auto_accept_indicator, V) -> V == <<"Y">>;
 decode_typed_field(alloc_report_id, V) -> V;
 decode_typed_field(no_nested2_party_ids, V) -> parse_num(V);
 decode_typed_field(nested2_party_id, V) -> V;
-decode_typed_field(nested2_party_id_source, V) -> V;
 decode_typed_field(nested2_party_role, V) -> parse_num(V);
 decode_typed_field(nested2_party_sub_id, V) -> V;
 decode_typed_field(benchmark_security_id_source, V) -> V;
@@ -11985,11 +14929,11 @@ decode_typed_field(last_update_time, V) -> V;
 decode_typed_field(alloc_settl_inst_type, V) -> parse_num(V);
 decode_typed_field(no_settl_party_ids, V) -> parse_num(V);
 decode_typed_field(settl_party_id, V) -> V;
-decode_typed_field(settl_party_id_source, V) -> V;
 decode_typed_field(settl_party_role, V) -> parse_num(V);
 decode_typed_field(settl_party_sub_id, V) -> V;
 decode_typed_field(settl_party_sub_id_type, V) -> parse_num(V);
-decode_typed_field(dlvy_inst_type, V) -> V;
+decode_typed_field(dlvy_inst_type, <<"C">>) -> 'cash';
+decode_typed_field(dlvy_inst_type, <<"S">>) -> 'securities';
 decode_typed_field(termination_type, V) -> parse_num(V);
 decode_typed_field(next_expected_msg_seq_num, V) -> parse_num(V);
 decode_typed_field(ord_status_req_id, V) -> V;
@@ -12151,7 +15095,6 @@ decode_typed_field(coll_inquiry_result, V) -> parse_num(V);
 decode_typed_field(strike_currency, V) -> V;
 decode_typed_field(no_nested3_party_ids, V) -> parse_num(V);
 decode_typed_field(nested3_party_id, V) -> V;
-decode_typed_field(nested3_party_id_source, V) -> V;
 decode_typed_field(nested3_party_role, V) -> parse_num(V);
 decode_typed_field(no_nested3_party_sub_ids, V) -> parse_num(V);
 decode_typed_field(nested3_party_sub_id, V) -> V;
@@ -12160,11 +15103,38 @@ decode_typed_field(leg_contract_settl_month, V) -> V;
 decode_typed_field(leg_interest_accrual_date, V) -> V;
 decode_typed_field(_Key, V) -> V.
 
+encode_typed_field(adv_side, 'buy') -> <<"B">>;
+encode_typed_field(adv_side, 'sell') -> <<"S">>;
+encode_typed_field(adv_side, 'trade') -> <<"T">>;
+encode_typed_field(adv_side, 'cross') -> <<"X">>;
 encode_typed_field(avg_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(begin_seq_no, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(body_length, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(comm_type, 'per_unit') -> <<"1">>;
+encode_typed_field(comm_type, 'percent') -> <<"2">>;
+encode_typed_field(comm_type, 'absolute') -> <<"3">>;
+encode_typed_field(comm_type, 'pctwaivedcshdisc') -> <<"4">>;
+encode_typed_field(comm_type, 'pctwaivedenunits') -> <<"5">>;
+encode_typed_field(comm_type, 'perbond') -> <<"6">>;
 encode_typed_field(cum_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(end_seq_no, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(exec_trans_type, 'new') -> <<"0">>;
+encode_typed_field(exec_trans_type, 'cancel') -> <<"1">>;
+encode_typed_field(exec_trans_type, 'correct') -> <<"2">>;
+encode_typed_field(exec_trans_type, 'status') -> <<"3">>;
+encode_typed_field(handl_inst, 'autoexecpriv') -> <<"1">>;
+encode_typed_field(handl_inst, 'autoexecpub') -> <<"2">>;
+encode_typed_field(handl_inst, 'manual') -> <<"3">>;
+encode_typed_field(ioi_qlty_ind, 'high') -> <<"H">>;
+encode_typed_field(ioi_qlty_ind, 'low') -> <<"L">>;
+encode_typed_field(ioi_qlty_ind, 'medium') -> <<"M">>;
+encode_typed_field(ioi_trans_type, 'cancel') -> <<"C">>;
+encode_typed_field(ioi_trans_type, 'new') -> <<"N">>;
+encode_typed_field(ioi_trans_type, 'replace') -> <<"R">>;
+encode_typed_field(last_capacity, 'a') -> <<"1">>;
+encode_typed_field(last_capacity, 'xa') -> <<"2">>;
+encode_typed_field(last_capacity, 'xp') -> <<"3">>;
+encode_typed_field(last_capacity, 'p') -> <<"4">>;
 encode_typed_field(last_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(last_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_lines_of_text, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12172,17 +15142,131 @@ encode_typed_field(msg_seq_num, V) when is_integer(V) -> list_to_binary(integer_
 encode_typed_field(msg_type, V) -> number_by_message(V);
 encode_typed_field(new_seq_no, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(order_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(ord_status, 'new') -> <<"0">>;
+encode_typed_field(ord_status, 'partial') -> <<"1">>;
+encode_typed_field(ord_status, 'filled') -> <<"2">>;
+encode_typed_field(ord_status, 'done') -> <<"3">>;
+encode_typed_field(ord_status, 'canceled') -> <<"4">>;
+encode_typed_field(ord_status, 'pending_cancel') -> <<"6">>;
+encode_typed_field(ord_status, 'stopped') -> <<"7">>;
+encode_typed_field(ord_status, 'rejected') -> <<"8">>;
+encode_typed_field(ord_status, 'suspended') -> <<"9">>;
+encode_typed_field(ord_status, 'pendingnew') -> <<"A">>;
+encode_typed_field(ord_status, 'calculated') -> <<"B">>;
+encode_typed_field(ord_status, 'expired') -> <<"C">>;
+encode_typed_field(ord_status, 'acceptb_idding') -> <<"D">>;
+encode_typed_field(ord_status, 'pendingrep') -> <<"E">>;
+encode_typed_field(ord_type, 'market') -> <<"1">>;
+encode_typed_field(ord_type, 'limit') -> <<"2">>;
+encode_typed_field(ord_type, 'stop') -> <<"3">>;
+encode_typed_field(ord_type, 'stoplimit') -> <<"4">>;
+encode_typed_field(ord_type, 'marketonclose') -> <<"5">>;
+encode_typed_field(ord_type, 'withorwithout') -> <<"6">>;
+encode_typed_field(ord_type, 'limitorbetter') -> <<"7">>;
+encode_typed_field(ord_type, 'limitwithorwithout') -> <<"8">>;
+encode_typed_field(ord_type, 'onbasis') -> <<"9">>;
+encode_typed_field(ord_type, 'onclose') -> <<"A">>;
+encode_typed_field(ord_type, 'limitonclose') -> <<"B">>;
+encode_typed_field(ord_type, 'forexmarket') -> <<"C">>;
+encode_typed_field(ord_type, 'previouslyquoted') -> <<"D">>;
+encode_typed_field(ord_type, 'previouslyindicated') -> <<"E">>;
+encode_typed_field(ord_type, 'forexlimit') -> <<"F">>;
+encode_typed_field(ord_type, 'forexswap') -> <<"G">>;
+encode_typed_field(ord_type, 'forexpreviouslyquoted') -> <<"H">>;
+encode_typed_field(ord_type, 'funari') -> <<"I">>;
+encode_typed_field(ord_type, 'marketiftouched') -> <<"J">>;
+encode_typed_field(ord_type, 'marketwithleftoverlimit') -> <<"K">>;
+encode_typed_field(ord_type, 'previousfundvaluationpoint') -> <<"L">>;
+encode_typed_field(ord_type, 'nextfundvaluationpoint') -> <<"M">>;
+encode_typed_field(ord_type, 'pegged') -> <<"P">>;
 encode_typed_field(poss_dup_flag, true) -> <<"Y">>;
 encode_typed_field(poss_dup_flag,false) -> <<"N">>;
 encode_typed_field(price, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(ref_seq_num, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(rule80a, 'agencysingle') -> <<"A">>;
+encode_typed_field(rule80a, 'shtextrana') -> <<"B">>;
+encode_typed_field(rule80a, 'prgnonindexarbmem') -> <<"C">>;
+encode_typed_field(rule80a, 'prgindexarbmem') -> <<"D">>;
+encode_typed_field(rule80a, 'marketmaker') -> <<"E">>;
+encode_typed_field(rule80a, 'shtextranw') -> <<"F">>;
+encode_typed_field(rule80a, 'shtextrani') -> <<"H">>;
+encode_typed_field(rule80a, 'invinestor') -> <<"I">>;
+encode_typed_field(rule80a, 'prgnonindexarbinv') -> <<"J">>;
+encode_typed_field(rule80a, 'prgindexarbinv') -> <<"K">>;
+encode_typed_field(rule80a, 'shtextranmem') -> <<"L">>;
+encode_typed_field(rule80a, 'prgnonindexarbothmem') -> <<"M">>;
+encode_typed_field(rule80a, 'prgindexarbothmem') -> <<"N">>;
+encode_typed_field(rule80a, 'competingdealer') -> <<"O">>;
+encode_typed_field(rule80a, 'principal') -> <<"P">>;
+encode_typed_field(rule80a, 'compdeale_r1') -> <<"R">>;
+encode_typed_field(rule80a, 'specialist') -> <<"S">>;
+encode_typed_field(rule80a, 'compdeale_r2') -> <<"T">>;
+encode_typed_field(rule80a, 'prgindexarbothagn') -> <<"U">>;
+encode_typed_field(rule80a, 'allotheragn') -> <<"W">>;
+encode_typed_field(rule80a, 'shtextranmemwt') -> <<"X">>;
+encode_typed_field(rule80a, 'prgnonindexarbothagn') -> <<"Y">>;
+encode_typed_field(rule80a, 'shtextrannonmem') -> <<"Z">>;
 encode_typed_field(quantity, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(side, 'buy') -> <<"1">>;
+encode_typed_field(side, 'sell') -> <<"2">>;
+encode_typed_field(side, 'buymin') -> <<"3">>;
+encode_typed_field(side, 'sellplus') -> <<"4">>;
+encode_typed_field(side, 'sellsht') -> <<"5">>;
+encode_typed_field(side, 'sellshtex') -> <<"6">>;
+encode_typed_field(side, 'undisc') -> <<"7">>;
+encode_typed_field(side, 'cross') -> <<"8">>;
+encode_typed_field(side, 'crossshort') -> <<"9">>;
+encode_typed_field(side, 'crossshortex') -> <<"A">>;
+encode_typed_field(side, 'asdefined') -> <<"B">>;
+encode_typed_field(side, 'opposite') -> <<"C">>;
+encode_typed_field(side, 'subscribe') -> <<"D">>;
+encode_typed_field(side, 'redeem') -> <<"E">>;
+encode_typed_field(side, 'lendfinancing') -> <<"F">>;
+encode_typed_field(side, 'borrowfinancing') -> <<"G">>;
+encode_typed_field(time_in_force, 'day') -> <<"0">>;
+encode_typed_field(time_in_force, 'goodtillcancel') -> <<"1">>;
+encode_typed_field(time_in_force, 'attheopening') -> <<"2">>;
+encode_typed_field(time_in_force, 'immediateorcancel') -> <<"3">>;
+encode_typed_field(time_in_force, 'fillorkill') -> <<"4">>;
+encode_typed_field(time_in_force, 'goodtillcrossing') -> <<"5">>;
+encode_typed_field(time_in_force, 'goodtilldate') -> <<"6">>;
+encode_typed_field(time_in_force, 'attheclose') -> <<"7">>;
+encode_typed_field(urgency, 'normal') -> <<"0">>;
+encode_typed_field(urgency, 'flash') -> <<"1">>;
+encode_typed_field(urgency, 'background') -> <<"2">>;
+encode_typed_field(settl_type, 'regular') -> <<"0">>;
+encode_typed_field(settl_type, 'cash') -> <<"1">>;
+encode_typed_field(settl_type, 'nextday') -> <<"2">>;
+encode_typed_field(settl_type, 't2') -> <<"3">>;
+encode_typed_field(settl_type, 't3') -> <<"4">>;
+encode_typed_field(settl_type, 't4') -> <<"5">>;
+encode_typed_field(settl_type, 'future') -> <<"6">>;
+encode_typed_field(settl_type, 'whenissued') -> <<"7">>;
+encode_typed_field(settl_type, 't5') -> <<"8">>;
+encode_typed_field(settl_type, 't1') -> <<"9">>;
 encode_typed_field(list_seq_no, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(tot_no_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(alloc_trans_type, 'new') -> <<"0">>;
+encode_typed_field(alloc_trans_type, 'replace') -> <<"1">>;
+encode_typed_field(alloc_trans_type, 'cancel') -> <<"2">>;
+encode_typed_field(alloc_trans_type, 'preliminary') -> <<"3">>;
+encode_typed_field(alloc_trans_type, 'calculated') -> <<"4">>;
+encode_typed_field(alloc_trans_type, 'calculatedwithoutpreliminary') -> <<"5">>;
 encode_typed_field(no_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(avg_px_precision, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(position_effect, 'close') -> <<"C">>;
+encode_typed_field(position_effect, 'fifo') -> <<"F">>;
+encode_typed_field(position_effect, 'open') -> <<"O">>;
+encode_typed_field(position_effect, 'rolled') -> <<"R">>;
 encode_typed_field(no_allocs, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(alloc_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(process_code, 'regular') -> <<"0">>;
+encode_typed_field(process_code, 'softdollar') -> <<"1">>;
+encode_typed_field(process_code, 'stepin') -> <<"2">>;
+encode_typed_field(process_code, 'stepout') -> <<"3">>;
+encode_typed_field(process_code, 'stepinsoft') -> <<"4">>;
+encode_typed_field(process_code, 'stepoutsoft') -> <<"5">>;
+encode_typed_field(process_code, 'plansponsor') -> <<"6">>;
 encode_typed_field(no_rpts, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(rpt_seq, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(cxl_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12191,6 +15275,9 @@ encode_typed_field(alloc_status, V) when is_integer(V) -> list_to_binary(integer
 encode_typed_field(alloc_rej_code, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(secure_data_len, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(signature_length, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(email_type, 'new') -> <<"0">>;
+encode_typed_field(email_type, 'reply') -> <<"1">>;
+encode_typed_field(email_type, 'adminreply') -> <<"2">>;
 encode_typed_field(raw_data_length, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(poss_resend, true) -> <<"Y">>;
 encode_typed_field(poss_resend,false) -> <<"N">>;
@@ -12198,6 +15285,24 @@ encode_typed_field(encrypt_method, V) when is_integer(V) -> list_to_binary(integ
 encode_typed_field(stop_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(cxl_rej_reason, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(ord_rej_reason, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(ioi_qualifier, 'aon') -> <<"A">>;
+encode_typed_field(ioi_qualifier, 'moc') -> <<"B">>;
+encode_typed_field(ioi_qualifier, 'atclose') -> <<"C">>;
+encode_typed_field(ioi_qualifier, 'vwap') -> <<"D">>;
+encode_typed_field(ioi_qualifier, 'intouch') -> <<"I">>;
+encode_typed_field(ioi_qualifier, 'limit') -> <<"L">>;
+encode_typed_field(ioi_qualifier, 'morebehind') -> <<"M">>;
+encode_typed_field(ioi_qualifier, 'atopen') -> <<"O">>;
+encode_typed_field(ioi_qualifier, 'takeposition') -> <<"P">>;
+encode_typed_field(ioi_qualifier, 'atmarket') -> <<"Q">>;
+encode_typed_field(ioi_qualifier, 'readytrade') -> <<"R">>;
+encode_typed_field(ioi_qualifier, 'portshow') -> <<"S">>;
+encode_typed_field(ioi_qualifier, 'throughday') -> <<"T">>;
+encode_typed_field(ioi_qualifier, 'versus') -> <<"V">>;
+encode_typed_field(ioi_qualifier, 'indwrkaway') -> <<"W">>;
+encode_typed_field(ioi_qualifier, 'crossopp') -> <<"X">>;
+encode_typed_field(ioi_qualifier, 'atm_id') -> <<"Y">>;
+encode_typed_field(ioi_qualifier, 'preopen') -> <<"Z">>;
 encode_typed_field(heart_bt_int, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(min_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(max_floor, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12210,6 +15315,13 @@ encode_typed_field(forex_req,false) -> <<"N">>;
 encode_typed_field(gap_fill_flag, true) -> <<"Y">>;
 encode_typed_field(gap_fill_flag,false) -> <<"N">>;
 encode_typed_field(no_execs, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(dk_reason, 'unknownsymbol') -> <<"A">>;
+encode_typed_field(dk_reason, 'wrongs_ide') -> <<"B">>;
+encode_typed_field(dk_reason, 'quantityexceedsorder') -> <<"C">>;
+encode_typed_field(dk_reason, 'nomatch') -> <<"D">>;
+encode_typed_field(dk_reason, 'priceexceedslimit') -> <<"E">>;
+encode_typed_field(dk_reason, 'calculationdifference') -> <<"F">>;
+encode_typed_field(dk_reason, 'other') -> <<"Z">>;
 encode_typed_field(ioi_natural_flag, true) -> <<"Y">>;
 encode_typed_field(ioi_natural_flag,false) -> <<"N">>;
 encode_typed_field(bid_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
@@ -12217,14 +15329,58 @@ encode_typed_field(offer_px, V) when is_float(V) -> iolist_to_binary(io_lib:form
 encode_typed_field(bid_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(offer_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_misc_fees, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(misc_fee_type, 'reg') -> <<"1">>;
+encode_typed_field(misc_fee_type, 'transaction') -> <<"10">>;
+encode_typed_field(misc_fee_type, 'conversion') -> <<"11">>;
+encode_typed_field(misc_fee_type, 'agent') -> <<"12">>;
+encode_typed_field(misc_fee_type, 'tax') -> <<"2">>;
+encode_typed_field(misc_fee_type, 'localcomm') -> <<"3">>;
+encode_typed_field(misc_fee_type, 'exchfee') -> <<"4">>;
+encode_typed_field(misc_fee_type, 'stamp') -> <<"5">>;
+encode_typed_field(misc_fee_type, 'levy') -> <<"6">>;
+encode_typed_field(misc_fee_type, 'other') -> <<"7">>;
+encode_typed_field(misc_fee_type, 'markup') -> <<"8">>;
+encode_typed_field(misc_fee_type, 'consumption') -> <<"9">>;
 encode_typed_field(prev_close_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(reset_seq_num_flag, true) -> <<"Y">>;
 encode_typed_field(reset_seq_num_flag,false) -> <<"N">>;
 encode_typed_field(no_related_sym, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(exec_type, 'new') -> <<"0">>;
+encode_typed_field(exec_type, 'done') -> <<"3">>;
+encode_typed_field(exec_type, 'canceled') -> <<"4">>;
+encode_typed_field(exec_type, 'replaced') -> <<"5">>;
+encode_typed_field(exec_type, 'pendingcxl') -> <<"6">>;
+encode_typed_field(exec_type, 'stopped') -> <<"7">>;
+encode_typed_field(exec_type, 'rejected') -> <<"8">>;
+encode_typed_field(exec_type, 'suspended') -> <<"9">>;
+encode_typed_field(exec_type, 'pendingnew') -> <<"A">>;
+encode_typed_field(exec_type, 'calculated') -> <<"B">>;
+encode_typed_field(exec_type, 'expired') -> <<"C">>;
+encode_typed_field(exec_type, 'restated') -> <<"D">>;
+encode_typed_field(exec_type, 'pendingreplace') -> <<"E">>;
+encode_typed_field(exec_type, 'trade') -> <<"F">>;
+encode_typed_field(exec_type, 'tradecorrect') -> <<"G">>;
+encode_typed_field(exec_type, 'tradecancel') -> <<"H">>;
+encode_typed_field(exec_type, 'orderstatus') -> <<"I">>;
 encode_typed_field(leaves_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(cash_order_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(alloc_avg_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
+encode_typed_field(settl_curr_fx_rate_calc, 'multiply') -> <<"M">>;
+encode_typed_field(settl_curr_fx_rate_calc, 'div_ide') -> <<"D">>;
 encode_typed_field(num_days_interest, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(settl_inst_mode, 'default') -> <<"0">>;
+encode_typed_field(settl_inst_mode, 'siprov_ided') -> <<"1">>;
+encode_typed_field(settl_inst_mode, 'accountoverr_iding') -> <<"2">>;
+encode_typed_field(settl_inst_mode, 'accountstanding') -> <<"3">>;
+encode_typed_field(settl_inst_mode, 'civordersingleacct') -> <<"4">>;
+encode_typed_field(settl_inst_mode, 'reject') -> <<"5">>;
+encode_typed_field(settl_inst_trans_type, 'cancel') -> <<"C">>;
+encode_typed_field(settl_inst_trans_type, 'new') -> <<"N">>;
+encode_typed_field(settl_inst_trans_type, 'replace') -> <<"R">>;
+encode_typed_field(settl_inst_trans_type, 'restate') -> <<"T">>;
+encode_typed_field(settl_inst_source, 'brokerinstr') -> <<"1">>;
+encode_typed_field(settl_inst_source, 'instinstr') -> <<"2">>;
+encode_typed_field(settl_inst_source, 'investorciv') -> <<"3">>;
 encode_typed_field(stand_inst_db_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(settl_delivery_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(bid_spot_rate, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
@@ -12244,6 +15400,15 @@ encode_typed_field(max_show, V) when is_integer(V) -> list_to_binary(integer_to_
 encode_typed_field(xml_data_len, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_routing_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(routing_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(benchmark, 'curve') -> <<"1">>;
+encode_typed_field(benchmark, '5yr') -> <<"2">>;
+encode_typed_field(benchmark, 'ol_d5') -> <<"3">>;
+encode_typed_field(benchmark, '10_yr') -> <<"4">>;
+encode_typed_field(benchmark, 'ol_d10') -> <<"5">>;
+encode_typed_field(benchmark, '30_yr') -> <<"6">>;
+encode_typed_field(benchmark, 'ol_d30') -> <<"7">>;
+encode_typed_field(benchmark, '3molibor') -> <<"8">>;
+encode_typed_field(benchmark, '6molibor') -> <<"9">>;
 encode_typed_field(repurchase_term, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_stipulations, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(repo_collateral_security_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12254,14 +15419,52 @@ encode_typed_field(leg_repurchase_term, V) when is_integer(V) -> list_to_binary(
 encode_typed_field(traded_flat_switch, true) -> <<"Y">>;
 encode_typed_field(traded_flat_switch,false) -> <<"N">>;
 encode_typed_field(basis_feature_price, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
+encode_typed_field(subscription_request_type, 'snapshot') -> <<"0">>;
+encode_typed_field(subscription_request_type, 'snapshotupdate') -> <<"1">>;
+encode_typed_field(subscription_request_type, 'unsubscribe') -> <<"2">>;
 encode_typed_field(market_depth, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(md_update_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(aggregated_book, true) -> <<"Y">>;
 encode_typed_field(aggregated_book,false) -> <<"N">>;
 encode_typed_field(no_md_entry_types, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_md_entries, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(md_entry_type, 'bid') -> <<"0">>;
+encode_typed_field(md_entry_type, 'offer') -> <<"1">>;
+encode_typed_field(md_entry_type, 'trade') -> <<"2">>;
+encode_typed_field(md_entry_type, 'indexvalue') -> <<"3">>;
+encode_typed_field(md_entry_type, 'opening') -> <<"4">>;
+encode_typed_field(md_entry_type, 'closing') -> <<"5">>;
+encode_typed_field(md_entry_type, 'settlement') -> <<"6">>;
+encode_typed_field(md_entry_type, 'tradinghigh') -> <<"7">>;
+encode_typed_field(md_entry_type, 'tradinglow') -> <<"8">>;
+encode_typed_field(md_entry_type, 'tradingvwap') -> <<"9">>;
+encode_typed_field(md_entry_type, 'imbalance') -> <<"A">>;
+encode_typed_field(md_entry_type, 'tradevolume') -> <<"B">>;
+encode_typed_field(md_entry_type, 'openinterest') -> <<"C">>;
 encode_typed_field(md_entry_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(md_entry_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(tick_direction, 'plus') -> <<"0">>;
+encode_typed_field(tick_direction, 'zeroplus') -> <<"1">>;
+encode_typed_field(tick_direction, 'minus') -> <<"2">>;
+encode_typed_field(tick_direction, 'zerominus') -> <<"3">>;
+encode_typed_field(md_update_action, 'new') -> <<"0">>;
+encode_typed_field(md_update_action, 'change') -> <<"1">>;
+encode_typed_field(md_update_action, 'delete') -> <<"2">>;
+encode_typed_field(md_req_rej_reason, 'unknownsym') -> <<"0">>;
+encode_typed_field(md_req_rej_reason, 'dup_id') -> <<"1">>;
+encode_typed_field(md_req_rej_reason, 'insband') -> <<"2">>;
+encode_typed_field(md_req_rej_reason, 'insperm') -> <<"3">>;
+encode_typed_field(md_req_rej_reason, 'unsuppsub') -> <<"4">>;
+encode_typed_field(md_req_rej_reason, 'unsuppmktdepth') -> <<"5">>;
+encode_typed_field(md_req_rej_reason, 'unsuppmdupdate') -> <<"6">>;
+encode_typed_field(md_req_rej_reason, 'unsuppaggbk') -> <<"7">>;
+encode_typed_field(md_req_rej_reason, 'unsuppentry') -> <<"8">>;
+encode_typed_field(md_req_rej_reason, 'unsupptrdsession_id') -> <<"9">>;
+encode_typed_field(md_req_rej_reason, 'unsuppscope') -> <<"A">>;
+encode_typed_field(md_req_rej_reason, 'unsupppositioneffectsettleflag') -> <<"B">>;
+encode_typed_field(md_req_rej_reason, 'unsuppmdimplicitdelete') -> <<"C">>;
+encode_typed_field(delete_reason, 'canceltradebust') -> <<"0">>;
+encode_typed_field(delete_reason, 'error') -> <<"1">>;
 encode_typed_field(seller_days, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(md_entry_position_no, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(def_bid_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12282,6 +15485,12 @@ encode_typed_field(security_response_type, V) when is_integer(V) -> list_to_bina
 encode_typed_field(unsolicited_indicator, true) -> <<"Y">>;
 encode_typed_field(unsolicited_indicator,false) -> <<"N">>;
 encode_typed_field(security_trading_status, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(halt_reason_char, 'newsdiss') -> <<"D">>;
+encode_typed_field(halt_reason_char, 'ordinfl') -> <<"E">>;
+encode_typed_field(halt_reason_char, 'ordimb') -> <<"I">>;
+encode_typed_field(halt_reason_char, 'addinfo') -> <<"M">>;
+encode_typed_field(halt_reason_char, 'newspend') -> <<"P">>;
+encode_typed_field(halt_reason_char, 'equipchange') -> <<"X">>;
 encode_typed_field(in_view_of_common, true) -> <<"Y">>;
 encode_typed_field(in_view_of_common,false) -> <<"N">>;
 encode_typed_field(due_to_related, true) -> <<"Y">>;
@@ -12309,6 +15518,8 @@ encode_typed_field(quote_entry_reject_reason, V) when is_integer(V) -> list_to_b
 encode_typed_field(last_msg_seq_num_processed, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(ref_tag_id, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(session_reject_reason, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(bid_request_trans_type, 'cancel') -> <<"C">>;
+encode_typed_field(bid_request_trans_type, 'no') -> <<"N">>;
 encode_typed_field(solicited_flag, true) -> <<"Y">>;
 encode_typed_field(solicited_flag,false) -> <<"N">>;
 encode_typed_field(exec_restatement_reason, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12316,8 +15527,17 @@ encode_typed_field(business_reject_reason, V) when is_integer(V) -> list_to_bina
 encode_typed_field(no_contra_brokers, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(max_message_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_msg_types, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(msg_direction, 'receive') -> <<"R">>;
+encode_typed_field(msg_direction, 'send') -> <<"S">>;
 encode_typed_field(no_trading_sessions, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(total_volume_traded, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(discretion_inst, 'reldisppx') -> <<"0">>;
+encode_typed_field(discretion_inst, 'relmktpx') -> <<"1">>;
+encode_typed_field(discretion_inst, 'relprimpx') -> <<"2">>;
+encode_typed_field(discretion_inst, 'rellocprimpx') -> <<"3">>;
+encode_typed_field(discretion_inst, 'relm_idpx') -> <<"4">>;
+encode_typed_field(discretion_inst, 'rellstpx') -> <<"5">>;
+encode_typed_field(discretion_inst, 'relvwap') -> <<"6">>;
 encode_typed_field(tot_no_related_sym, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(bid_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(num_tickets, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12331,6 +15551,23 @@ encode_typed_field(prog_rpt_reqs, V) when is_integer(V) -> list_to_binary(intege
 encode_typed_field(prog_period_interval, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(inc_tax_ind, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(num_bidders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(bid_trade_type, 'agency') -> <<"A">>;
+encode_typed_field(bid_trade_type, 'vwapguarantee') -> <<"G">>;
+encode_typed_field(bid_trade_type, 'guaranteedclose') -> <<"J">>;
+encode_typed_field(bid_trade_type, 'risktrade') -> <<"R">>;
+encode_typed_field(basis_px_type, 'clspxmorn') -> <<"2">>;
+encode_typed_field(basis_px_type, 'clspx') -> <<"3">>;
+encode_typed_field(basis_px_type, 'currpx') -> <<"4">>;
+encode_typed_field(basis_px_type, 'sq') -> <<"5">>;
+encode_typed_field(basis_px_type, 'vwapday') -> <<"6">>;
+encode_typed_field(basis_px_type, 'vwapmorn') -> <<"7">>;
+encode_typed_field(basis_px_type, 'vwapaft') -> <<"8">>;
+encode_typed_field(basis_px_type, 'vwapdayxyori') -> <<"9">>;
+encode_typed_field(basis_px_type, 'vwapmornxyori') -> <<"A">>;
+encode_typed_field(basis_px_type, 'vwapaftxyori') -> <<"B">>;
+encode_typed_field(basis_px_type, 'strike') -> <<"C">>;
+encode_typed_field(basis_px_type, 'open') -> <<"D">>;
+encode_typed_field(basis_px_type, 'others') -> <<"Z">>;
 encode_typed_field(no_bid_components, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(tot_no_strikes, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(price_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12342,9 +15579,37 @@ encode_typed_field(no_strikes, V) when is_integer(V) -> list_to_binary(integer_t
 encode_typed_field(list_status_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(net_gross_ind, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(list_order_status, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(list_exec_inst_type, 'immed') -> <<"1">>;
+encode_typed_field(list_exec_inst_type, 'wait') -> <<"2">>;
+encode_typed_field(list_exec_inst_type, 'exchcivsell') -> <<"3">>;
+encode_typed_field(list_exec_inst_type, 'exchcivbuytop') -> <<"4">>;
+encode_typed_field(list_exec_inst_type, 'exchcivbuywd') -> <<"5">>;
+encode_typed_field(cxl_rej_response_to, 'ordcxlreq') -> <<"1">>;
+encode_typed_field(cxl_rej_response_to, 'ordcxlrepreq') -> <<"2">>;
 encode_typed_field(contra_trade_qty, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(liquidity_num_securities, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(multi_leg_reporting_type, 'single') -> <<"1">>;
+encode_typed_field(multi_leg_reporting_type, 'indivleg') -> <<"2">>;
+encode_typed_field(multi_leg_reporting_type, 'multileg') -> <<"3">>;
 encode_typed_field(encoded_list_status_text_len, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(party_id_source, 'koreaninvestor_id') -> <<"1">>;
+encode_typed_field(party_id_source, 'taiwanesequalified') -> <<"2">>;
+encode_typed_field(party_id_source, 'taiwanesetradingacct') -> <<"3">>;
+encode_typed_field(party_id_source, 'mcdnumber') -> <<"4">>;
+encode_typed_field(party_id_source, 'chinesebshare') -> <<"5">>;
+encode_typed_field(party_id_source, 'uknationalinspennumber') -> <<"6">>;
+encode_typed_field(party_id_source, 'ussocialsecurity') -> <<"7">>;
+encode_typed_field(party_id_source, 'usemployer_idnumber') -> <<"8">>;
+encode_typed_field(party_id_source, 'australianbusinessnumber') -> <<"9">>;
+encode_typed_field(party_id_source, 'australiantaxfilenumber') -> <<"A">>;
+encode_typed_field(party_id_source, 'bic') -> <<"B">>;
+encode_typed_field(party_id_source, 'accptmarketpart') -> <<"C">>;
+encode_typed_field(party_id_source, 'propcode') -> <<"D">>;
+encode_typed_field(party_id_source, 'isocode') -> <<"E">>;
+encode_typed_field(party_id_source, 'settlentloc') -> <<"F">>;
+encode_typed_field(party_id_source, 'mic') -> <<"G">>;
+encode_typed_field(party_id_source, 'csdpartcode') -> <<"H">>;
+encode_typed_field(party_id_source, 'directeddefinedisitc') -> <<"I">>;
 encode_typed_field(party_role, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_party_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_security_alt_id, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12354,21 +15619,85 @@ encode_typed_field(underlying_product, V) when is_integer(V) -> list_to_binary(i
 encode_typed_field(test_message_indicator, true) -> <<"Y">>;
 encode_typed_field(test_message_indicator,false) -> <<"N">>;
 encode_typed_field(quantity_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(rounding_direction, 'roundnearest') -> <<"0">>;
+encode_typed_field(rounding_direction, 'rounddown') -> <<"1">>;
+encode_typed_field(rounding_direction, 'roundup') -> <<"2">>;
 encode_typed_field(no_regist_dtls, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(distrib_payment_method, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(cancellation_rights, 'nowaiver') -> <<"M">>;
+encode_typed_field(cancellation_rights, 'noexeconly') -> <<"N">>;
+encode_typed_field(cancellation_rights, 'noinstit') -> <<"O">>;
+encode_typed_field(cancellation_rights, 'yes') -> <<"Y">>;
+encode_typed_field(money_laundering_status, 'exbelowlim') -> <<"1">>;
+encode_typed_field(money_laundering_status, 'exclientmoneytype') -> <<"2">>;
+encode_typed_field(money_laundering_status, 'exauthcredit') -> <<"3">>;
+encode_typed_field(money_laundering_status, 'notchecked') -> <<"N">>;
+encode_typed_field(money_laundering_status, 'passed') -> <<"Y">>;
+encode_typed_field(exec_price_type, 'b_idprice') -> <<"B">>;
+encode_typed_field(exec_price_type, 'creationprice') -> <<"C">>;
+encode_typed_field(exec_price_type, 'creationpriceadjpct') -> <<"D">>;
+encode_typed_field(exec_price_type, 'creationpriceadjamt') -> <<"E">>;
+encode_typed_field(exec_price_type, 'offerprice') -> <<"O">>;
+encode_typed_field(exec_price_type, 'offerpriceminusadjpct') -> <<"P">>;
+encode_typed_field(exec_price_type, 'offerpriceminusadjamt') -> <<"Q">>;
+encode_typed_field(exec_price_type, 'singleprice') -> <<"S">>;
 encode_typed_field(trade_report_trans_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(payment_method, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(tax_advantage_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(fund_renew_waiv, 'no') -> <<"N">>;
+encode_typed_field(fund_renew_waiv, 'yes') -> <<"Y">>;
+encode_typed_field(regist_status, 'accepted') -> <<"A">>;
+encode_typed_field(regist_status, 'held') -> <<"H">>;
+encode_typed_field(regist_status, 'reminder_ie_registration_instructions_are_still_outstanding') -> <<"N">>;
+encode_typed_field(regist_status, 'rejected') -> <<"R">>;
 encode_typed_field(regist_rej_reason_code, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_distrib_insts, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(regist_trans_type, 'new') -> <<"0">>;
+encode_typed_field(regist_trans_type, 'replace') -> <<"1">>;
+encode_typed_field(regist_trans_type, 'cancel') -> <<"2">>;
+encode_typed_field(ownership_type, 'joint_trustees') -> <<"2">>;
+encode_typed_field(ownership_type, 'joint_investors') -> <<"J">>;
+encode_typed_field(ownership_type, 'tenants_in_common') -> <<"T">>;
 encode_typed_field(no_cont_amts, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(cont_amt_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(owner_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(order_capacity, 'agency') -> <<"A">>;
+encode_typed_field(order_capacity, 'proprietary') -> <<"G">>;
+encode_typed_field(order_capacity, 'indiv_idual') -> <<"I">>;
+encode_typed_field(order_capacity, 'principal') -> <<"P">>;
+encode_typed_field(order_capacity, 'risklessprincipal') -> <<"R">>;
+encode_typed_field(order_capacity, 'agentothermember') -> <<"W">>;
+encode_typed_field(mass_cancel_request_type, 'cxlorderssecurity') -> <<"1">>;
+encode_typed_field(mass_cancel_request_type, 'cxlordersunderlyingsecurity') -> <<"2">>;
+encode_typed_field(mass_cancel_request_type, 'cxlordersproduct') -> <<"3">>;
+encode_typed_field(mass_cancel_request_type, 'cxlorderscficode') -> <<"4">>;
+encode_typed_field(mass_cancel_request_type, 'cxlorderssecuritytype') -> <<"5">>;
+encode_typed_field(mass_cancel_request_type, 'cxlorderstrdsession') -> <<"6">>;
+encode_typed_field(mass_cancel_request_type, 'cxlallorders') -> <<"7">>;
+encode_typed_field(mass_cancel_response, 'cxlreqrej') -> <<"0">>;
+encode_typed_field(mass_cancel_response, 'cxlorderssecurity') -> <<"1">>;
+encode_typed_field(mass_cancel_response, 'cxlordersunderlyingsecurity') -> <<"2">>;
+encode_typed_field(mass_cancel_response, 'cxlordersproduct') -> <<"3">>;
+encode_typed_field(mass_cancel_response, 'cxlorderscficode') -> <<"4">>;
+encode_typed_field(mass_cancel_response, 'cxlorderssecuritytype') -> <<"5">>;
+encode_typed_field(mass_cancel_response, 'cxlorderstrdsession') -> <<"6">>;
+encode_typed_field(mass_cancel_response, 'cxlallorders') -> <<"7">>;
+encode_typed_field(mass_cancel_reject_reason, 'masscxlnotsupported') -> <<"0">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idsecurity') -> <<"1">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idunderlying') -> <<"2">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idproduct') -> <<"3">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idcficode') -> <<"4">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idsecuritytype') -> <<"5">>;
+encode_typed_field(mass_cancel_reject_reason, 'inval_idtrdsession') -> <<"6">>;
+encode_typed_field(mass_cancel_reject_reason, 'other') -> <<"99">>;
 encode_typed_field(total_affected_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_affected_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(quote_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(nested_party_role, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_nested_party_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(cash_margin, 'cash') -> <<"1">>;
+encode_typed_field(cash_margin, 'marginopen') -> <<"2">>;
+encode_typed_field(cash_margin, 'marginclose') -> <<"3">>;
 encode_typed_field(md_implicit_delete, true) -> <<"Y">>;
 encode_typed_field(md_implicit_delete,false) -> <<"N">>;
 encode_typed_field(cross_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12388,6 +15717,9 @@ encode_typed_field(trad_ses_status_rej_reason, V) when is_integer(V) -> list_to_
 encode_typed_field(trade_request_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(previously_reported, true) -> <<"Y">>;
 encode_typed_field(previously_reported,false) -> <<"N">>;
+encode_typed_field(match_status, 'compmataff') -> <<"0">>;
+encode_typed_field(match_status, 'uncompunmatunaff') -> <<"1">>;
+encode_typed_field(match_status, 'advalert') -> <<"2">>;
 encode_typed_field(odd_lot, true) -> <<"Y">>;
 encode_typed_field(odd_lot,false) -> <<"N">>;
 encode_typed_field(no_clearing_instructions, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12396,6 +15728,14 @@ encode_typed_field(no_dates, V) when is_integer(V) -> list_to_binary(integer_to_
 encode_typed_field(account_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(cust_order_capacity, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(mass_status_req_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(day_booking_inst, 'can_trigger_booking_without_reference_to_the_order_initiator_auto') -> <<"0">>;
+encode_typed_field(day_booking_inst, 'speak_with_order_initiator_before_booking_speak_first') -> <<"1">>;
+encode_typed_field(day_booking_inst, 'accumulate') -> <<"2">>;
+encode_typed_field(booking_unit, 'each_partial_execution_is_a_bookable_unit') -> <<"0">>;
+encode_typed_field(booking_unit, 'aggregate_partial_executions_on_this_order_and_book_one_trade_per_order') -> <<"1">>;
+encode_typed_field(booking_unit, 'aggregate_executions_for_this_symbol_s_ide_and_settlement_date') -> <<"2">>;
+encode_typed_field(prealloc_method, 'prorata') -> <<"0">>;
+encode_typed_field(prealloc_method, 'do_not_prorata_discuss_first') -> <<"1">>;
 encode_typed_field(leg_product, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(leg_strike_price, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(encoded_leg_issuer_len, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12469,7 +15809,11 @@ encode_typed_field(underlying_settl_price, V) when is_float(V) -> iolist_to_bina
 encode_typed_field(underlying_settl_price_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(prior_settl_price, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
 encode_typed_field(no_quote_qualifiers, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(assignment_method, 'prorata') -> <<"P">>;
+encode_typed_field(assignment_method, 'random') -> <<"R">>;
 encode_typed_field(assignment_unit, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(exercise_method, 'automatic') -> <<"A">>;
+encode_typed_field(exercise_method, 'manual') -> <<"M">>;
 encode_typed_field(tot_num_trade_reports, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(trade_request_result, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(trade_request_status, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -12491,6 +15835,8 @@ encode_typed_field(alloc_settl_inst_type, V) when is_integer(V) -> list_to_binar
 encode_typed_field(no_settl_party_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(settl_party_role, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(settl_party_sub_id_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(dlvy_inst_type, 'cash') -> <<"C">>;
+encode_typed_field(dlvy_inst_type, 'securities') -> <<"S">>;
 encode_typed_field(termination_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(next_expected_msg_seq_num, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(settl_inst_req_rej_code, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
