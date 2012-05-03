@@ -247,6 +247,11 @@ underscore("ID" ++ String, [$_|Acc]) when length(Acc) > 0 ->
 underscore("ID" ++ String, Acc) when length(Acc) > 0 ->
   underscore(String, [$d,$i,$_|Acc]);
 
+underscore([Char,$_,Char2|String], Acc) when 
+  (Char >= $A andalso Char =< $Z) andalso (Char2 >= $A andalso Char2 =< $Z) andalso length(Acc) > 0 ->
+  underscore([Char2|String], [$_, string:to_lower(Char)|Acc]);
+
+
 underscore([Char,Char1,Char2|String], Acc) when 
   not (Char >= $A andalso Char =< $Z) andalso (Char1 >= $A andalso Char1 =< $Z) andalso (Char2 >= $A andalso Char2 =< $Z) andalso length(Acc) > 0 ->
   underscore([Char1,Char2|String], [$_, Char|Acc]);
@@ -481,7 +486,7 @@ underscore_test() ->
   ?assertEqual("leg_ioi_qty", underscore("LegIOIQty")),
   ?assertEqual("out_main_cntry_u_index", underscore("OutMainCntryUIndex")),
   ?assertEqual("alt_md_source_id", underscore("AltMDSourceID")),
-  % ?assertEqual("", underscore("")),
+  ?assertEqual("closing_price", underscore("CLOSING_PRICE")),
   % ?assertEqual("", underscore("")),
   ok.
 
