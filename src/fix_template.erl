@@ -79,8 +79,8 @@ parser_body() ->
   #parser{messages = Messages, fields = Fields} = parse(),
   Header = ["-module(fix_parser).\n-include(\"../include/admin.hrl\").\n-include(\"../include/business.hrl\").\n\n",
   "-export([decode_message/1, field_by_number/1, number_by_field/1, decode_typed_field/2, encode_typed_field/2, message_by_number/1, number_by_message/1]).\n\n"],
-  Body1 = generate_decode_message(Messages, []),
-  Body2 = generate_message_decoders(Messages, Fields, []),
+  Body1 = generate_decode_message(Messages, Fields),
+  Body2 = [],
   Body3 = generate_field_decoders(Fields),
   Body4 = generate_field_by_number(Fields),
   Body5 = generate_decode_typed_field(Fields),
@@ -91,17 +91,20 @@ parser_body() ->
   Body10 = add_parse_num(),
   iolist_to_binary([Header, Body1, Body2, Body3, Body4, Body5, Body6, Body7, Body8, Body9, Body10]).
 
-generate_decode_message([#message{name = Name, type = Type, code = Code}|Messages], Acc) ->
-  Body = [
-  "decode_message(<<\"35=",Type,"\",1,Message/binary>>) -> % ", Code, "\n",
-  "  decode_message_",Name, "(Message, #",Name,"{})",
-  if length(Messages) == 0 -> "."; true -> ";" end,
-  "\n\n"
-  ],
-  generate_decode_message(Messages, Acc ++ Body);
-
-generate_decode_message([], Acc) ->
-  Acc.
+generate_decode_message(Messages, Fields) ->
+  Bodies1 = [
+  ["decode_message(<<\"35=",Type,"\",1,Message/binary>>) -> % ", Code, "\n",
+  "  decode_fields", "(Message, #",Name,"{}, ",Name,", ",integer_to_list(length(message_fields(MsgFields, Fields)) + 2),")"]
+  || #message{name = Name, type = Type, code = Code, fields = MsgFields} <- Messages],
+  
+  Bodies2_ = [begin
+    UsedFields = message_fields(MsgFields, Fields),
+    Indexes = lists:zip(UsedFields, lists:seq(2, 1+length(UsedFields))),
+    [["field_index(",FieldName,", ",RecordName,") -> ",integer_to_list(Index),";\n"] || {FieldName,Index} <- Indexes]
+  end|| #message{fields = MsgFields, name = RecordName} <- Messages],
+  Bodies2 = [Bodies2_, "field_index(_,_) -> undefined.\n\n"],
+  
+  [string:join(Bodies1, ";\n\n"), ".\n\n", Bodies2].
 
 generate_field_by_number(Fields) ->
   [
@@ -156,70 +159,9 @@ generate_encode_typed_field(Fields) ->
   ].
 
 
-generate_message_decoders([#message{name = Name, fields = MsgFields}|Messages], Fields, Acc) ->
-  % % Choice 1
-  % 
-  % Body = [lists:map(fun(FieldName) ->
-  %   #field{number = Number} = lists:keyfind(FieldName, #field.name, Fields),
-  %   ["decode_message_", Name, "(<<\"",Number,"=\", Message/binary>>, #",Name,"{} = Record) ->\n",
-  %   "  [Value, Rest] = binary:split(Message, <<1>>),\n",
-  %   "  decode_message_", Name, "(Rest, Record#",Name,"{",FieldName,"=Value});\n\n"
-  %   ]
-  % end, MsgFields),
-  % 
-  % "decode_message_",Name, "(<<>>, #",Name,"{fields = Fields} = Record) ->\n",
-  % "  Record#",Name,"{fields = lists:reverse(Fields)};\n\n",
-  % 
-  % "decode_message_",Name, "(Message, #",Name,"{fields = Fields} = Record) ->\n",
-  % "  [F, Rest] = binary:split(Message, <<1>>),\n",
-  % "  [Key, Value] = binary:split(F, <<\"=\">>),\n",
-  % "  decode_message_",Name,"(Rest, Record#",Name,"{fields = [{field_by_number(Key),Value}|Fields]}).\n\n"
-  % 
-  % ],
-  
-  % % Choice 2
-  % Body = [
-  % "decode_message_",Name, "(Message, #",Name,"{} = Record) ->\n"
-  % "  Fields = [begin\n"
-  % "    [K,V] = binary:split(Field, <<\"=\">>),\n"
-  % "    {field_by_number(K),V}\n"
-  % "  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],\n"
-  % "  Record1 = #",Name,"{fields = F} = lists:foldl(fun\n",
-  % lists:map(fun(FieldName) ->
-  %   Value = case lists:keyfind(FieldName, #field.name, Fields) of
-  %     #field{type = float} -> "fix:parse_num(V)";
-  %     #field{type = int} -> "fix:parse_num(V)";
-  %     #field{type = bool} -> "V == <<\"Y\">>";
-  %     _ -> "V"
-  %   end,
-  % ["    ({",FieldName,",V}, Rec) -> Rec#",Name,"{",FieldName," = ",Value,"};\n"]  
-  % end, MsgFields),
-  % "    ({K,V}, #",Name,"{fields = F} = Rec) -> Rec#",Name,"{fields = [{K,decode_typed_field(K,V)}|F]}\n"    
-  % "  end, Record, Fields),\n"
-  % "  Record1#",Name,"{fields = lists:reverse(F)}.\n\n"
-  % ],
-
-  % Choice 3
-  
-  % UsedFields = [lists:keyfind(FieldName, #field.name, Fields) || FieldName <- MsgFields],
-  Fields1 = message_fields(MsgFields, Fields),
-  Fields2 = lists:zip(Fields1, lists:seq(2, 1 + length(Fields1))),
-  FieldDesc = ["[", string:join([["{",F,", ",integer_to_list(I),"}"] || {F, I} <- Fields2], ","), "]"],
-  Body = [
-  "decode_message_", Name, "(Message, #",Name,"{} = Record) -> \n",
-  "  Message1 = decode_fields(Message, Record, ", FieldDesc,", ", integer_to_list(length(Fields1)+2),"),\n",
-  "  Message1.\n\n"  
-  ],
-
-  generate_message_decoders(Messages, Fields, Acc ++ Body);
-
-generate_message_decoders([], _Fields, Acc) ->
-  Acc.
-
-
 generate_field_decoders(Fields) ->
   Bodies1 = [
-  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, Indexes, Default) ->\n",
+  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, RecordName, Default) ->\n",
   "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
   "  Value = ", case Type of
     int -> "parse_num(RawValue)";
@@ -227,34 +169,34 @@ generate_field_decoders(Fields) ->
     bool -> "RawValue == <<\"Y\">>";
     _ -> "RawValue"
   end, ",\n",
-  "  Record1 = case proplists:get_value(",Name,", Indexes) of\n",
+  "  Record1 = case field_index(",Name,", RecordName) of\n",
   "    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
-  "  decode_fields(Rest, Record1, Indexes, Default);\n\n"]
+  "  decode_fields(Rest, Record1, RecordName, Default);\n\n"]
   || #field{number = Number, name = Name, raw_type = T, type = Type} <- Fields, T =/= "DATA" andalso T =/= "LENGTH"],
   
   Bodies2 = [
-  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, Indexes, Default) ->\n",
+  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, RecordName, Default) ->\n",
   "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
   "  DataLength = parse_num(RawValue),\n",
-  "  decode_data_field(Rest, DataLength, Record, Indexes, Default);\n\n"
+  "  decode_data_field(Rest, DataLength, Record, RecordName, Default);\n\n"
   ]
   || #field{number = Number, raw_type = T} <- Fields, T == "LENGTH"],
   
   Bodies3 = [
-  "decode_fields(<<>>, Record, _Indexes, Default) ->\n",
+  "decode_fields(<<>>, Record, _RecordName, Default) ->\n",
   "  erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).\n\n"
   ],
   
   Bodies4_ = [
-  ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, Indexes, Default) ->\n",
+  ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, RecordName, Default) ->\n",
   "  <<Value:DataLength/binary, 1, Rest/binary>> = Message,\n",
-  "  Record1 = case proplists:get_value(",Name,", Indexes) of\n",
+  "  Record1 = case field_index(",Name,", RecordName) of\n",
   "    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
-  "  decode_fields(Rest, Record1, Indexes, Default)"]
+  "  decode_fields(Rest, Record1, RecordName, Default)"]
   || #field{number = Number, name = Name, raw_type = T} <- Fields, T == "DATA"],
   Bodies4 = [string:join(Bodies4_, ";\n\n"), ".\n\n"],
   
