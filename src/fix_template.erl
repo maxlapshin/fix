@@ -170,7 +170,7 @@ generate_field_decoders(Fields) ->
     _ -> "RawValue"
   end, ",\n",
   "  Record1 = case field_index(",Name,", RecordName) of\n",
-  "    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);\n",
+  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
   "  decode_fields(Rest, Record1, RecordName, Default);\n\n"]
@@ -193,7 +193,7 @@ generate_field_decoders(Fields) ->
   ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, RecordName, Default) ->\n",
   "  <<Value:DataLength/binary, 1, Rest/binary>> = Message,\n",
   "  Record1 = case field_index(",Name,", RecordName) of\n",
-  "    undefined -> erlang:setelement(Default, Record, [Value|erlang:element(Default,Record)]);\n",
+  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
   "  decode_fields(Rest, Record1, RecordName, Default)"]
