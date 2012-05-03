@@ -155,8 +155,8 @@ generate_encode_typed_field(Fields) ->
 
 
 generate_message_decoders([#message{name = Name, fields = MsgFields}|Messages], Fields, Acc) ->
-  % Choice 1
-  %
+  % % Choice 1
+  % 
   % Body = [lists:map(fun(FieldName) ->
   %   #field{number = Number} = lists:keyfind(FieldName, #field.name, Fields),
   %   ["decode_message_", Name, "(<<\"",Number,"=\", Message/binary>>, #",Name,"{} = Record) ->\n",
@@ -175,27 +175,27 @@ generate_message_decoders([#message{name = Name, fields = MsgFields}|Messages], 
   % 
   % ],
   
-  % Choice 2
-  Body = [
-  "decode_message_",Name, "(Message, #",Name,"{} = Record) ->\n"
-  "  Fields = [begin\n"
-  "    [K,V] = binary:split(Field, <<\"=\">>),\n"
-  "    {field_by_number(K),V}\n"
-  "  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],\n"
-  "  Record1 = #",Name,"{fields = F} = lists:foldl(fun\n",
-  lists:map(fun(FieldName) ->
-    Value = case lists:keyfind(FieldName, #field.name, Fields) of
-      #field{type = float} -> "fix:parse_num(V)";
-      #field{type = int} -> "fix:parse_num(V)";
-      #field{type = bool} -> "V == <<\"Y\">>";
-      _ -> "V"
-    end,
- ["    ({",FieldName,",V}, Rec) -> Rec#",Name,"{",FieldName," = ",Value,"};\n"]  
-  end, MsgFields),
-  "    ({K,V}, #",Name,"{fields = F} = Rec) -> Rec#",Name,"{fields = [{K,decode_typed_field(K,V)}|F]}\n"    
-  "  end, Record, Fields),\n"
-  "  Record1#",Name,"{fields = lists:reverse(F)}.\n\n"
-  ],
+  % % Choice 2
+  % Body = [
+  % "decode_message_",Name, "(Message, #",Name,"{} = Record) ->\n"
+  % "  Fields = [begin\n"
+  % "    [K,V] = binary:split(Field, <<\"=\">>),\n"
+  % "    {field_by_number(K),V}\n"
+  % "  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0],\n"
+  % "  Record1 = #",Name,"{fields = F} = lists:foldl(fun\n",
+  % lists:map(fun(FieldName) ->
+  %   Value = case lists:keyfind(FieldName, #field.name, Fields) of
+  %     #field{type = float} -> "fix:parse_num(V)";
+  %     #field{type = int} -> "fix:parse_num(V)";
+  %     #field{type = bool} -> "V == <<\"Y\">>";
+  %     _ -> "V"
+  %   end,
+  % ["    ({",FieldName,",V}, Rec) -> Rec#",Name,"{",FieldName," = ",Value,"};\n"]  
+  % end, MsgFields),
+  % "    ({K,V}, #",Name,"{fields = F} = Rec) -> Rec#",Name,"{fields = [{K,decode_typed_field(K,V)}|F]}\n"    
+  % "  end, Record, Fields),\n"
+  % "  Record1#",Name,"{fields = lists:reverse(F)}.\n\n"
+  % ],
 
 
   generate_message_decoders(Messages, Fields, Acc ++ Body);
