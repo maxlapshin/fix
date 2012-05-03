@@ -39,7 +39,6 @@
   ref_msg_type,
   session_reject_reason,
   text,
-  encoded_text_len,
   encoded_text,
   signature,
   fields = []
@@ -62,7 +61,6 @@
   msg_seq_num,
   sending_time,
   text,
-  encoded_text_len,
   encoded_text,
   signature,
   fields = []
@@ -75,11 +73,9 @@
   sending_time,
   encrypt_method,
   heart_bt_int,
-  raw_data_length,
   raw_data,
   reset_seq_num_flag,
   next_expected_msg_seq_num,
-  max_message_size,
   ref_msg_type,
   msg_direction,
   test_message_indicator,
