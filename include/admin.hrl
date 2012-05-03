@@ -4,6 +4,7 @@
   msg_seq_num,
   sending_time,
   test_req_id,
+  signature,
   fields = []
 }).
 
@@ -13,6 +14,7 @@
   msg_seq_num,
   sending_time,
   test_req_id,
+  signature,
   fields = []
 }).
 
@@ -23,6 +25,7 @@
   sending_time,
   begin_seq_no,
   end_seq_no,
+  signature,
   fields = []
 }).
 
@@ -38,6 +41,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -48,6 +52,7 @@
   sending_time,
   gap_fill_flag,
   new_seq_no,
+  signature,
   fields = []
 }).
 
@@ -59,6 +64,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -79,6 +85,7 @@
   test_message_indicator,
   username,
   password,
+  signature,
   fields = []
 }).
 

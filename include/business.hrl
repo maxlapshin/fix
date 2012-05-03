@@ -24,6 +24,7 @@
   url_link,
   routing_type,
   routing_id,
+  signature,
   fields = []
 }).
 
@@ -49,6 +50,7 @@
   last_mkt,
   trading_session_id,
   trading_session_sub_id,
+  signature,
   fields = []
 }).
 
@@ -201,6 +203,7 @@
   misc_fee_curr,
   misc_fee_type,
   misc_fee_basis,
+  signature,
   fields = []
 }).
 
@@ -230,6 +233,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -251,6 +255,7 @@
   url_link,
   raw_data_length,
   raw_data,
+  signature,
   fields = []
 }).
 
@@ -274,6 +279,7 @@
   encoded_text,
   raw_data_length,
   raw_data,
+  signature,
   fields = []
 }).
 
@@ -352,6 +358,7 @@
   money_laundering_status,
   regist_id,
   designation,
+  signature,
   fields = []
 }).
 
@@ -448,6 +455,7 @@
   target_strategy_parameters,
   participation_rate,
   designation,
+  signature,
   fields = []
 }).
 
@@ -472,6 +480,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -550,6 +559,7 @@
   money_laundering_status,
   regist_id,
   designation,
+  signature,
   fields = []
 }).
 
@@ -566,6 +576,7 @@
   account,
   acct_id_source,
   side,
+  signature,
   fields = []
 }).
 
@@ -668,6 +679,7 @@
   clearing_instruction,
   clearing_fee_indicator,
   alloc_settl_inst_type,
+  signature,
   fields = []
 }).
 
@@ -683,6 +695,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -698,6 +711,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -710,6 +724,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -741,6 +756,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -771,6 +787,7 @@
   alloc_text,
   encoded_alloc_text_len,
   encoded_alloc_text,
+  signature,
   fields = []
 }).
 
@@ -789,6 +806,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -833,6 +851,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -898,6 +917,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -934,6 +954,7 @@
   card_iss_num,
   payment_date,
   payment_remitter_id,
+  signature,
   fields = []
 }).
 
@@ -955,6 +976,7 @@
   trading_session_sub_id,
   appl_queue_action,
   appl_queue_max,
+  signature,
   fields = []
 }).
 
@@ -1002,6 +1024,7 @@
   encoded_text,
   appl_queue_depth,
   appl_queue_resolution,
+  signature,
   fields = []
 }).
 
@@ -1053,6 +1076,7 @@
   encoded_text,
   appl_queue_depth,
   appl_queue_resolution,
+  signature,
   fields = []
 }).
 
@@ -1067,6 +1091,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1084,6 +1109,7 @@
   account_type,
   trading_session_id,
   trading_session_sub_id,
+  signature,
   fields = []
 }).
 
@@ -1100,6 +1126,7 @@
   trading_session_id,
   trading_session_sub_id,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1148,6 +1175,7 @@
   offer_forward_points2,
   currency,
   quote_entry_reject_reason,
+  signature,
   fields = []
 }).
 
@@ -1166,6 +1194,7 @@
   trading_session_sub_id,
   expiration_cycle,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1186,6 +1215,7 @@
   expiration_cycle,
   round_lot,
   min_trade_vol,
+  signature,
   fields = []
 }).
 
@@ -1199,6 +1229,7 @@
   subscription_request_type,
   trading_session_id,
   trading_session_sub_id,
+  signature,
   fields = []
 }).
 
@@ -1228,6 +1259,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1242,6 +1274,7 @@
   trad_ses_method,
   trad_ses_mode,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1267,6 +1300,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1312,6 +1346,7 @@
   bid_forward_points2,
   offer_forward_points2,
   currency,
+  signature,
   fields = []
 }).
 
@@ -1327,6 +1362,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1382,6 +1418,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1406,6 +1443,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1426,6 +1464,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1458,6 +1497,7 @@
   cash_distrib_agent_acct_number,
   cash_distrib_pay_ref,
   cash_distrib_agent_acct_name,
+  signature,
   fields = []
 }).
 
@@ -1475,6 +1515,7 @@
   regist_status,
   regist_rej_reason_code,
   regist_rej_reason_text,
+  signature,
   fields = []
 }).
 
@@ -1493,6 +1534,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1519,6 +1561,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1598,6 +1641,7 @@
   money_laundering_status,
   regist_id,
   designation,
+  signature,
   fields = []
 }).
 
@@ -1681,6 +1725,7 @@
   money_laundering_status,
   regist_id,
   designation,
+  signature,
   fields = []
 }).
 
@@ -1707,6 +1752,7 @@
   encoded_text_len,
   encoded_text,
   transact_time,
+  signature,
   fields = []
 }).
 
@@ -1724,6 +1770,7 @@
   product,
   security_type,
   security_sub_type,
+  signature,
   fields = []
 }).
 
@@ -1747,6 +1794,7 @@
   trading_session_id,
   trading_session_sub_id,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1764,6 +1812,7 @@
   trading_session_id,
   trading_session_sub_id,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1788,6 +1837,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1806,6 +1856,7 @@
   trading_session_id,
   trading_session_sub_id,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -1826,6 +1877,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -1915,6 +1967,7 @@
   regist_id,
   designation,
   multi_leg_rpt_type_req,
+  signature,
   fields = []
 }).
 
@@ -2007,6 +2060,7 @@
   regist_id,
   designation,
   multi_leg_rpt_type_req,
+  signature,
   fields = []
 }).
 
@@ -2046,6 +2100,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2175,6 +2230,7 @@
   copy_msg_indicator,
   publish_trd_indicator,
   short_sale_reason,
+  signature,
   fields = []
 }).
 
@@ -2190,6 +2246,7 @@
   trading_session_id,
   trading_session_sub_id,
   side,
+  signature,
   fields = []
 }).
 
@@ -2232,6 +2289,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2247,6 +2305,7 @@
   trading_session_id,
   trading_session_sub_id,
   subscription_request_type,
+  signature,
   fields = []
 }).
 
@@ -2311,6 +2370,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2378,6 +2438,7 @@
   encoded_text,
   price,
   price_type,
+  signature,
   fields = []
 }).
 
@@ -2451,6 +2512,7 @@
   misc_fee_curr,
   misc_fee_type,
   misc_fee_basis,
+  signature,
   fields = []
 }).
 
@@ -2481,6 +2543,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2511,6 +2574,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2538,6 +2602,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2561,6 +2626,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2593,6 +2659,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2613,6 +2680,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2668,6 +2736,7 @@
   alloc_settl_currency,
   individual_alloc_id,
   alloc_qty,
+  signature,
   fields = []
 }).
 
@@ -2774,6 +2843,7 @@
   clearing_instruction,
   clearing_fee_indicator,
   alloc_settl_inst_type,
+  signature,
   fields = []
 }).
 
@@ -2805,6 +2875,7 @@
   alloc_text,
   encoded_alloc_text_len,
   encoded_alloc_text,
+  signature,
   fields = []
 }).
 
@@ -2822,6 +2893,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2844,6 +2916,7 @@
   stand_inst_db_type,
   stand_inst_db_name,
   stand_inst_db_id,
+  signature,
   fields = []
 }).
 
@@ -2873,6 +2946,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2921,6 +2995,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -2972,6 +3047,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -3019,6 +3095,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -3067,6 +3144,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -3111,6 +3189,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -3125,6 +3204,7 @@
   ref_sub_id,
   location_id,
   desk_id,
+  signature,
   fields = []
 }).
 
@@ -3143,6 +3223,7 @@
   desk_id,
   status_value,
   status_text,
+  signature,
   fields = []
 }).
 
@@ -3158,6 +3239,7 @@
   new_password,
   raw_data_length,
   raw_data,
+  signature,
   fields = []
 }).
 
@@ -3170,6 +3252,7 @@
   username,
   user_status,
   user_status_text,
+  signature,
   fields = []
 }).
 
@@ -3206,6 +3289,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
@@ -3234,6 +3318,7 @@
   text,
   encoded_text_len,
   encoded_text,
+  signature,
   fields = []
 }).
 
