@@ -88,7 +88,8 @@ parser_body() ->
   Body7 = generate_number_by_field(Fields),
   Body8 = generate_message_by_number(Messages),
   Body9 = generate_number_by_message(Messages),
-  iolist_to_binary([Header, Body1, Body2, Body3, Body4, Body5, Body6, Body7, Body8, Body9]).
+  Body10 = add_parse_num(),
+  iolist_to_binary([Header, Body1, Body2, Body3, Body4, Body5, Body6, Body7, Body8, Body9, Body10]).
 
 generate_decode_message([#message{name = Name, type = Type, code = Code}|Messages], Acc) ->
   Body = [
@@ -130,8 +131,8 @@ generate_decode_typed_field(Fields) ->
   [
   lists:map(fun
     (#field{name = "msg_type"}) -> ["decode_typed_field(msg_type, V) -> message_by_number(V);\n"];
-    (#field{name = Name, type = int}) -> ["decode_typed_field(",Name,", V) -> fix:parse_num(V);\n"];
-    (#field{name = Name, type = float}) -> ["decode_typed_field(",Name,", V) -> fix:parse_num(V)*1.0;\n"];
+    (#field{name = Name, type = int}) -> ["decode_typed_field(",Name,", V) -> parse_num(V);\n"];
+    (#field{name = Name, type = float}) -> ["decode_typed_field(",Name,", V) -> parse_num(V)*1.0;\n"];
     (#field{name = Name, type = bool}) -> ["decode_typed_field(",Name,", V) -> V == <<\"Y\">>;\n"];
     (#field{name = Name}) -> ["decode_typed_field(",Name,", V) -> V;\n"]
   end, Fields),
@@ -221,8 +222,8 @@ generate_field_decoders(Fields) ->
   ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, Indexes, Default) ->\n",
   "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
   "  Value = ", case Type of
-    int -> "fix:parse_num(RawValue)";
-    float -> "fix:parse_num(RawValue)";
+    int -> "parse_num(RawValue)";
+    float -> "parse_num(RawValue)";
     bool -> "RawValue == <<\"Y\">>";
     _ -> "RawValue"
   end, ",\n",
@@ -236,7 +237,7 @@ generate_field_decoders(Fields) ->
   Bodies2 = [
   ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, Indexes, Default) ->\n",
   "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
-  "  DataLength = fix:parse_num(RawValue),\n",
+  "  DataLength = parse_num(RawValue),\n",
   "  decode_data_field(Rest, DataLength, Record, Indexes, Default);\n\n"
   ]
   || #field{number = Number, raw_type = T} <- Fields, T == "LENGTH"],
@@ -259,6 +260,15 @@ generate_field_decoders(Fields) ->
   
   [Bodies1, Bodies2, Bodies3, Bodies4].
   
+
+add_parse_num() ->
+  "parse_num(Bin) -> parse_num_erl(Bin).\n"
+  "\n"
+  "parse_num_erl(Bin) -> parse_num(Bin, 0, 0).\n"
+  "parse_num(<<$., Bin/binary>>, Acc, 0) -> parse_num(Bin, Acc*1.0, 0.1);\n"
+  "parse_num(<<X, Bin/binary>>, Acc, 0) -> parse_num(Bin, Acc*10 + X - $0, 0);\n"
+  "parse_num(<<X, Bin/binary>>, Acc, Coeff) -> parse_num(Bin, Acc + (X - $0)*Coeff, Coeff*0.1);\n"
+  "parse_num(<<>>, Acc, _) -> Acc.\n\n".
   
 
 message_fields(FieldNames, Fields) ->
