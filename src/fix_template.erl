@@ -60,7 +60,8 @@ parse() ->
   {ok, Xml} = file:read_file(root() ++"/spec/FIX44.xml"),
   {ok, #parser{messages = Messages} = State, _} = erlsom:parse_sax(Xml, #parser{}, fun handler/2, []),
   Prepend = ["sender_comp_id","target_comp_id","msg_seq_num","sending_time"],
-  State#parser{messages = [Message#message{fields = Prepend ++ Fields, required = Prepend ++ Required} || 
+  Trailer = ["signature"],
+  State#parser{messages = [Message#message{fields = Prepend ++ Fields ++ Trailer, required = Prepend ++ Required} || 
   #message{fields = Fields, required = Required} = Message <- Messages]}.
 
 
