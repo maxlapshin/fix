@@ -162,28 +162,6 @@ bench1() ->
   
 -include_lib("eunit/include/eunit.hrl").
 
-parse_num_test() ->
-  ?assertEqual(123, parse_num(<<"123">>)),
-  ?assertEqual(0, parse_num(<<"">>)),
-  ?assertMatch(123.4, parse_num(<<"123.4">>)),
-  ?assertEqual(123.0, parse_num(<<"123.">>)),
-  ok.
-
-encode_test() ->
-  ?assertEqual(sample_fix(), iolist_to_binary(fix:encode(fix:decode_fields(sample_fix())))).
-
-decode_test() ->
-  ?assertMatch([{msg_type,market_data_snapshot_full_refresh}, {msg_seq_num,3}, 
-  {sending_time,<<"20120426-06:33:03.516">>}, {symbol,<<"URKA">>}, {md_req_id,<<"42">>}, 
-  {no_md_entries,2}, {md_entry_type,<<"0">>}, {md_entry_px,218.87}, {md_entry_size,20}, 
-  {md_entry_type,<<"1">>}, {md_entry_px,219.03}, {md_entry_size,140}], fix:decode_fields(sample_fix())).
-
-pack_test() ->
-  Out = fix:pack(market_data_request, [{sending_time,"20120502-13:08:35"}, {md_req_id,42},{subscription_request_type,1},{market_depth,0},{md_update_type,0},{no_md_entry_types,2},
-  {md_entry_type,0},{md_entry_type,1},{no_related_sym,1},{symbol,"URKA"},{cfi_code,"EXXXXX"},{security_exchange,"MICEX"}], 31, "SENDER", "TARGET"),  
-  Fix = <<"8=FIX.4.4|9=135|35=V|49=SENDER|56=TARGET|34=31|43=N|52=20120502-13:08:35|262=42|263=1|264=0|265=0|267=2|269=0|269=1|146=1|55=URKA|461=EXXXXX|207=MICEX|10=158|">>,
-
-  ?assertEqual(Fix, dump(iolist_to_binary(Out))).
 
   
   

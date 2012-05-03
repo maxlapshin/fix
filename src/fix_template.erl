@@ -146,6 +146,8 @@ generate_decode_typed_field(Fields) ->
     (#field{name = Name, type = int}) -> ["decode_typed_field(",Name,", V) -> parse_num(V);\n"];
     (#field{name = Name, type = float}) -> ["decode_typed_field(",Name,", V) -> parse_num(V)*1.0;\n"];
     (#field{name = Name, type = bool}) -> ["decode_typed_field(",Name,", V) -> V == <<\"Y\">>;\n"];
+    (#field{name = Name, type = choice, choices = Choices}) -> 
+      [["decode_typed_field(",Name,", <<\"",Value,"\">>) -> '",underscore(Desc),"';\n"] || {Value,Desc} <- Choices];
     (#field{name = Name}) -> ["decode_typed_field(",Name,", V) -> V;\n"]
   end, Fields),
   "decode_typed_field(_Key, V) -> V.\n\n"
@@ -158,6 +160,8 @@ generate_encode_typed_field(Fields) ->
     (#field{name = Name, type = int}) -> ["encode_typed_field(",Name,", V) when is_integer(V) -> list_to_binary(integer_to_list(V));\n"];
     (#field{name = Name, type = float}) -> ["encode_typed_field(",Name,", V) when is_float(V) -> iolist_to_binary(io_lib:format(\"~.3f\", [V*1.0]));\n"];
     (#field{name = Name, type = bool}) -> ["encode_typed_field(",Name,", true) -> <<\"Y\">>;\nencode_typed_field(",Name,",false) -> <<\"N\">>;\n"];
+    (#field{name = Name, type = choice, choices = Choices}) -> 
+      [["encode_typed_field(",Name,", '",underscore(Desc),"') -> <<\"",Value,"\">>;\n"] || {Value,Desc} <- Choices];
     (#field{}) -> []
   end, Fields),
   "encode_typed_field(_Key, V) when is_binary(V) -> V;\n"
@@ -183,7 +187,7 @@ generate_field_decoders(Fields) ->
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
   "  decode_fields(Rest, Record1, RecordName, Default);\n\n"]
-  || #field{number = Number, name = Name, raw_type = T, type = Type} <- Fields, T =/= "DATA" andalso T =/= "LENGTH"],
+  || #field{number = Number, name = Name, raw_type = T, type = Type} <- Fields, T =/= "DATA" andalso T =/= "LENGTH" andalso T =/= "CHAR"],
   
   Bodies2 = [
   ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, RecordName, Default) ->\n",
@@ -192,13 +196,24 @@ generate_field_decoders(Fields) ->
   "  decode_data_field(Rest, DataLength, Record, RecordName, Default);\n\n"
   ]
   || #field{number = Number, raw_type = T} <- Fields, T == "LENGTH"],
+
+  Bodies3 = [[
+  ["decode_fields(<<\"",Number,"=",Value,"\", 1, Message/binary>>, Record, RecordName, Default) ->\n",
+  "  Value = '",underscore(Desc),"',\n",
+  "  Record1 = case field_index(RecordName, ",Name,") of\n",
+  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
+  "    Index -> erlang:setelement(Index, Record, Value)\n",
+  "  end,\n",  
+  "  decode_fields(Message, Record1, RecordName, Default);\n\n"
+  ] || {Value,Desc} <- Choices]
+  || #field{number = Number, raw_type = T, name = Name, choices = Choices} <- Fields, T == "CHAR"],
   
-  Bodies3 = [
+  Bodies4 = [
   "decode_fields(<<>>, Record, _RecordName, Default) ->\n",
   "  erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).\n\n"
   ],
   
-  Bodies4_ = [
+  Bodies5_ = [
   ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, RecordName, Default) ->\n",
   "  <<Value:DataLength/binary, 1, Rest/binary>> = Message,\n",
   "  Record1 = case field_index(RecordName, ",Name,") of\n",
@@ -207,9 +222,9 @@ generate_field_decoders(Fields) ->
   "  end,",
   "  decode_fields(Rest, Record1, RecordName, Default)"]
   || #field{number = Number, name = Name, raw_type = T} <- Fields, T == "DATA"],
-  Bodies4 = [string:join(Bodies4_, ";\n\n"), ".\n\n"],
+  Bodies5 = [string:join(Bodies5_, ";\n\n"), ".\n\n"],
   
-  [Bodies1, Bodies2, Bodies3, Bodies4].
+  [Bodies1, Bodies2, Bodies3, Bodies4, Bodies5].
   
 
 add_parse_num() ->
@@ -238,6 +253,9 @@ write_messages_to_header(Messages, Fields, Path) ->
     "}).\n\n"]
   end, Messages)).
 
+underscore("BID") ->
+  "bid";
+  
 underscore(String) ->
   underscore(String, []).
 
@@ -341,7 +359,6 @@ handler({endElement, _, "field", _}, #parser{state = messages} = State) ->
 handler({startElement, _, "group", _, Attributes}, #parser{state = messages} = State) ->
   {attribute, "name", _, _, Code} = lists:keyfind("name", 2, Attributes),
   Counter = "no_" ++ Name = underscore(Code),
-  ?D({skip_group,Name}),
   #group{name = Name, counter = Counter, stack = State};
 
 
@@ -436,6 +453,7 @@ handler({startElement, _, "field", _, Attributes}, #parser{state = fields} = Sta
     "QTY" -> int;
     "NUMINGROUP" -> int;
     "BOOLEAN" -> bool;
+    "CHAR" -> choice;
     _ -> string
     % "AMT" -> amt
   end,
@@ -471,9 +489,12 @@ handler(_Event, State) ->
 -include_lib("eunit/include/eunit.hrl").
 
 underscore_test() ->
+  ?assertEqual("id", underscore("ID")),
+  ?assertEqual("bid", underscore("BID")),
   ?assertEqual("logout", underscore("Logout")),
   ?assertEqual("logout", underscore("logout")),
   ?assertEqual("logout", underscore("LOGOUT")),
+  ?assertEqual("curve", underscore("CURVE")),
   ?assertEqual("test_request", underscore("TestRequest")),
   ?assertEqual("allocation_instruction_ack", underscore("AllocationInstructionAck")),
   ?assertEqual("ioi", underscore("IOI")),
@@ -487,6 +508,7 @@ underscore_test() ->
   ?assertEqual("out_main_cntry_u_index", underscore("OutMainCntryUIndex")),
   ?assertEqual("alt_md_source_id", underscore("AltMDSourceID")),
   ?assertEqual("closing_price", underscore("CLOSING_PRICE")),
+  ?assertEqual("snapshot_plus_updates", underscore("SNAPSHOT_PLUS_UPDATES")),
   % ?assertEqual("", underscore("")),
   ok.
 
