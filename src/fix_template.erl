@@ -34,6 +34,7 @@
   code,
   number,
   type,
+  raw_type,
   choices = []
 }).
 
@@ -384,7 +385,7 @@ handler({startElement, _, "field", _, Attributes}, #parser{state = fields} = Sta
     _ -> string
     % "AMT" -> amt
   end,
-  State#parser{field = #field{name = Name, code = Code, type = Type, number = Number}};
+  State#parser{field = #field{name = Name, code = Code, type = Type, raw_type = RawType, number = Number}};
 
 handler({startElement, _, "value", _, Attributes}, #parser{state = fields, field = #field{choices = Choices} = Field} = State) ->
   {attribute, "description", _, _, Desc} = lists:keyfind("description", 2, Attributes),
