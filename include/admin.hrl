@@ -76,12 +76,11 @@
   raw_data,
   reset_seq_num_flag,
   next_expected_msg_seq_num,
-  ref_msg_type,
-  msg_direction,
   test_message_indicator,
   username,
   password,
   signature,
+  msg_types = [],
   fields = []
 }).
 
