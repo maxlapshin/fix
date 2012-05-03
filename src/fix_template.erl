@@ -18,7 +18,8 @@
   admin = false,
   fields = [],
   required = [],
-  components = []
+  components = [],
+  groups = []
 }).
 
 -record(component, {
@@ -38,6 +39,13 @@
   choices = []
 }).
 
+-record(group, {
+  counter,
+  name,
+  fields = [],
+  stack
+}).
+
 -record(parser, {
   state,
   header = #header{},
@@ -47,7 +55,8 @@
   fields = [],
   component,
   inline = false,
-  components = []
+  components = [],
+  groups = []
 }).
 
 
@@ -94,14 +103,14 @@ parser_body() ->
 generate_decode_message(Messages, Fields) ->
   Bodies1 = [
   ["decode_message(<<\"35=",Type,"\",1,Message/binary>>) -> % ", Code, "\n",
-  "  decode_fields", "(Message, #",Name,"{}, ",Name,", ",integer_to_list(length(message_fields(MsgFields, Fields)) + 2),")"]
-  || #message{name = Name, type = Type, code = Code, fields = MsgFields} <- Messages],
+  "  decode_fields", "(Message, #",Name,"{}, ",Name,", ",integer_to_list(default_field_offset(Msg, Fields)),")"]
+  || #message{name = Name, type = Type, code = Code} = Msg <- Messages],
   
   Bodies2_ = [begin
-    UsedFields = message_fields(MsgFields, Fields),
+    UsedFields = message_fields(Msg, Fields),
     Indexes = lists:zip(UsedFields, lists:seq(2, 1+length(UsedFields))),
-    [["field_index(",FieldName,", ",RecordName,") -> ",integer_to_list(Index),";\n"] || {FieldName,Index} <- Indexes]
-  end|| #message{fields = MsgFields, name = RecordName} <- Messages],
+    [["field_index(",RecordName,", ",FieldName,") -> ",integer_to_list(Index),";\n"] || {FieldName,Index} <- Indexes]
+  end|| #message{name = RecordName} = Msg <- Messages],
   Bodies2 = [Bodies2_, "field_index(_,_) -> undefined.\n\n"],
   
   [string:join(Bodies1, ";\n\n"), ".\n\n", Bodies2].
@@ -169,7 +178,7 @@ generate_field_decoders(Fields) ->
     bool -> "RawValue == <<\"Y\">>";
     _ -> "RawValue"
   end, ",\n",
-  "  Record1 = case field_index(",Name,", RecordName) of\n",
+  "  Record1 = case field_index(RecordName, ",Name,") of\n",
   "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
@@ -192,7 +201,7 @@ generate_field_decoders(Fields) ->
   Bodies4_ = [
   ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, RecordName, Default) ->\n",
   "  <<Value:DataLength/binary, 1, Rest/binary>> = Message,\n",
-  "  Record1 = case field_index(",Name,", RecordName) of\n",
+  "  Record1 = case field_index(RecordName, ",Name,") of\n",
   "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
   "    Index -> erlang:setelement(Index, Record, Value)\n",
   "  end,",
@@ -213,14 +222,18 @@ add_parse_num() ->
   "parse_num(<<>>, Acc, _) -> Acc.\n\n".
   
 
-message_fields(FieldNames, Fields) ->
+message_fields(#message{fields = FieldNames}, Fields) ->
   [Name || #field{raw_type = T, name = Name} <- [lists:keyfind(F, #field.name, Fields) || F <- FieldNames], T =/= "LENGTH"].
 
+default_field_offset(#message{groups = Groups} = Msg, Fields) ->
+  length(message_fields(Msg, Fields)) + length(Groups) + 2. 
+
 write_messages_to_header(Messages, Fields, Path) ->
-  file:write_file(Path, lists:map(fun(#message{name = Name, fields = FieldNames}) ->
-    Names = message_fields(FieldNames, Fields),
+  file:write_file(Path, lists:map(fun(#message{name = Name, groups = Groups} = Msg) ->
+    Names = message_fields(Msg, Fields),
     ["-record(", Name, ", {\n",
       [["  ", N,",\n"] || N <- Names],
+      [["  ", N," = [],\n"] || #group{name = N} <- Groups],
     "  fields = []\n",
     "}).\n\n"]
   end, Messages)).
@@ -319,6 +332,29 @@ handler({startElement, _, "field", _, _} = F, #parser{state = messages, message 
 
 handler({endElement, _, "field", _}, #parser{state = messages} = State) ->
   State;
+
+handler({startElement, _, "group", _, Attributes}, #parser{state = messages} = State) ->
+  {attribute, "name", _, _, Code} = lists:keyfind("name", 2, Attributes),
+  Counter = "no_" ++ Name = underscore(Code),
+  ?D({skip_group,Name}),
+  #group{name = Name, counter = Counter, stack = State};
+
+
+handler({startElement, _, "field", _, _} = F, #group{fields = Fields} = Group) ->
+  {Name, _Mandatory} = parse_field(F),
+  % Required1 = case Mandatory of
+  %   true -> Required++[Name];
+  %   false -> Required
+  % end,
+  Group#group{fields = Fields++[Name]};
+
+handler({endElement, _, "field", _}, #group{} = State) ->
+  State;
+
+  
+handler({endElement, _, "group", _}, #group{stack = #parser{groups = AllGroups, message = #message{groups = Groups} = Message} = State} = Group) ->
+  Group1 = Group#group{stack = undefined},
+  State#parser{message = Message#message{groups = Groups ++ [Group1]}, groups = AllGroups ++ [Group1]};
 
 handler({startElement, _, "component", _, Attributes}, #parser{state = messages, message = #message{components = Components} = Message} = State) ->
   {attribute, "required", _, _, Required} = lists:keyfind("required", 2, Attributes),

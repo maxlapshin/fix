@@ -144,8 +144,8 @@ handle_messages([Message|Messages], #fix_session{consumer = Consumer} = Session)
 handle_messages([], #fix_session{} = Session) ->
   {noreply, Session}.
 
-dump(#market_data_snapshot_full_refresh{fields = Fields, md_entry_type = Type, md_entry_px = Price, md_entry_size = Size}) ->
-  ?D({market_data, if Type == <<"1">> -> ask; true -> bid end, proplists:get_value(symbol, Fields), Price, Size});
+% dump(#market_data_snapshot_full_refresh{fields = Fields, md_entry_type = Type, md_entry_px = Price, md_entry_size = Size}) ->
+%   ?D({market_data, if Type == <<"1">> -> ask; true -> bid end, proplists:get_value(symbol, Fields), Price, Size});
 
 dump(#logon{}) ->
   ?D(logged_in);
