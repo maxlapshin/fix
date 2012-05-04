@@ -2,4 +2,4 @@ all:
 	./rebar compile
 
 test:
-	./rebar test
+	./rebar eunit

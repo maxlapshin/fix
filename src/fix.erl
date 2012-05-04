@@ -118,7 +118,8 @@ profile() ->
   fprof:start(),
   T1 = erlang:now(),
   fprof:apply(fun() ->
-    [fix_parser:decode_message(FIX) || _N <- Nums]
+    % [fix_parser:decode_message(FIX) || _N <- Nums]
+    [decode(fix_tests:sample_md()) || _N <- Nums]
   end, []),
   T2 = erlang:now(),
   fprof:profile(),
@@ -159,6 +160,16 @@ bench1() ->
     {Tag, T1, T2, T3}
   end || {Tag, Bin, F} <- Bins],
   ?D(Results).
+ 
+bench2() ->
+  FIX = fix_tests:sample_md(),
+  Num = 1000,
+  Nums = lists:seq(1, Num),
+  T1 = erlang:now(),
+  [decode(FIX) || _N <- Nums],
+  T2 = erlang:now(),
+  ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
+  ok.
   
 -include_lib("eunit/include/eunit.hrl").
 

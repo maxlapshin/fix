@@ -253,6 +253,59 @@ write_messages_to_header(Messages, Fields, Path) ->
     "}).\n\n"]
   end, Messages)).
 
+
+build_table([Field|Fields], Acc, Predicate) ->
+  case Predicate(Field) of
+    true -> build_table(Fields, <<Acc/bitstring, 1:1>>, Predicate);
+    false -> build_table(Fields, <<Acc/bitstring, 0:1>>, Predicate)
+  end;
+
+build_table([], Acc, _Predicate) ->
+  Padding = 8 - (erlang:bit_size(Acc) rem 8),
+  Nums = [[io_lib:format("0x~2.16.0B", [N]), ","] || N <- binary_to_list(<<Acc/bitstring, 0:Padding>>)],
+  Rows = [[Row, "\n"] || Row <- in_groups_of(Nums, 20)],
+  Rows.
+
+in_groups_of(Items, Count) ->
+  in_groups_of(Items, [], Count, []).
+
+in_groups_of([Item|Items], Group, Count, Acc) when length(Group) < Count ->
+  in_groups_of(Items, [Item|Group], Count, Acc);
+
+in_groups_of(Items, Group, Count, Acc) when length(Group) >= Count ->
+  in_groups_of(Items, [], Count, [lists:reverse(Group)|Acc]);
+
+in_groups_of([], [], _Count, Acc) ->
+  lists:reverse(Acc);
+
+in_groups_of([], Group, _Count, Acc) ->
+  lists:reverse([lists:reverse(Group)|Acc]).
+
+
+
+generate_headers() ->
+  #parser{fields = Fields} = parse(),
+  
+  Table1 = ["unsigned char INT_CODES[] = {\n",
+  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == int orelse Type == float end),
+  "0};\n\n"],
+  
+  Table2 = ["unsigned char BOOL_CODES[] = {\n",
+  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == bool end),
+  "0};\n\n"],
+  
+  Table3 = ["unsigned char LENGTH_CODES[] = {\n",
+  build_table(Fields, <<0:1>>, fun(#field{raw_type = RawType}) -> RawType == "LENGTH" end),
+  "0};\n\n"],
+
+  Table4 = ["unsigned char CHOICE_CODES[] = {\n",
+  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == choice end),
+  "0};\n\n"],
+  
+  file:write_file(root() ++ "/c_src/splitter.h", [Table1, Table2, Table3, Table4]).
+
+
+
 underscore("BID") ->
   "bid";
   

@@ -9,6 +9,7 @@
 
 -record(fix_session, {
   socket,
+  md_req_id = 1,
   host,
   port,
   target,
@@ -48,12 +49,15 @@ logon(Pid) ->
   ok.
 
 subscribe(Pid, Symbol, Exchange) ->
-  Opts = [{md_req_id, 42}, {subscription_request_type, 1}, {market_depth, 0}, {md_update_type, 0},
-    {no_md_entry_types,2},{md_entry_type,0},{md_entry_type,1},{no_related_sym,1},
+  Opts = [{md_req_id, next_md_req_id(Pid)}, {subscription_request_type, 1}, {market_depth, 0}, {md_update_type, 0},
+    {no_md_entry_types,2},{md_entry_type,bid},{md_entry_type,offer},{no_related_sym,1},
     {symbol, Symbol},{cfi_code, "EXXXXX"},{security_exchange, Exchange}],
   gen_server:call(Pid, {msg, market_data_request, Opts}),
   ok.
 
+
+next_md_req_id(Pid) ->
+  gen_server:call(Pid, next_md_req_id).
 
 status(Pid) ->
   gen_server:call(Pid, status).
@@ -79,6 +83,9 @@ handle_info({'DOWN', _, _, Consumer, _}, #fix_session{consumer = Consumer} = Ses
   ?D({session_exit}),
   {stop, normal, send(logout, [], Session)};
 
+handle_info(stop, Session) ->
+  {stop, normal, Session};
+
 handle_info({tcp, Socket, Data}, #fix_session{buffer = Buffer} = Session) ->
   Bin = case Buffer of
     <<>> -> Data;
@@ -102,6 +109,9 @@ handle_call({get_field, Key}, _From, Session) ->
 handle_call({set_field, Key, Value}, _From, Session) ->
   {reply, ok, set(Session, Key, Value)};
 
+handle_call(next_md_req_id, _From, #fix_session{md_req_id = MdReqId} = Session) ->
+  {reply, MdReqId, Session#fix_session{md_req_id = MdReqId + 1}};
+
 handle_call(status, _From, #fix_session{} = Session) ->
   {reply, [], Session};
 
@@ -110,8 +120,9 @@ handle_call({msg, MessageType, Body}, _From, #fix_session{} = Session) ->
 
 
 send(MessageType, Body, #fix_session{seq = Seq, sender = Sender, target = Target, socket = Socket} = Session) ->
-  ?D({pack, MessageType, Body, Seq, Sender, Target}),
+  if MessageType =/= heartbeat -> ?D({pack, MessageType, Body, Seq, Sender, Target}); true -> ok end,
   Bin = fix:pack(MessageType, Body, Seq, Sender, Target),
+  if MessageType =/= heartbeat -> ?D({send, fix:dump(Bin)}); true -> ok end,
   gen_tcp:send(Socket, Bin),
   Session#fix_session{seq = Seq + 1}.
 
@@ -124,6 +135,7 @@ decode_messages(Bin) ->
 decode_messages(Bin, Acc) ->
   case fix:decode(Bin) of
     {ok, Message, Rest} ->
+      ?D({in, fix:dump(Bin)}),
       decode_messages(Rest, [Message|Acc]);
     {more, _} ->
       {lists:reverse(Acc), Bin};
