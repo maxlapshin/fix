@@ -62,7 +62,7 @@
 
 root() ->
   case code:lib_dir(fix) of
-    {error, Error} -> erlang:error(Error);
+    {error, _Error} -> filename:dirname(code:which(?MODULE)) ++ "/../";
     Root_ when is_list(Root_) -> Root_
   end.
 
@@ -299,10 +299,21 @@ generate_headers() ->
   "0};\n\n"],
 
   Table4 = ["unsigned char CHOICE_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == choice end),
+  build_table(Fields, <<0:1>>, fun(#field{choices = Choices}) -> length(Choices) > 0 end),
   "0};\n\n"],
   
-  file:write_file(root() ++ "/c_src/splitter.h", [Table1, Table2, Table3, Table4]).
+  Table5 = ["const char *FIELD_NAMES[] = {\n\"undefined\",\n",
+  [["\"",Name,"\",\n"] || #field{name = Name} <- Fields],
+  "\"undefined\"};\n\n"],
+  
+  Table6 = ["ERL_NIF_TERM FIELD_ATOMS[", integer_to_list(length(Fields) + 1),"];\n\n"],
+  
+  ChoiceFields = lists:flatten([ [{Number, Value, Desc} || {Value,Desc} <- Choices] || #field{number = Number, choices = Choices} <- Fields, length(Choices) > 0]),
+  Table7 = ["struct ValueDesc CHOICE_VALUES[] = {\n",
+    [ ["{",Number,", \"",Value,"\", \"", underscore(Desc),"\"},\n"] || {Number, Value, Desc} <- ChoiceFields],
+  "{0, 0, 0}\n};\n\n"],
+  
+  file:write_file(root() ++ "/c_src/splitter.h", [Table1, Table2, Table3, Table4, Table5, Table6, Table7]).
 
 
 

@@ -27,3 +27,10 @@ decode_fields_erl(Message) ->
 
 bench() ->
   ok.
+
+
+-include_lib("eunit/include/eunit.hrl").
+
+
+split_1_test() ->
+  ?assertEqual([{msg_type,heartbeat}], split(<<"35=0",1>>)).
