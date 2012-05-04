@@ -34,3 +34,13 @@ bench() ->
 
 split_1_test() ->
   ?assertEqual([{msg_type,heartbeat}], split(<<"35=0",1>>)).
+
+
+split_2_test() ->
+  List = split(fix_tests:sample_md()),
+  ?assertMatch([{begin_string, <<"FIX.4.4">>},{body_length,1084},{msg_type,marketdatasnapshotfullrefresh},{msg_seq_num,2}|_], List).
+
+split_3_test() ->
+  ?assertMatch([{begin_string,<<"FIX.4.4">>},{body_length,22},{msg_type,heartbeat},{signature,<<"A",1,"89=234">>},{check_sum,<<"999">>}], 
+  split(<<"8=FIX.4.4",1,"9=22",1,"35=0",1,"93=8",1,"89=A",1,"89=234",1,"10=999",1>>)).
+
