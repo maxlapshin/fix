@@ -90,7 +90,7 @@ parser_body() ->
   "-export([decode_message/1, field_by_number/1, number_by_field/1, decode_typed_field/2, encode_typed_field/2, message_by_number/1, number_by_message/1]).\n\n"],
   Body1 = generate_decode_message(Messages, Fields),
   Body2 = [],
-  Body3 = generate_field_decoders(Fields),
+  Body3 = [],
   Body4 = generate_field_by_number(Fields),
   Body5 = generate_decode_typed_field(Fields),
   Body6 = generate_encode_typed_field(Fields),
@@ -102,9 +102,9 @@ parser_body() ->
 
 generate_decode_message(Messages, Fields) ->
   Bodies1 = [
-  ["decode_message(<<\"35=",Type,"\",1,Message/binary>>) -> % ", Code, "\n",
-  "  decode_fields", "(Message, #",Name,"{}, ",Name,", ",integer_to_list(default_field_offset(Msg, Fields)),")"]
-  || #message{name = Name, type = Type, code = Code} = Msg <- Messages],
+  ["decode_message([{msg_type,",Name,"}|Message]) -> % ", Code, "\n",
+  "  decode_fields(Message, #",Name,"{}, ",Name,", ",integer_to_list(default_field_offset(Msg, Fields)),")"]
+  || #message{name = Name, code = Code} = Msg <- Messages],
   
   Bodies2_ = [begin
     UsedFields = message_fields(Msg, Fields),
@@ -113,12 +113,23 @@ generate_decode_message(Messages, Fields) ->
   end|| #message{name = RecordName} = Msg <- Messages],
   Bodies2 = [Bodies2_, "field_index(_,_) -> undefined.\n\n"],
   
-  [string:join(Bodies1, ";\n\n"), ".\n\n", Bodies2].
+  Bodies3 = [
+  "decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->\n"
+  "  Record1 = case field_index(RecordName, Code) of\n"
+  "    undefined -> erlang:setelement(Default, Record, [{Code,Value}|erlang:element(Default,Record)]);\n"
+  "    Index -> erlang:setelement(Index, Record, Value)\n"
+  "  end,\n"
+  "  decode_fields(Message, Record1, RecordName, Default);\n\n"
+  "decode_fields([], Record, _RecordName, Default) ->\n"
+  "  erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).\n\n"
+  ],
+  
+  [string:join(Bodies1, ";\n\n"), ".\n\n", Bodies2, Bodies3].
 
 generate_field_by_number(Fields) ->
   [
   [["field_by_number(<<\"",Number,"\">>) -> ",Name,";\n"] || #field{name = Name, number = Number} <- Fields],
-  "field_by_number(Key) -> Key.\n\n"
+  "field_by_number(_Key) -> undefined.\n\n"
   ].
 
 generate_number_by_field(Fields) ->
@@ -171,60 +182,6 @@ generate_encode_typed_field(Fields) ->
   "\n"
   ].
 
-
-generate_field_decoders(Fields) ->
-  Bodies1 = [
-  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, RecordName, Default) ->\n",
-  "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
-  "  Value = ", case Type of
-    int -> "parse_num(RawValue)";
-    float -> "parse_num(RawValue)";
-    bool -> "RawValue == <<\"Y\">>";
-    _ -> "RawValue"
-  end, ",\n",
-  "  Record1 = case field_index(RecordName, ",Name,") of\n",
-  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
-  "    Index -> erlang:setelement(Index, Record, Value)\n",
-  "  end,",
-  "  decode_fields(Rest, Record1, RecordName, Default);\n\n"]
-  || #field{number = Number, name = Name, raw_type = T, type = Type} <- Fields, T =/= "DATA" andalso T =/= "LENGTH" andalso T =/= "CHAR"],
-  
-  Bodies2 = [
-  ["decode_fields(<<\"",Number,"=\", Message/binary>>, Record, RecordName, Default) ->\n",
-  "  [RawValue, Rest] = binary:split(Message, <<1>>),\n",
-  "  DataLength = parse_num(RawValue),\n",
-  "  decode_data_field(Rest, DataLength, Record, RecordName, Default);\n\n"
-  ]
-  || #field{number = Number, raw_type = T} <- Fields, T == "LENGTH"],
-
-  Bodies3 = [[
-  ["decode_fields(<<\"",Number,"=",Value,"\", 1, Message/binary>>, Record, RecordName, Default) ->\n",
-  "  Value = '",underscore(Desc),"',\n",
-  "  Record1 = case field_index(RecordName, ",Name,") of\n",
-  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
-  "    Index -> erlang:setelement(Index, Record, Value)\n",
-  "  end,\n",  
-  "  decode_fields(Message, Record1, RecordName, Default);\n\n"
-  ] || {Value,Desc} <- Choices]
-  || #field{number = Number, raw_type = T, name = Name, choices = Choices} <- Fields, T == "CHAR"],
-  
-  Bodies4 = [
-  "decode_fields(<<>>, Record, _RecordName, Default) ->\n",
-  "  erlang:setelement(Default, Record, lists:reverse(erlang:element(Default,Record))).\n\n"
-  ],
-  
-  Bodies5_ = [
-  ["decode_data_field(<<\"",Number,"=\", Message/binary>>, DataLength, Record, RecordName, Default) ->\n",
-  "  <<Value:DataLength/binary, 1, Rest/binary>> = Message,\n",
-  "  Record1 = case field_index(RecordName, ",Name,") of\n",
-  "    undefined -> erlang:setelement(Default, Record, [{",Name,",Value}|erlang:element(Default,Record)]);\n",
-  "    Index -> erlang:setelement(Index, Record, Value)\n",
-  "  end,",
-  "  decode_fields(Rest, Record1, RecordName, Default)"]
-  || #field{number = Number, name = Name, raw_type = T} <- Fields, T == "DATA"],
-  Bodies5 = [string:join(Bodies5_, ";\n\n"), ".\n\n"],
-  
-  [Bodies1, Bodies2, Bodies3, Bodies4, Bodies5].
   
 
 add_parse_num() ->
@@ -253,14 +210,21 @@ write_messages_to_header(Messages, Fields, Path) ->
     "}).\n\n"]
   end, Messages)).
 
+build_table(Fields, Predicate) ->
+  build_table(<<>>, Fields, [integer_to_list(N) || N <- lists:seq(0,length(Fields)+10)], Predicate).
 
-build_table([Field|Fields], Acc, Predicate) ->
-  case Predicate(Field) of
-    true -> build_table(Fields, <<Acc/bitstring, 1:1>>, Predicate);
-    false -> build_table(Fields, <<Acc/bitstring, 0:1>>, Predicate)
-  end;
+build_table(Acc, Fields, [Num|Nums], Predicate) ->
+  Val = case lists:keyfind(Num, #field.number, Fields) of
+    false -> 0;
+    Field ->
+      case Predicate(Field) of
+        true -> 1;
+        false -> 0
+      end
+  end,
+  build_table(<<Acc/bitstring, Val:1>>, Fields, Nums, Predicate);
 
-build_table([], Acc, _Predicate) ->
+build_table(Acc, _Fields, [], _Predicate) ->
   Padding = 8 - (erlang:bit_size(Acc) rem 8),
   Nums = [[io_lib:format("0x~2.16.0B", [N]), ","] || N <- binary_to_list(<<Acc/bitstring, 0:Padding>>)],
   Rows = [[Row, "\n"] || Row <- in_groups_of(Nums, 20)],
@@ -284,36 +248,45 @@ in_groups_of([], Group, _Count, Acc) ->
 
 
 generate_headers() ->
-  #parser{fields = Fields} = parse(),
+  #parser{fields = Fields, messages = Messages} = parse(),
   
   Table1 = ["unsigned char INT_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == int orelse Type == float end),
+  build_table(Fields, fun(#field{type = Type}) -> Type == int orelse Type == float end),
   "0};\n\n"],
   
   Table2 = ["unsigned char BOOL_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{type = Type}) -> Type == bool end),
+  build_table(Fields, fun(#field{type = Type}) -> Type == bool end),
   "0};\n\n"],
   
   Table3 = ["unsigned char LENGTH_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{raw_type = RawType, name = Name}) -> RawType == "LENGTH" andalso Name =/= "body_length" end),
+  build_table(Fields, fun(#field{raw_type = RawType, name = Name}) -> RawType == "LENGTH" andalso Name =/= "body_length" end),
   "0};\n\n"],
 
   Table4 = ["unsigned char CHOICE_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{choices = Choices}) -> length(Choices) > 0 end),
+  build_table(Fields, fun(#field{choices = Choices}) -> length(Choices) > 0 end),
   "0};\n\n"],
   
+  MaxNumber = lists:max([list_to_integer(N) || #field{number = N} <- Fields]),
+  
   Table5 = ["const char *FIELD_NAMES[] = {\n\"undefined\",\n",
-  [["\"",Name,"\",\n"] || #field{name = Name} <- Fields],
+  [case lists:keyfind(integer_to_list(Num), #field.number, Fields) of
+    false -> "\"undefined\",\n";
+    #field{name = Name, number = N} -> ["\"",Name,"\", // ",N," \n"]
+  end || Num <- lists:seq(1, MaxNumber)],
   "\"undefined\"};\n\n"],
   
-  Table6 = ["ERL_NIF_TERM FIELD_ATOMS[", integer_to_list(length(Fields) + 1),"];\n\n"],
+  Table6 = ["ERL_NIF_TERM FIELD_ATOMS[", integer_to_list(MaxNumber + 5),"];\n\n"],
   
-  ChoiceFields = lists:flatten([ [{Number, Value, Desc} || {Value,Desc} <- Choices] || #field{number = Number, choices = Choices} <- Fields, length(Choices) > 0]),
+  ChoiceFields1 = [{Number, Choices} || #field{number = Number, choices = Choices} <- Fields, length(Choices) > 0],
+  ChoiceFields2 = lists:keyreplace("35", 1, ChoiceFields1, {"35", [{Type,Name} || #message{type = Type, name = Name} <- Messages]}),
+  ChoiceFields = lists:flatten([[{Number, Value, Desc} || {Value,Desc} <- Choices] || {Number, Choices} <- ChoiceFields2]),
   Table7 = ["struct ValueDesc CHOICE_VALUES[] = {\n",
     [ ["{",Number,", \"",Value,"\", \"", underscore(Desc),"\"},\n"] || {Number, Value, Desc} <- ChoiceFields],
   "{0, 0, 0}\n};\n\n"],
   
-  file:write_file(root() ++ "/c_src/splitter.h", [Table1, Table2, Table3, Table4, Table5, Table6, Table7]).
+  Table8 = ["#define MAX_FIELD_NUMBER ", integer_to_list(MaxNumber), "\n\n"],
+  
+  file:write_file(root() ++ "/c_src/splitter.h", [Table1, Table2, Table3, Table4, Table5, Table6, Table7, Table8]).
 
 
 

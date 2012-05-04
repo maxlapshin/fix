@@ -15,13 +15,13 @@ parse_num_test() ->
   ok.
 
 encode_test() ->
-  ?assertEqual(fix:sample_fix(), iolist_to_binary(fix:encode(fix:decode_fields(fix:sample_fix())))).
+  ?assertEqual(fix:sample_fix(), iolist_to_binary(fix:encode(fix_splitter:split(fix:sample_fix())))).
 
 decode_test() ->
   ?assertMatch([{msg_type,market_data_snapshot_full_refresh}, {msg_seq_num,3}, 
   {sending_time,<<"20120426-06:33:03.516">>}, {symbol,<<"URKA">>}, {md_req_id,<<"42">>}, 
   {no_md_entries,2}, {md_entry_type,bid}, {md_entry_px,218.87}, {md_entry_size,20}, 
-  {md_entry_type,offer}, {md_entry_px,219.03}, {md_entry_size,140}], fix:decode_fields(fix:sample_fix())).
+  {md_entry_type,offer}, {md_entry_px,219.03}, {md_entry_size,140}], fix_splitter:split(fix:sample_fix())).
 
 pack_test() ->
   Out = fix:pack(market_data_request, [{sending_time,"20120502-13:08:35"}, {md_req_id,42},{subscription_request_type,1},{market_depth,0},{md_update_type,0},{no_md_entry_types,2},
@@ -42,11 +42,11 @@ fix_decode_2_test() ->
     sender_comp_id = <<"SENDER">>,
     target_comp_id = <<"TARGET">>,
     msg_seq_num = 31,
-    md_req_id = <<"42">>,
-    sending_time = <<"20120502-13:08:35">>,
-    subscription_request_type = snapshotupdate,
-    market_depth = 0,
-    md_update_type = 0,
+    % md_req_id = <<"42">>,
+    % sending_time = <<"20120502-13:08:35">>,
+    % subscription_request_type = snapshotupdate,
+    % market_depth = 0,
+    % md_update_type = 0,
     fields = [
       {poss_dup_flag,false},
       {no_md_entry_types,2},

@@ -1,997 +1,1004 @@
 unsigned char INT_CODES[] = {
-0x03,0x42,0x80,0x01,0xEA,0x0C,0x04,0x00,0x18,0x62,0xBD,0xA5,0x36,0x16,0x00,0x10,0x1F,0x10,0x43,0x88,
-0x00,0x90,0x00,0x15,0x4A,0xF0,0xD3,0x00,0x41,0x02,0x30,0x60,0x13,0x6C,0x00,0x04,0x9F,0xB6,0x00,0x65,
-0x48,0xF8,0xE0,0xAA,0xAA,0xAB,0x50,0xAE,0xC1,0xCD,0x01,0x0F,0x2F,0xFC,0x11,0x10,0x39,0x29,0x01,0x10,
-0x04,0x24,0x00,0x48,0x0C,0x80,0x19,0xC0,0x1A,0x5F,0xDD,0x03,0x39,0x00,0x00,0x04,0x20,0x90,0xCC,0x1A,
-0x1E,0x70,0xBD,0xB9,0x07,0x7C,0xA9,0x8B,0x96,0x08,0xF7,0xFC,0x01,0x3F,0x24,0x02,0x9E,0xB2,0xB2,0xAF,
-0xFF,0x7C,0x81,0xE4,0xFF,0xF8,0xBE,0x7E,0x98,0x89,0x88,0xCE,0x0B,0x18,0x08,0x54,0x0F,0xC7,0x4D,0x00,
+0x03,0x42,0x80,0x01,0xEA,0x0C,0x04,0x00,0x18,0x62,0xBD,0xA5,0x33,0x0B,0x00,0x08,0x0F,0x88,0x21,0xC4,
+0x00,0x48,0x00,0x0A,0xA5,0x78,0x69,0x80,0x20,0x81,0x18,0x30,0x08,0xDB,0x00,0x01,0x27,0xED,0x80,0x19,
+0x52,0x3E,0x38,0x2A,0xAA,0xAA,0xD4,0x2B,0xB0,0x73,0x40,0x43,0xCB,0xFF,0x04,0x44,0x0E,0x4A,0x40,0x44,
+0x01,0x09,0x00,0x12,0x03,0x20,0x06,0x70,0x06,0x97,0xF7,0x40,0xCE,0x40,0x00,0x01,0x08,0x24,0x33,0x06,
+0x87,0x9C,0x2F,0x6E,0x41,0xDF,0x2A,0x62,0xE5,0x82,0x3D,0xFF,0x00,0x4F,0xC9,0x00,0xA7,0xAC,0xAC,0xAB,
+0xFF,0xAF,0x90,0x3C,0x9F,0xFF,0x17,0xCF,0xD3,0x11,0x31,0x19,0xC1,0x63,0x01,0x0A,0x81,0xF8,0xE9,0xA0,
+0x00,
 0};
 
 unsigned char BOOL_CODES[] = {
-0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0xC0,0xA0,0x40,0x08,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
-0x13,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x84,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x20,
-0x00,0x80,0x00,0x00,0x00,0x00,0x00,0x20,0x00,0x06,0x00,0x00,0x00,0x00,0x80,0x00,0x00,0x00,0x00,0x10,
-0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x20,0x00,0x04,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x60,0x50,0x20,0x04,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,0x00,0x00,0x00,0x00,0x20,0x20,0x00,0x00,0x00,0x00,0x00,0x00,
+0x04,0xC0,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x21,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,
+0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x01,0x80,0x00,0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x04,
+0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x80,0x00,0x00,0x00,0x00,0x00,
+0x00,
 0};
 
 unsigned char LENGTH_CODES[] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x25,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x2A,0xAA,0xA0,0x00,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x90,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x0A,0xAA,0xA8,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x24,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,
 0};
 
 unsigned char CHOICE_CODES[] = {
-0x0C,0x04,0x2E,0x4C,0x11,0x91,0x02,0x15,0x41,0x04,0x41,0x82,0x67,0x00,0xC0,0xA2,0x40,0x28,0x04,0x11,
-0x2E,0x80,0x00,0x00,0x08,0xB1,0x81,0x28,0x00,0xA0,0x00,0x00,0x45,0x10,0xB5,0x18,0x61,0xB4,0x00,0x01,
-0x5F,0x08,0xE0,0x00,0x00,0x02,0x19,0xA1,0x20,0x85,0x01,0x4A,0xC4,0x5D,0x80,0x84,0x20,0x23,0x20,0x13,
-0x24,0x25,0x00,0xC0,0x94,0x83,0xE1,0x06,0xDA,0x06,0x45,0x9D,0x19,0x1C,0x00,0x00,0x00,0x00,0x80,0x68,
-0x00,0x90,0xA1,0xA0,0x00,0x00,0xA8,0x04,0xD2,0x08,0xF3,0x40,0x02,0x5E,0x00,0x00,0x9C,0x20,0x62,0xA8,
-0x42,0x18,0x81,0xC0,0xF7,0xD8,0xF6,0x02,0x08,0x80,0x00,0xAC,0x0B,0x14,0x08,0x54,0x0A,0xC7,0x00,0x00,
+0x0C,0x04,0x2E,0x4C,0x11,0x91,0x02,0x15,0x41,0x04,0x41,0x82,0x63,0x80,0x60,0x51,0x20,0x14,0x02,0x08,
+0x97,0x40,0x00,0x00,0x04,0x58,0xC0,0x94,0x00,0x50,0x00,0x00,0x21,0x44,0x2D,0x46,0x18,0x6D,0x00,0x00,
+0x57,0xC2,0x38,0x00,0x00,0x00,0x86,0x68,0x48,0x21,0x40,0x52,0xB1,0x17,0x60,0x21,0x08,0x08,0xC8,0x04,
+0xC9,0x09,0x40,0x30,0x25,0x20,0xF8,0x41,0xB6,0x81,0x91,0x67,0x46,0x47,0x00,0x00,0x00,0x00,0x20,0x1A,
+0x00,0x24,0x28,0x68,0x00,0x00,0x2A,0x01,0x34,0x82,0x3C,0xD0,0x00,0x97,0x80,0x00,0x27,0x08,0x18,0xAA,
+0x10,0x83,0x10,0x38,0x1E,0xFB,0x1E,0xC0,0x41,0x10,0x00,0x15,0x81,0x62,0x81,0x0A,0x81,0x58,0xE0,0x00,
+0x00,
 0};
 
 const char *FIELD_NAMES[] = {
 "undefined",
-"account",
-"adv_id",
-"adv_ref_id",
-"adv_side",
-"adv_trans_type",
-"avg_px",
-"begin_seq_no",
-"begin_string",
-"body_length",
-"check_sum",
-"cl_ord_id",
-"commission",
-"comm_type",
-"cum_qty",
-"currency",
-"end_seq_no",
-"exec_id",
-"exec_inst",
-"exec_ref_id",
-"exec_trans_type",
-"handl_inst",
-"security_id_source",
-"ioi_id",
-"ioi_oth_svc",
-"ioi_qlty_ind",
-"ioi_ref_id",
-"ioi_qty",
-"ioi_trans_type",
-"last_capacity",
-"last_mkt",
-"last_px",
-"last_qty",
-"no_lines_of_text",
-"msg_seq_num",
-"msg_type",
-"new_seq_no",
-"order_id",
-"order_qty",
-"ord_status",
-"ord_type",
-"orig_cl_ord_id",
-"orig_time",
-"poss_dup_flag",
-"price",
-"ref_seq_num",
-"relatd_sym",
-"rule80a",
-"security_id",
-"sender_comp_id",
-"sender_sub_id",
-"sending_date",
-"sending_time",
-"quantity",
-"side",
-"symbol",
-"target_comp_id",
-"target_sub_id",
-"text",
-"time_in_force",
-"transact_time",
-"urgency",
-"valid_until_time",
-"settl_type",
-"settl_date",
-"symbol_sfx",
-"list_id",
-"list_seq_no",
-"tot_no_orders",
-"list_exec_inst",
-"alloc_id",
-"alloc_trans_type",
-"ref_alloc_id",
-"no_orders",
-"avg_px_precision",
-"trade_date",
-"exec_broker",
-"position_effect",
-"no_allocs",
-"alloc_account",
-"alloc_qty",
-"process_code",
-"no_rpts",
-"rpt_seq",
-"cxl_qty",
-"no_dlvy_inst",
-"dlvy_inst",
-"alloc_status",
-"alloc_rej_code",
-"signature",
-"secure_data_len",
-"secure_data",
-"broker_of_credit",
-"signature_length",
-"email_type",
-"raw_data_length",
-"raw_data",
-"poss_resend",
-"encrypt_method",
-"stop_px",
-"ex_destination",
-"cxl_rej_reason",
-"ord_rej_reason",
-"ioi_qualifier",
-"wave_no",
-"issuer",
-"security_desc",
-"heart_bt_int",
-"client_id",
-"min_qty",
-"max_floor",
-"test_req_id",
-"report_to_exch",
-"locate_reqd",
-"on_behalf_of_comp_id",
-"on_behalf_of_sub_id",
-"quote_id",
-"net_money",
-"settl_curr_amt",
-"settl_currency",
-"forex_req",
-"orig_sending_time",
-"gap_fill_flag",
-"no_execs",
-"cxl_type",
-"expire_time",
-"dk_reason",
-"deliver_to_comp_id",
-"deliver_to_sub_id",
-"ioi_natural_flag",
-"quote_req_id",
-"bid_px",
-"offer_px",
-"bid_size",
-"offer_size",
-"no_misc_fees",
-"misc_fee_amt",
-"misc_fee_curr",
-"misc_fee_type",
-"prev_close_px",
-"reset_seq_num_flag",
-"sender_location_id",
-"target_location_id",
-"on_behalf_of_location_id",
-"deliver_to_location_id",
-"no_related_sym",
-"subject",
-"headline",
-"url_link",
-"exec_type",
-"leaves_qty",
-"cash_order_qty",
-"alloc_avg_px",
-"alloc_net_money",
-"settl_curr_fx_rate",
-"settl_curr_fx_rate_calc",
-"num_days_interest",
-"accrued_interest_rate",
-"accrued_interest_amt",
-"settl_inst_mode",
-"alloc_text",
-"settl_inst_id",
-"settl_inst_trans_type",
-"email_thread_id",
-"settl_inst_source",
-"settl_location",
-"security_type",
-"effective_time",
-"stand_inst_db_type",
-"stand_inst_db_name",
-"stand_inst_db_id",
-"settl_delivery_type",
-"settl_depository_code",
-"settl_brkr_code",
-"settl_inst_code",
-"security_settl_agent_name",
-"security_settl_agent_code",
-"security_settl_agent_acct_num",
-"security_settl_agent_acct_name",
-"security_settl_agent_contact_name",
-"security_settl_agent_contact_phone",
-"cash_settl_agent_name",
-"cash_settl_agent_code",
-"cash_settl_agent_acct_num",
-"cash_settl_agent_acct_name",
-"cash_settl_agent_contact_name",
-"cash_settl_agent_contact_phone",
-"bid_spot_rate",
-"bid_forward_points",
-"offer_spot_rate",
-"offer_forward_points",
-"order_qty2",
-"settl_date2",
-"last_spot_rate",
-"last_forward_points",
-"alloc_link_id",
-"alloc_link_type",
-"secondary_order_id",
-"no_ioi_qualifiers",
-"maturity_month_year",
-"put_or_call",
-"strike_price",
-"covered_or_uncovered",
-"customer_or_firm",
-"maturity_day",
-"opt_attribute",
-"security_exchange",
-"notify_broker_of_credit",
-"alloc_handl_inst",
-"max_show",
-"peg_offset_value",
-"xml_data_len",
-"xml_data",
-"settl_inst_ref_id",
-"no_routing_ids",
-"routing_type",
-"routing_id",
-"spread",
-"benchmark",
-"benchmark_curve_currency",
-"benchmark_curve_name",
-"benchmark_curve_point",
-"coupon_rate",
-"coupon_payment_date",
-"issue_date",
-"repurchase_term",
-"repurchase_rate",
-"factor",
-"trade_origination_date",
-"ex_date",
-"contract_multiplier",
-"no_stipulations",
-"stipulation_type",
-"stipulation_value",
-"yield_type",
-"yield",
-"total_takedown",
-"concession",
-"repo_collateral_security_type",
-"redemption_date",
-"underlying_coupon_payment_date",
-"underlying_issue_date",
-"underlying_repo_collateral_security_type",
-"underlying_repurchase_term",
-"underlying_repurchase_rate",
-"underlying_factor",
-"underlying_redemption_date",
-"leg_coupon_payment_date",
-"leg_issue_date",
-"leg_repo_collateral_security_type",
-"leg_repurchase_term",
-"leg_repurchase_rate",
-"leg_factor",
-"leg_redemption_date",
-"credit_rating",
-"underlying_credit_rating",
-"leg_credit_rating",
-"traded_flat_switch",
-"basis_feature_date",
-"basis_feature_price",
-"md_req_id",
-"subscription_request_type",
-"market_depth",
-"md_update_type",
-"aggregated_book",
-"no_md_entry_types",
-"no_md_entries",
-"md_entry_type",
-"md_entry_px",
-"md_entry_size",
-"md_entry_date",
-"md_entry_time",
-"tick_direction",
-"md_mkt",
-"quote_condition",
-"trade_condition",
-"md_entry_id",
-"md_update_action",
-"md_entry_ref_id",
-"md_req_rej_reason",
-"md_entry_originator",
-"location_id",
-"desk_id",
-"delete_reason",
-"open_close_settl_flag",
-"seller_days",
-"md_entry_buyer",
-"md_entry_seller",
-"md_entry_position_no",
-"financial_status",
-"corporate_action",
-"def_bid_size",
-"def_offer_size",
-"no_quote_entries",
-"no_quote_sets",
-"quote_status",
-"quote_cancel_type",
-"quote_entry_id",
-"quote_reject_reason",
-"quote_response_level",
-"quote_set_id",
-"quote_request_type",
-"tot_no_quote_entries",
-"underlying_security_id_source",
-"underlying_issuer",
-"underlying_security_desc",
-"underlying_security_exchange",
-"underlying_security_id",
-"underlying_security_type",
-"underlying_symbol",
-"underlying_symbol_sfx",
-"underlying_maturity_month_year",
-"underlying_maturity_day",
-"underlying_put_or_call",
-"underlying_strike_price",
-"underlying_opt_attribute",
-"underlying_currency",
-"ratio_qty",
-"security_req_id",
-"security_request_type",
-"security_response_id",
-"security_response_type",
-"security_status_req_id",
-"unsolicited_indicator",
-"security_trading_status",
-"halt_reason_char",
-"in_view_of_common",
-"due_to_related",
-"buy_volume",
-"sell_volume",
-"high_px",
-"low_px",
-"adjustment",
-"trad_ses_req_id",
-"trading_session_id",
-"contra_trader",
-"trad_ses_method",
-"trad_ses_mode",
-"trad_ses_status",
-"trad_ses_start_time",
-"trad_ses_open_time",
-"trad_ses_pre_close_time",
-"trad_ses_close_time",
-"trad_ses_end_time",
-"number_of_orders",
-"message_encoding",
-"encoded_issuer_len",
-"encoded_issuer",
-"encoded_security_desc_len",
-"encoded_security_desc",
-"encoded_list_exec_inst_len",
-"encoded_list_exec_inst",
-"encoded_text_len",
-"encoded_text",
-"encoded_subject_len",
-"encoded_subject",
-"encoded_headline_len",
-"encoded_headline",
-"encoded_alloc_text_len",
-"encoded_alloc_text",
-"encoded_underlying_issuer_len",
-"encoded_underlying_issuer",
-"encoded_underlying_security_desc_len",
-"encoded_underlying_security_desc",
-"alloc_price",
-"quote_set_valid_until_time",
-"quote_entry_reject_reason",
-"last_msg_seq_num_processed",
-"on_behalf_of_sending_time",
-"ref_tag_id",
-"ref_msg_type",
-"session_reject_reason",
-"bid_request_trans_type",
-"contra_broker",
-"compliance_id",
-"solicited_flag",
-"exec_restatement_reason",
-"business_reject_ref_id",
-"business_reject_reason",
-"gross_trade_amt",
-"no_contra_brokers",
-"max_message_size",
-"no_msg_types",
-"msg_direction",
-"no_trading_sessions",
-"total_volume_traded",
-"discretion_inst",
-"discretion_offset_value",
-"bid_id",
-"client_bid_id",
-"list_name",
-"tot_no_related_sym",
-"bid_type",
-"num_tickets",
-"side_value1",
-"side_value2",
-"no_bid_descriptors",
-"bid_descriptor_type",
-"bid_descriptor",
-"side_value_ind",
-"liquidity_pct_low",
-"liquidity_pct_high",
-"liquidity_value",
-"efp_tracking_error",
-"fair_value",
-"outside_index_pct",
-"value_of_futures",
-"liquidity_ind_type",
-"wt_average_liquidity",
-"exchange_for_physical",
-"out_main_cntry_u_index",
-"cross_percent",
-"prog_rpt_reqs",
-"prog_period_interval",
-"inc_tax_ind",
-"num_bidders",
-"bid_trade_type",
-"basis_px_type",
-"no_bid_components",
-"country",
-"tot_no_strikes",
-"price_type",
-"day_order_qty",
-"day_cum_qty",
-"day_avg_px",
-"gt_booking_inst",
-"no_strikes",
-"list_status_type",
-"net_gross_ind",
-"list_order_status",
-"expire_date",
-"list_exec_inst_type",
-"cxl_rej_response_to",
-"underlying_coupon_rate",
-"underlying_contract_multiplier",
-"contra_trade_qty",
-"contra_trade_time",
-"clearing_firm",
-"clearing_account",
-"liquidity_num_securities",
-"multi_leg_reporting_type",
-"strike_time",
-"list_status_text",
-"encoded_list_status_text_len",
-"encoded_list_status_text",
-"party_id_source",
-"party_id",
-"total_volume_traded_date",
-"total_volume_traded_time",
-"net_chg_prev_day",
-"party_role",
-"no_party_ids",
-"no_security_alt_id",
-"security_alt_id",
-"security_alt_id_source",
-"no_underlying_security_alt_id",
-"underlying_security_alt_id",
-"underlying_security_alt_id_source",
-"product",
-"cfi_code",
-"underlying_product",
-"underlying_cfi_code",
-"test_message_indicator",
-"quantity_type",
-"booking_ref_id",
-"individual_alloc_id",
-"rounding_direction",
-"rounding_modulus",
-"country_of_issue",
-"state_or_province_of_issue",
-"locale_of_issue",
-"no_regist_dtls",
-"mailing_dtls",
-"investor_country_of_residence",
-"payment_ref",
-"distrib_payment_method",
-"cash_distrib_curr",
-"comm_currency",
-"cancellation_rights",
-"money_laundering_status",
-"mailing_inst",
-"trans_bkd_time",
-"exec_price_type",
-"exec_price_adjustment",
-"date_of_birth",
-"trade_report_trans_type",
-"card_holder_name",
-"card_number",
-"card_exp_date",
-"card_iss_num",
-"payment_method",
-"regist_acct_type",
-"designation",
-"tax_advantage_type",
-"regist_rej_reason_text",
-"fund_renew_waiv",
-"cash_distrib_agent_name",
-"cash_distrib_agent_code",
-"cash_distrib_agent_acct_number",
-"cash_distrib_pay_ref",
-"cash_distrib_agent_acct_name",
-"card_start_date",
-"payment_date",
-"payment_remitter_id",
-"regist_status",
-"regist_rej_reason_code",
-"regist_ref_id",
-"regist_dtls",
-"no_distrib_insts",
-"regist_email",
-"distrib_percentage",
-"regist_id",
-"regist_trans_type",
-"exec_valuation_point",
-"order_percent",
-"ownership_type",
-"no_cont_amts",
-"cont_amt_type",
-"cont_amt_value",
-"cont_amt_curr",
-"owner_type",
-"party_sub_id",
-"nested_party_id",
-"nested_party_id_source",
-"secondary_cl_ord_id",
-"secondary_exec_id",
-"order_capacity",
-"order_restrictions",
-"mass_cancel_request_type",
-"mass_cancel_response",
-"mass_cancel_reject_reason",
-"total_affected_orders",
-"no_affected_orders",
-"affected_order_id",
-"affected_secondary_order_id",
-"quote_type",
-"nested_party_role",
-"no_nested_party_ids",
-"total_accrued_interest_amt",
-"maturity_date",
-"underlying_maturity_date",
-"instr_registry",
-"cash_margin",
-"nested_party_sub_id",
-"scope",
-"md_implicit_delete",
-"cross_id",
-"cross_type",
-"cross_prioritization",
-"orig_cross_id",
-"no_sides",
-"username",
-"password",
-"no_legs",
-"leg_currency",
-"tot_no_security_types",
-"no_security_types",
-"security_list_request_type",
-"security_request_result",
-"round_lot",
-"min_trade_vol",
-"multi_leg_rpt_type_req",
-"leg_position_effect",
-"leg_covered_or_uncovered",
-"leg_price",
-"trad_ses_status_rej_reason",
-"trade_request_id",
-"trade_request_type",
-"previously_reported",
-"trade_report_id",
-"trade_report_ref_id",
-"match_status",
-"match_type",
-"odd_lot",
-"no_clearing_instructions",
-"clearing_instruction",
-"trade_input_source",
-"trade_input_device",
-"no_dates",
-"account_type",
-"cust_order_capacity",
-"cl_ord_link_id",
-"mass_status_req_id",
-"mass_status_req_type",
-"orig_ord_mod_time",
-"leg_settl_type",
-"leg_settl_date",
-"day_booking_inst",
-"booking_unit",
-"prealloc_method",
-"underlying_country_of_issue",
-"underlying_state_or_province_of_issue",
-"underlying_locale_of_issue",
-"underlying_instr_registry",
-"leg_country_of_issue",
-"leg_state_or_province_of_issue",
-"leg_locale_of_issue",
-"leg_instr_registry",
-"leg_symbol",
-"leg_symbol_sfx",
-"leg_security_id",
-"leg_security_id_source",
-"no_leg_security_alt_id",
-"leg_security_alt_id",
-"leg_security_alt_id_source",
-"leg_product",
-"leg_cfi_code",
-"leg_security_type",
-"leg_maturity_month_year",
-"leg_maturity_date",
-"leg_strike_price",
-"leg_opt_attribute",
-"leg_contract_multiplier",
-"leg_coupon_rate",
-"leg_security_exchange",
-"leg_issuer",
-"encoded_leg_issuer_len",
-"encoded_leg_issuer",
-"leg_security_desc",
-"encoded_leg_security_desc_len",
-"encoded_leg_security_desc",
-"leg_ratio_qty",
-"leg_side",
-"trading_session_sub_id",
-"alloc_type",
-"no_hops",
-"hop_comp_id",
-"hop_sending_time",
-"hop_ref_id",
-"mid_px",
-"bid_yield",
-"mid_yield",
-"offer_yield",
-"clearing_fee_indicator",
-"working_indicator",
-"leg_last_px",
-"priority_indicator",
-"price_improvement",
-"price2",
-"last_forward_points2",
-"bid_forward_points2",
-"offer_forward_points2",
-"rfq_req_id",
-"mkt_bid_px",
-"mkt_offer_px",
-"min_bid_size",
-"min_offer_size",
-"quote_status_req_id",
-"legal_confirm",
-"underlying_last_px",
-"underlying_last_qty",
-"sec_def_status",
-"leg_ref_id",
-"contra_leg_ref_id",
-"settl_curr_bid_fx_rate",
-"settl_curr_offer_fx_rate",
-"quote_request_reject_reason",
-"side_compliance_id",
-"acct_id_source",
-"alloc_acct_id_source",
-"benchmark_price",
-"benchmark_price_type",
-"confirm_id",
-"confirm_status",
-"confirm_trans_type",
-"contract_settl_month",
-"delivery_form",
-"last_par_px",
-"no_leg_allocs",
-"leg_alloc_account",
-"leg_individual_alloc_id",
-"leg_alloc_qty",
-"leg_alloc_acct_id_source",
-"leg_settl_currency",
-"leg_benchmark_curve_currency",
-"leg_benchmark_curve_name",
-"leg_benchmark_curve_point",
-"leg_benchmark_price",
-"leg_benchmark_price_type",
-"leg_bid_px",
-"leg_ioi_qty",
-"no_leg_stipulations",
-"leg_offer_px",
-"leg_order_qty",
-"leg_price_type",
-"leg_qty",
-"leg_stipulation_type",
-"leg_stipulation_value",
-"leg_swap_type",
-"pool",
-"quote_price_type",
-"quote_resp_id",
-"quote_resp_type",
-"quote_qualifier",
-"yield_redemption_date",
-"yield_redemption_price",
-"yield_redemption_price_type",
-"benchmark_security_id",
-"reversal_indicator",
-"yield_calc_date",
-"no_positions",
-"pos_type",
-"long_qty",
-"short_qty",
-"pos_qty_status",
-"pos_amt_type",
-"pos_amt",
-"pos_trans_type",
-"pos_req_id",
-"no_underlyings",
-"pos_maint_action",
-"orig_pos_req_ref_id",
-"pos_maint_rpt_ref_id",
-"clearing_business_date",
-"settl_sess_id",
-"settl_sess_sub_id",
-"adjustment_type",
-"contrary_instruction_indicator",
-"prior_spread_indicator",
-"pos_maint_rpt_id",
-"pos_maint_status",
-"pos_maint_result",
-"pos_req_type",
-"response_transport_type",
-"response_destination",
-"total_num_pos_reports",
-"pos_req_result",
-"pos_req_status",
-"settl_price",
-"settl_price_type",
-"underlying_settl_price",
-"underlying_settl_price_type",
-"prior_settl_price",
-"no_quote_qualifiers",
-"alloc_settl_currency",
-"alloc_settl_curr_amt",
-"interest_at_maturity",
-"leg_dated_date",
-"leg_pool",
-"alloc_interest_at_maturity",
-"alloc_accrued_interest_amt",
-"delivery_date",
-"assignment_method",
-"assignment_unit",
-"open_interest",
-"exercise_method",
-"tot_num_trade_reports",
-"trade_request_result",
-"trade_request_status",
-"trade_report_reject_reason",
-"side_multi_leg_reporting_type",
-"no_pos_amt",
-"auto_accept_indicator",
-"alloc_report_id",
-"no_nested2_party_ids",
-"nested2_party_id",
-"nested2_party_id_source",
-"nested2_party_role",
-"nested2_party_sub_id",
-"benchmark_security_id_source",
-"security_sub_type",
-"underlying_security_sub_type",
-"leg_security_sub_type",
-"allowable_one_sidedness_pct",
-"allowable_one_sidedness_value",
-"allowable_one_sidedness_curr",
-"no_trd_reg_timestamps",
-"trd_reg_timestamp",
-"trd_reg_timestamp_type",
-"trd_reg_timestamp_origin",
-"confirm_ref_id",
-"confirm_type",
-"confirm_rej_reason",
-"booking_type",
-"individual_alloc_rej_code",
-"settl_inst_msg_id",
-"no_settl_inst",
-"last_update_time",
-"alloc_settl_inst_type",
-"no_settl_party_ids",
-"settl_party_id",
-"settl_party_id_source",
-"settl_party_role",
-"settl_party_sub_id",
-"settl_party_sub_id_type",
-"dlvy_inst_type",
-"termination_type",
-"next_expected_msg_seq_num",
-"ord_status_req_id",
-"settl_inst_req_id",
-"settl_inst_req_rej_code",
-"secondary_alloc_id",
-"alloc_report_type",
-"alloc_report_ref_id",
-"alloc_canc_replace_reason",
-"copy_msg_indicator",
-"alloc_account_type",
-"order_avg_px",
-"order_booking_qty",
-"no_settl_party_sub_ids",
-"no_party_sub_ids",
-"party_sub_id_type",
-"no_nested_party_sub_ids",
-"nested_party_sub_id_type",
-"no_nested2_party_sub_ids",
-"nested2_party_sub_id_type",
-"alloc_intermed_req_type",
-"underlying_px",
-"price_delta",
-"appl_queue_max",
-"appl_queue_depth",
-"appl_queue_resolution",
-"appl_queue_action",
-"no_alt_md_source",
-"alt_md_source_id",
-"secondary_trade_report_id",
-"avg_px_indicator",
-"trade_link_id",
-"order_input_device",
-"underlying_trading_session_id",
-"underlying_trading_session_sub_id",
-"trade_leg_ref_id",
-"exchange_rule",
-"trade_alloc_indicator",
-"expiration_cycle",
-"trd_type",
-"trd_sub_type",
-"transfer_reason",
-"asgn_req_id",
-"tot_num_assignment_reports",
-"asgn_rpt_id",
-"threshold_amount",
-"peg_move_type",
-"peg_offset_type",
-"peg_limit_type",
-"peg_round_direction",
-"pegged_price",
-"peg_scope",
-"discretion_move_type",
-"discretion_offset_type",
-"discretion_limit_type",
-"discretion_round_direction",
-"discretion_price",
-"discretion_scope",
-"target_strategy",
-"target_strategy_parameters",
-"participation_rate",
-"target_strategy_performance",
-"last_liquidity_ind",
-"publish_trd_indicator",
-"short_sale_reason",
-"qty_type",
-"secondary_trd_type",
-"trade_report_type",
-"alloc_no_orders_type",
-"shared_commission",
-"confirm_req_id",
-"avg_par_px",
-"reported_px",
-"no_capacities",
-"order_capacity_qty",
-"no_events",
-"event_type",
-"event_date",
-"event_px",
-"event_text",
-"pct_at_risk",
-"no_instr_attrib",
-"instr_attrib_type",
-"instr_attrib_value",
-"dated_date",
-"interest_accrual_date",
-"cp_program",
-"cp_reg_type",
-"underlying_cp_program",
-"underlying_cp_reg_type",
-"underlying_qty",
-"trd_match_id",
-"secondary_trade_report_ref_id",
-"underlying_dirty_price",
-"underlying_end_price",
-"underlying_start_value",
-"underlying_current_value",
-"underlying_end_value",
-"no_underlying_stips",
-"underlying_stip_type",
-"underlying_stip_value",
-"maturity_net_money",
-"misc_fee_basis",
-"tot_no_allocs",
-"last_fragment",
-"coll_req_id",
-"coll_asgn_reason",
-"coll_inquiry_qualifier",
-"no_trades",
-"margin_ratio",
-"margin_excess",
-"total_net_value",
-"cash_outstanding",
-"coll_asgn_id",
-"coll_asgn_trans_type",
-"coll_resp_id",
-"coll_asgn_resp_type",
-"coll_asgn_reject_reason",
-"coll_asgn_ref_id",
-"coll_rpt_id",
-"coll_inquiry_id",
-"coll_status",
-"tot_num_reports",
-"last_rpt_requested",
-"agreement_desc",
-"agreement_id",
-"agreement_date",
-"start_date",
-"end_date",
-"agreement_currency",
-"delivery_type",
-"end_accrued_interest_amt",
-"start_cash",
-"end_cash",
-"user_request_id",
-"user_request_type",
-"new_password",
-"user_status",
-"user_status_text",
-"status_value",
-"status_text",
-"ref_comp_id",
-"ref_sub_id",
-"network_response_id",
-"network_request_id",
-"last_network_response_id",
-"network_request_type",
-"no_comp_ids",
-"network_status_response_type",
-"no_coll_inquiry_qualifier",
-"trd_rpt_status",
-"affirm_status",
-"underlying_strike_currency",
-"leg_strike_currency",
-"time_bracket",
-"coll_action",
-"coll_inquiry_status",
-"coll_inquiry_result",
-"strike_currency",
-"no_nested3_party_ids",
-"nested3_party_id",
-"nested3_party_id_source",
-"nested3_party_role",
-"no_nested3_party_sub_ids",
-"nested3_party_sub_id",
-"nested3_party_sub_id_type",
-"leg_contract_settl_month",
-"leg_interest_accrual_date",
+"account", // 1 
+"adv_id", // 2 
+"adv_ref_id", // 3 
+"adv_side", // 4 
+"adv_trans_type", // 5 
+"avg_px", // 6 
+"begin_seq_no", // 7 
+"begin_string", // 8 
+"body_length", // 9 
+"check_sum", // 10 
+"cl_ord_id", // 11 
+"commission", // 12 
+"comm_type", // 13 
+"cum_qty", // 14 
+"currency", // 15 
+"end_seq_no", // 16 
+"exec_id", // 17 
+"exec_inst", // 18 
+"exec_ref_id", // 19 
+"exec_trans_type", // 20 
+"handl_inst", // 21 
+"security_id_source", // 22 
+"ioi_id", // 23 
+"ioi_oth_svc", // 24 
+"ioi_qlty_ind", // 25 
+"ioi_ref_id", // 26 
+"ioi_qty", // 27 
+"ioi_trans_type", // 28 
+"last_capacity", // 29 
+"last_mkt", // 30 
+"last_px", // 31 
+"last_qty", // 32 
+"no_lines_of_text", // 33 
+"msg_seq_num", // 34 
+"msg_type", // 35 
+"new_seq_no", // 36 
+"order_id", // 37 
+"order_qty", // 38 
+"ord_status", // 39 
+"ord_type", // 40 
+"orig_cl_ord_id", // 41 
+"orig_time", // 42 
+"poss_dup_flag", // 43 
+"price", // 44 
+"ref_seq_num", // 45 
+"relatd_sym", // 46 
+"rule80a", // 47 
+"security_id", // 48 
+"sender_comp_id", // 49 
+"sender_sub_id", // 50 
+"sending_date", // 51 
+"sending_time", // 52 
+"quantity", // 53 
+"side", // 54 
+"symbol", // 55 
+"target_comp_id", // 56 
+"target_sub_id", // 57 
+"text", // 58 
+"time_in_force", // 59 
+"transact_time", // 60 
+"urgency", // 61 
+"valid_until_time", // 62 
+"settl_type", // 63 
+"settl_date", // 64 
+"symbol_sfx", // 65 
+"list_id", // 66 
+"list_seq_no", // 67 
+"tot_no_orders", // 68 
+"list_exec_inst", // 69 
+"alloc_id", // 70 
+"alloc_trans_type", // 71 
+"ref_alloc_id", // 72 
+"no_orders", // 73 
+"avg_px_precision", // 74 
+"trade_date", // 75 
+"exec_broker", // 76 
+"position_effect", // 77 
+"no_allocs", // 78 
+"alloc_account", // 79 
+"alloc_qty", // 80 
+"process_code", // 81 
+"no_rpts", // 82 
+"rpt_seq", // 83 
+"cxl_qty", // 84 
+"no_dlvy_inst", // 85 
+"dlvy_inst", // 86 
+"alloc_status", // 87 
+"alloc_rej_code", // 88 
+"signature", // 89 
+"secure_data_len", // 90 
+"secure_data", // 91 
+"broker_of_credit", // 92 
+"signature_length", // 93 
+"email_type", // 94 
+"raw_data_length", // 95 
+"raw_data", // 96 
+"poss_resend", // 97 
+"encrypt_method", // 98 
+"stop_px", // 99 
+"ex_destination", // 100 
+"undefined",
+"cxl_rej_reason", // 102 
+"ord_rej_reason", // 103 
+"ioi_qualifier", // 104 
+"wave_no", // 105 
+"issuer", // 106 
+"security_desc", // 107 
+"heart_bt_int", // 108 
+"client_id", // 109 
+"min_qty", // 110 
+"max_floor", // 111 
+"test_req_id", // 112 
+"report_to_exch", // 113 
+"locate_reqd", // 114 
+"on_behalf_of_comp_id", // 115 
+"on_behalf_of_sub_id", // 116 
+"quote_id", // 117 
+"net_money", // 118 
+"settl_curr_amt", // 119 
+"settl_currency", // 120 
+"forex_req", // 121 
+"orig_sending_time", // 122 
+"gap_fill_flag", // 123 
+"no_execs", // 124 
+"cxl_type", // 125 
+"expire_time", // 126 
+"dk_reason", // 127 
+"deliver_to_comp_id", // 128 
+"deliver_to_sub_id", // 129 
+"ioi_natural_flag", // 130 
+"quote_req_id", // 131 
+"bid_px", // 132 
+"offer_px", // 133 
+"bid_size", // 134 
+"offer_size", // 135 
+"no_misc_fees", // 136 
+"misc_fee_amt", // 137 
+"misc_fee_curr", // 138 
+"misc_fee_type", // 139 
+"prev_close_px", // 140 
+"reset_seq_num_flag", // 141 
+"sender_location_id", // 142 
+"target_location_id", // 143 
+"on_behalf_of_location_id", // 144 
+"deliver_to_location_id", // 145 
+"no_related_sym", // 146 
+"subject", // 147 
+"headline", // 148 
+"url_link", // 149 
+"exec_type", // 150 
+"leaves_qty", // 151 
+"cash_order_qty", // 152 
+"alloc_avg_px", // 153 
+"alloc_net_money", // 154 
+"settl_curr_fx_rate", // 155 
+"settl_curr_fx_rate_calc", // 156 
+"num_days_interest", // 157 
+"accrued_interest_rate", // 158 
+"accrued_interest_amt", // 159 
+"settl_inst_mode", // 160 
+"alloc_text", // 161 
+"settl_inst_id", // 162 
+"settl_inst_trans_type", // 163 
+"email_thread_id", // 164 
+"settl_inst_source", // 165 
+"settl_location", // 166 
+"security_type", // 167 
+"effective_time", // 168 
+"stand_inst_db_type", // 169 
+"stand_inst_db_name", // 170 
+"stand_inst_db_id", // 171 
+"settl_delivery_type", // 172 
+"settl_depository_code", // 173 
+"settl_brkr_code", // 174 
+"settl_inst_code", // 175 
+"security_settl_agent_name", // 176 
+"security_settl_agent_code", // 177 
+"security_settl_agent_acct_num", // 178 
+"security_settl_agent_acct_name", // 179 
+"security_settl_agent_contact_name", // 180 
+"security_settl_agent_contact_phone", // 181 
+"cash_settl_agent_name", // 182 
+"cash_settl_agent_code", // 183 
+"cash_settl_agent_acct_num", // 184 
+"cash_settl_agent_acct_name", // 185 
+"cash_settl_agent_contact_name", // 186 
+"cash_settl_agent_contact_phone", // 187 
+"bid_spot_rate", // 188 
+"bid_forward_points", // 189 
+"offer_spot_rate", // 190 
+"offer_forward_points", // 191 
+"order_qty2", // 192 
+"settl_date2", // 193 
+"last_spot_rate", // 194 
+"last_forward_points", // 195 
+"alloc_link_id", // 196 
+"alloc_link_type", // 197 
+"secondary_order_id", // 198 
+"no_ioi_qualifiers", // 199 
+"maturity_month_year", // 200 
+"put_or_call", // 201 
+"strike_price", // 202 
+"covered_or_uncovered", // 203 
+"customer_or_firm", // 204 
+"maturity_day", // 205 
+"opt_attribute", // 206 
+"security_exchange", // 207 
+"notify_broker_of_credit", // 208 
+"alloc_handl_inst", // 209 
+"max_show", // 210 
+"peg_offset_value", // 211 
+"xml_data_len", // 212 
+"xml_data", // 213 
+"settl_inst_ref_id", // 214 
+"no_routing_ids", // 215 
+"routing_type", // 216 
+"routing_id", // 217 
+"spread", // 218 
+"benchmark", // 219 
+"benchmark_curve_currency", // 220 
+"benchmark_curve_name", // 221 
+"benchmark_curve_point", // 222 
+"coupon_rate", // 223 
+"coupon_payment_date", // 224 
+"issue_date", // 225 
+"repurchase_term", // 226 
+"repurchase_rate", // 227 
+"factor", // 228 
+"trade_origination_date", // 229 
+"ex_date", // 230 
+"contract_multiplier", // 231 
+"no_stipulations", // 232 
+"stipulation_type", // 233 
+"stipulation_value", // 234 
+"yield_type", // 235 
+"yield", // 236 
+"total_takedown", // 237 
+"concession", // 238 
+"repo_collateral_security_type", // 239 
+"redemption_date", // 240 
+"underlying_coupon_payment_date", // 241 
+"underlying_issue_date", // 242 
+"underlying_repo_collateral_security_type", // 243 
+"underlying_repurchase_term", // 244 
+"underlying_repurchase_rate", // 245 
+"underlying_factor", // 246 
+"underlying_redemption_date", // 247 
+"leg_coupon_payment_date", // 248 
+"leg_issue_date", // 249 
+"leg_repo_collateral_security_type", // 250 
+"leg_repurchase_term", // 251 
+"leg_repurchase_rate", // 252 
+"leg_factor", // 253 
+"leg_redemption_date", // 254 
+"credit_rating", // 255 
+"underlying_credit_rating", // 256 
+"leg_credit_rating", // 257 
+"traded_flat_switch", // 258 
+"basis_feature_date", // 259 
+"basis_feature_price", // 260 
+"undefined",
+"md_req_id", // 262 
+"subscription_request_type", // 263 
+"market_depth", // 264 
+"md_update_type", // 265 
+"aggregated_book", // 266 
+"no_md_entry_types", // 267 
+"no_md_entries", // 268 
+"md_entry_type", // 269 
+"md_entry_px", // 270 
+"md_entry_size", // 271 
+"md_entry_date", // 272 
+"md_entry_time", // 273 
+"tick_direction", // 274 
+"md_mkt", // 275 
+"quote_condition", // 276 
+"trade_condition", // 277 
+"md_entry_id", // 278 
+"md_update_action", // 279 
+"md_entry_ref_id", // 280 
+"md_req_rej_reason", // 281 
+"md_entry_originator", // 282 
+"location_id", // 283 
+"desk_id", // 284 
+"delete_reason", // 285 
+"open_close_settl_flag", // 286 
+"seller_days", // 287 
+"md_entry_buyer", // 288 
+"md_entry_seller", // 289 
+"md_entry_position_no", // 290 
+"financial_status", // 291 
+"corporate_action", // 292 
+"def_bid_size", // 293 
+"def_offer_size", // 294 
+"no_quote_entries", // 295 
+"no_quote_sets", // 296 
+"quote_status", // 297 
+"quote_cancel_type", // 298 
+"quote_entry_id", // 299 
+"quote_reject_reason", // 300 
+"quote_response_level", // 301 
+"quote_set_id", // 302 
+"quote_request_type", // 303 
+"tot_no_quote_entries", // 304 
+"underlying_security_id_source", // 305 
+"underlying_issuer", // 306 
+"underlying_security_desc", // 307 
+"underlying_security_exchange", // 308 
+"underlying_security_id", // 309 
+"underlying_security_type", // 310 
+"underlying_symbol", // 311 
+"underlying_symbol_sfx", // 312 
+"underlying_maturity_month_year", // 313 
+"underlying_maturity_day", // 314 
+"underlying_put_or_call", // 315 
+"underlying_strike_price", // 316 
+"underlying_opt_attribute", // 317 
+"underlying_currency", // 318 
+"ratio_qty", // 319 
+"security_req_id", // 320 
+"security_request_type", // 321 
+"security_response_id", // 322 
+"security_response_type", // 323 
+"security_status_req_id", // 324 
+"unsolicited_indicator", // 325 
+"security_trading_status", // 326 
+"halt_reason_char", // 327 
+"in_view_of_common", // 328 
+"due_to_related", // 329 
+"buy_volume", // 330 
+"sell_volume", // 331 
+"high_px", // 332 
+"low_px", // 333 
+"adjustment", // 334 
+"trad_ses_req_id", // 335 
+"trading_session_id", // 336 
+"contra_trader", // 337 
+"trad_ses_method", // 338 
+"trad_ses_mode", // 339 
+"trad_ses_status", // 340 
+"trad_ses_start_time", // 341 
+"trad_ses_open_time", // 342 
+"trad_ses_pre_close_time", // 343 
+"trad_ses_close_time", // 344 
+"trad_ses_end_time", // 345 
+"number_of_orders", // 346 
+"message_encoding", // 347 
+"encoded_issuer_len", // 348 
+"encoded_issuer", // 349 
+"encoded_security_desc_len", // 350 
+"encoded_security_desc", // 351 
+"encoded_list_exec_inst_len", // 352 
+"encoded_list_exec_inst", // 353 
+"encoded_text_len", // 354 
+"encoded_text", // 355 
+"encoded_subject_len", // 356 
+"encoded_subject", // 357 
+"encoded_headline_len", // 358 
+"encoded_headline", // 359 
+"encoded_alloc_text_len", // 360 
+"encoded_alloc_text", // 361 
+"encoded_underlying_issuer_len", // 362 
+"encoded_underlying_issuer", // 363 
+"encoded_underlying_security_desc_len", // 364 
+"encoded_underlying_security_desc", // 365 
+"alloc_price", // 366 
+"quote_set_valid_until_time", // 367 
+"quote_entry_reject_reason", // 368 
+"last_msg_seq_num_processed", // 369 
+"on_behalf_of_sending_time", // 370 
+"ref_tag_id", // 371 
+"ref_msg_type", // 372 
+"session_reject_reason", // 373 
+"bid_request_trans_type", // 374 
+"contra_broker", // 375 
+"compliance_id", // 376 
+"solicited_flag", // 377 
+"exec_restatement_reason", // 378 
+"business_reject_ref_id", // 379 
+"business_reject_reason", // 380 
+"gross_trade_amt", // 381 
+"no_contra_brokers", // 382 
+"max_message_size", // 383 
+"no_msg_types", // 384 
+"msg_direction", // 385 
+"no_trading_sessions", // 386 
+"total_volume_traded", // 387 
+"discretion_inst", // 388 
+"discretion_offset_value", // 389 
+"bid_id", // 390 
+"client_bid_id", // 391 
+"list_name", // 392 
+"tot_no_related_sym", // 393 
+"bid_type", // 394 
+"num_tickets", // 395 
+"side_value1", // 396 
+"side_value2", // 397 
+"no_bid_descriptors", // 398 
+"bid_descriptor_type", // 399 
+"bid_descriptor", // 400 
+"side_value_ind", // 401 
+"liquidity_pct_low", // 402 
+"liquidity_pct_high", // 403 
+"liquidity_value", // 404 
+"efp_tracking_error", // 405 
+"fair_value", // 406 
+"outside_index_pct", // 407 
+"value_of_futures", // 408 
+"liquidity_ind_type", // 409 
+"wt_average_liquidity", // 410 
+"exchange_for_physical", // 411 
+"out_main_cntry_u_index", // 412 
+"cross_percent", // 413 
+"prog_rpt_reqs", // 414 
+"prog_period_interval", // 415 
+"inc_tax_ind", // 416 
+"num_bidders", // 417 
+"bid_trade_type", // 418 
+"basis_px_type", // 419 
+"no_bid_components", // 420 
+"country", // 421 
+"tot_no_strikes", // 422 
+"price_type", // 423 
+"day_order_qty", // 424 
+"day_cum_qty", // 425 
+"day_avg_px", // 426 
+"gt_booking_inst", // 427 
+"no_strikes", // 428 
+"list_status_type", // 429 
+"net_gross_ind", // 430 
+"list_order_status", // 431 
+"expire_date", // 432 
+"list_exec_inst_type", // 433 
+"cxl_rej_response_to", // 434 
+"underlying_coupon_rate", // 435 
+"underlying_contract_multiplier", // 436 
+"contra_trade_qty", // 437 
+"contra_trade_time", // 438 
+"clearing_firm", // 439 
+"clearing_account", // 440 
+"liquidity_num_securities", // 441 
+"multi_leg_reporting_type", // 442 
+"strike_time", // 443 
+"list_status_text", // 444 
+"encoded_list_status_text_len", // 445 
+"encoded_list_status_text", // 446 
+"party_id_source", // 447 
+"party_id", // 448 
+"total_volume_traded_date", // 449 
+"total_volume_traded_time", // 450 
+"net_chg_prev_day", // 451 
+"party_role", // 452 
+"no_party_ids", // 453 
+"no_security_alt_id", // 454 
+"security_alt_id", // 455 
+"security_alt_id_source", // 456 
+"no_underlying_security_alt_id", // 457 
+"underlying_security_alt_id", // 458 
+"underlying_security_alt_id_source", // 459 
+"product", // 460 
+"cfi_code", // 461 
+"underlying_product", // 462 
+"underlying_cfi_code", // 463 
+"test_message_indicator", // 464 
+"quantity_type", // 465 
+"booking_ref_id", // 466 
+"individual_alloc_id", // 467 
+"rounding_direction", // 468 
+"rounding_modulus", // 469 
+"country_of_issue", // 470 
+"state_or_province_of_issue", // 471 
+"locale_of_issue", // 472 
+"no_regist_dtls", // 473 
+"mailing_dtls", // 474 
+"investor_country_of_residence", // 475 
+"payment_ref", // 476 
+"distrib_payment_method", // 477 
+"cash_distrib_curr", // 478 
+"comm_currency", // 479 
+"cancellation_rights", // 480 
+"money_laundering_status", // 481 
+"mailing_inst", // 482 
+"trans_bkd_time", // 483 
+"exec_price_type", // 484 
+"exec_price_adjustment", // 485 
+"date_of_birth", // 486 
+"trade_report_trans_type", // 487 
+"card_holder_name", // 488 
+"card_number", // 489 
+"card_exp_date", // 490 
+"card_iss_num", // 491 
+"payment_method", // 492 
+"regist_acct_type", // 493 
+"designation", // 494 
+"tax_advantage_type", // 495 
+"regist_rej_reason_text", // 496 
+"fund_renew_waiv", // 497 
+"cash_distrib_agent_name", // 498 
+"cash_distrib_agent_code", // 499 
+"cash_distrib_agent_acct_number", // 500 
+"cash_distrib_pay_ref", // 501 
+"cash_distrib_agent_acct_name", // 502 
+"card_start_date", // 503 
+"payment_date", // 504 
+"payment_remitter_id", // 505 
+"regist_status", // 506 
+"regist_rej_reason_code", // 507 
+"regist_ref_id", // 508 
+"regist_dtls", // 509 
+"no_distrib_insts", // 510 
+"regist_email", // 511 
+"distrib_percentage", // 512 
+"regist_id", // 513 
+"regist_trans_type", // 514 
+"exec_valuation_point", // 515 
+"order_percent", // 516 
+"ownership_type", // 517 
+"no_cont_amts", // 518 
+"cont_amt_type", // 519 
+"cont_amt_value", // 520 
+"cont_amt_curr", // 521 
+"owner_type", // 522 
+"party_sub_id", // 523 
+"nested_party_id", // 524 
+"nested_party_id_source", // 525 
+"secondary_cl_ord_id", // 526 
+"secondary_exec_id", // 527 
+"order_capacity", // 528 
+"order_restrictions", // 529 
+"mass_cancel_request_type", // 530 
+"mass_cancel_response", // 531 
+"mass_cancel_reject_reason", // 532 
+"total_affected_orders", // 533 
+"no_affected_orders", // 534 
+"affected_order_id", // 535 
+"affected_secondary_order_id", // 536 
+"quote_type", // 537 
+"nested_party_role", // 538 
+"no_nested_party_ids", // 539 
+"total_accrued_interest_amt", // 540 
+"maturity_date", // 541 
+"underlying_maturity_date", // 542 
+"instr_registry", // 543 
+"cash_margin", // 544 
+"nested_party_sub_id", // 545 
+"scope", // 546 
+"md_implicit_delete", // 547 
+"cross_id", // 548 
+"cross_type", // 549 
+"cross_prioritization", // 550 
+"orig_cross_id", // 551 
+"no_sides", // 552 
+"username", // 553 
+"password", // 554 
+"no_legs", // 555 
+"leg_currency", // 556 
+"tot_no_security_types", // 557 
+"no_security_types", // 558 
+"security_list_request_type", // 559 
+"security_request_result", // 560 
+"round_lot", // 561 
+"min_trade_vol", // 562 
+"multi_leg_rpt_type_req", // 563 
+"leg_position_effect", // 564 
+"leg_covered_or_uncovered", // 565 
+"leg_price", // 566 
+"trad_ses_status_rej_reason", // 567 
+"trade_request_id", // 568 
+"trade_request_type", // 569 
+"previously_reported", // 570 
+"trade_report_id", // 571 
+"trade_report_ref_id", // 572 
+"match_status", // 573 
+"match_type", // 574 
+"odd_lot", // 575 
+"no_clearing_instructions", // 576 
+"clearing_instruction", // 577 
+"trade_input_source", // 578 
+"trade_input_device", // 579 
+"no_dates", // 580 
+"account_type", // 581 
+"cust_order_capacity", // 582 
+"cl_ord_link_id", // 583 
+"mass_status_req_id", // 584 
+"mass_status_req_type", // 585 
+"orig_ord_mod_time", // 586 
+"leg_settl_type", // 587 
+"leg_settl_date", // 588 
+"day_booking_inst", // 589 
+"booking_unit", // 590 
+"prealloc_method", // 591 
+"underlying_country_of_issue", // 592 
+"underlying_state_or_province_of_issue", // 593 
+"underlying_locale_of_issue", // 594 
+"underlying_instr_registry", // 595 
+"leg_country_of_issue", // 596 
+"leg_state_or_province_of_issue", // 597 
+"leg_locale_of_issue", // 598 
+"leg_instr_registry", // 599 
+"leg_symbol", // 600 
+"leg_symbol_sfx", // 601 
+"leg_security_id", // 602 
+"leg_security_id_source", // 603 
+"no_leg_security_alt_id", // 604 
+"leg_security_alt_id", // 605 
+"leg_security_alt_id_source", // 606 
+"leg_product", // 607 
+"leg_cfi_code", // 608 
+"leg_security_type", // 609 
+"leg_maturity_month_year", // 610 
+"leg_maturity_date", // 611 
+"leg_strike_price", // 612 
+"leg_opt_attribute", // 613 
+"leg_contract_multiplier", // 614 
+"leg_coupon_rate", // 615 
+"leg_security_exchange", // 616 
+"leg_issuer", // 617 
+"encoded_leg_issuer_len", // 618 
+"encoded_leg_issuer", // 619 
+"leg_security_desc", // 620 
+"encoded_leg_security_desc_len", // 621 
+"encoded_leg_security_desc", // 622 
+"leg_ratio_qty", // 623 
+"leg_side", // 624 
+"trading_session_sub_id", // 625 
+"alloc_type", // 626 
+"no_hops", // 627 
+"hop_comp_id", // 628 
+"hop_sending_time", // 629 
+"hop_ref_id", // 630 
+"mid_px", // 631 
+"bid_yield", // 632 
+"mid_yield", // 633 
+"offer_yield", // 634 
+"clearing_fee_indicator", // 635 
+"working_indicator", // 636 
+"leg_last_px", // 637 
+"priority_indicator", // 638 
+"price_improvement", // 639 
+"price2", // 640 
+"last_forward_points2", // 641 
+"bid_forward_points2", // 642 
+"offer_forward_points2", // 643 
+"rfq_req_id", // 644 
+"mkt_bid_px", // 645 
+"mkt_offer_px", // 646 
+"min_bid_size", // 647 
+"min_offer_size", // 648 
+"quote_status_req_id", // 649 
+"legal_confirm", // 650 
+"underlying_last_px", // 651 
+"underlying_last_qty", // 652 
+"sec_def_status", // 653 
+"leg_ref_id", // 654 
+"contra_leg_ref_id", // 655 
+"settl_curr_bid_fx_rate", // 656 
+"settl_curr_offer_fx_rate", // 657 
+"quote_request_reject_reason", // 658 
+"side_compliance_id", // 659 
+"acct_id_source", // 660 
+"alloc_acct_id_source", // 661 
+"benchmark_price", // 662 
+"benchmark_price_type", // 663 
+"confirm_id", // 664 
+"confirm_status", // 665 
+"confirm_trans_type", // 666 
+"contract_settl_month", // 667 
+"delivery_form", // 668 
+"last_par_px", // 669 
+"no_leg_allocs", // 670 
+"leg_alloc_account", // 671 
+"leg_individual_alloc_id", // 672 
+"leg_alloc_qty", // 673 
+"leg_alloc_acct_id_source", // 674 
+"leg_settl_currency", // 675 
+"leg_benchmark_curve_currency", // 676 
+"leg_benchmark_curve_name", // 677 
+"leg_benchmark_curve_point", // 678 
+"leg_benchmark_price", // 679 
+"leg_benchmark_price_type", // 680 
+"leg_bid_px", // 681 
+"leg_ioi_qty", // 682 
+"no_leg_stipulations", // 683 
+"leg_offer_px", // 684 
+"leg_order_qty", // 685 
+"leg_price_type", // 686 
+"leg_qty", // 687 
+"leg_stipulation_type", // 688 
+"leg_stipulation_value", // 689 
+"leg_swap_type", // 690 
+"pool", // 691 
+"quote_price_type", // 692 
+"quote_resp_id", // 693 
+"quote_resp_type", // 694 
+"quote_qualifier", // 695 
+"yield_redemption_date", // 696 
+"yield_redemption_price", // 697 
+"yield_redemption_price_type", // 698 
+"benchmark_security_id", // 699 
+"reversal_indicator", // 700 
+"yield_calc_date", // 701 
+"no_positions", // 702 
+"pos_type", // 703 
+"long_qty", // 704 
+"short_qty", // 705 
+"pos_qty_status", // 706 
+"pos_amt_type", // 707 
+"pos_amt", // 708 
+"pos_trans_type", // 709 
+"pos_req_id", // 710 
+"no_underlyings", // 711 
+"pos_maint_action", // 712 
+"orig_pos_req_ref_id", // 713 
+"pos_maint_rpt_ref_id", // 714 
+"clearing_business_date", // 715 
+"settl_sess_id", // 716 
+"settl_sess_sub_id", // 717 
+"adjustment_type", // 718 
+"contrary_instruction_indicator", // 719 
+"prior_spread_indicator", // 720 
+"pos_maint_rpt_id", // 721 
+"pos_maint_status", // 722 
+"pos_maint_result", // 723 
+"pos_req_type", // 724 
+"response_transport_type", // 725 
+"response_destination", // 726 
+"total_num_pos_reports", // 727 
+"pos_req_result", // 728 
+"pos_req_status", // 729 
+"settl_price", // 730 
+"settl_price_type", // 731 
+"underlying_settl_price", // 732 
+"underlying_settl_price_type", // 733 
+"prior_settl_price", // 734 
+"no_quote_qualifiers", // 735 
+"alloc_settl_currency", // 736 
+"alloc_settl_curr_amt", // 737 
+"interest_at_maturity", // 738 
+"leg_dated_date", // 739 
+"leg_pool", // 740 
+"alloc_interest_at_maturity", // 741 
+"alloc_accrued_interest_amt", // 742 
+"delivery_date", // 743 
+"assignment_method", // 744 
+"assignment_unit", // 745 
+"open_interest", // 746 
+"exercise_method", // 747 
+"tot_num_trade_reports", // 748 
+"trade_request_result", // 749 
+"trade_request_status", // 750 
+"trade_report_reject_reason", // 751 
+"side_multi_leg_reporting_type", // 752 
+"no_pos_amt", // 753 
+"auto_accept_indicator", // 754 
+"alloc_report_id", // 755 
+"no_nested2_party_ids", // 756 
+"nested2_party_id", // 757 
+"nested2_party_id_source", // 758 
+"nested2_party_role", // 759 
+"nested2_party_sub_id", // 760 
+"benchmark_security_id_source", // 761 
+"security_sub_type", // 762 
+"underlying_security_sub_type", // 763 
+"leg_security_sub_type", // 764 
+"allowable_one_sidedness_pct", // 765 
+"allowable_one_sidedness_value", // 766 
+"allowable_one_sidedness_curr", // 767 
+"no_trd_reg_timestamps", // 768 
+"trd_reg_timestamp", // 769 
+"trd_reg_timestamp_type", // 770 
+"trd_reg_timestamp_origin", // 771 
+"confirm_ref_id", // 772 
+"confirm_type", // 773 
+"confirm_rej_reason", // 774 
+"booking_type", // 775 
+"individual_alloc_rej_code", // 776 
+"settl_inst_msg_id", // 777 
+"no_settl_inst", // 778 
+"last_update_time", // 779 
+"alloc_settl_inst_type", // 780 
+"no_settl_party_ids", // 781 
+"settl_party_id", // 782 
+"settl_party_id_source", // 783 
+"settl_party_role", // 784 
+"settl_party_sub_id", // 785 
+"settl_party_sub_id_type", // 786 
+"dlvy_inst_type", // 787 
+"termination_type", // 788 
+"next_expected_msg_seq_num", // 789 
+"ord_status_req_id", // 790 
+"settl_inst_req_id", // 791 
+"settl_inst_req_rej_code", // 792 
+"secondary_alloc_id", // 793 
+"alloc_report_type", // 794 
+"alloc_report_ref_id", // 795 
+"alloc_canc_replace_reason", // 796 
+"copy_msg_indicator", // 797 
+"alloc_account_type", // 798 
+"order_avg_px", // 799 
+"order_booking_qty", // 800 
+"no_settl_party_sub_ids", // 801 
+"no_party_sub_ids", // 802 
+"party_sub_id_type", // 803 
+"no_nested_party_sub_ids", // 804 
+"nested_party_sub_id_type", // 805 
+"no_nested2_party_sub_ids", // 806 
+"nested2_party_sub_id_type", // 807 
+"alloc_intermed_req_type", // 808 
+"undefined",
+"underlying_px", // 810 
+"price_delta", // 811 
+"appl_queue_max", // 812 
+"appl_queue_depth", // 813 
+"appl_queue_resolution", // 814 
+"appl_queue_action", // 815 
+"no_alt_md_source", // 816 
+"alt_md_source_id", // 817 
+"secondary_trade_report_id", // 818 
+"avg_px_indicator", // 819 
+"trade_link_id", // 820 
+"order_input_device", // 821 
+"underlying_trading_session_id", // 822 
+"underlying_trading_session_sub_id", // 823 
+"trade_leg_ref_id", // 824 
+"exchange_rule", // 825 
+"trade_alloc_indicator", // 826 
+"expiration_cycle", // 827 
+"trd_type", // 828 
+"trd_sub_type", // 829 
+"transfer_reason", // 830 
+"asgn_req_id", // 831 
+"tot_num_assignment_reports", // 832 
+"asgn_rpt_id", // 833 
+"threshold_amount", // 834 
+"peg_move_type", // 835 
+"peg_offset_type", // 836 
+"peg_limit_type", // 837 
+"peg_round_direction", // 838 
+"pegged_price", // 839 
+"peg_scope", // 840 
+"discretion_move_type", // 841 
+"discretion_offset_type", // 842 
+"discretion_limit_type", // 843 
+"discretion_round_direction", // 844 
+"discretion_price", // 845 
+"discretion_scope", // 846 
+"target_strategy", // 847 
+"target_strategy_parameters", // 848 
+"participation_rate", // 849 
+"target_strategy_performance", // 850 
+"last_liquidity_ind", // 851 
+"publish_trd_indicator", // 852 
+"short_sale_reason", // 853 
+"qty_type", // 854 
+"secondary_trd_type", // 855 
+"trade_report_type", // 856 
+"alloc_no_orders_type", // 857 
+"shared_commission", // 858 
+"confirm_req_id", // 859 
+"avg_par_px", // 860 
+"reported_px", // 861 
+"no_capacities", // 862 
+"order_capacity_qty", // 863 
+"no_events", // 864 
+"event_type", // 865 
+"event_date", // 866 
+"event_px", // 867 
+"event_text", // 868 
+"pct_at_risk", // 869 
+"no_instr_attrib", // 870 
+"instr_attrib_type", // 871 
+"instr_attrib_value", // 872 
+"dated_date", // 873 
+"interest_accrual_date", // 874 
+"cp_program", // 875 
+"cp_reg_type", // 876 
+"underlying_cp_program", // 877 
+"underlying_cp_reg_type", // 878 
+"underlying_qty", // 879 
+"trd_match_id", // 880 
+"secondary_trade_report_ref_id", // 881 
+"underlying_dirty_price", // 882 
+"underlying_end_price", // 883 
+"underlying_start_value", // 884 
+"underlying_current_value", // 885 
+"underlying_end_value", // 886 
+"no_underlying_stips", // 887 
+"underlying_stip_type", // 888 
+"underlying_stip_value", // 889 
+"maturity_net_money", // 890 
+"misc_fee_basis", // 891 
+"tot_no_allocs", // 892 
+"last_fragment", // 893 
+"coll_req_id", // 894 
+"coll_asgn_reason", // 895 
+"coll_inquiry_qualifier", // 896 
+"no_trades", // 897 
+"margin_ratio", // 898 
+"margin_excess", // 899 
+"total_net_value", // 900 
+"cash_outstanding", // 901 
+"coll_asgn_id", // 902 
+"coll_asgn_trans_type", // 903 
+"coll_resp_id", // 904 
+"coll_asgn_resp_type", // 905 
+"coll_asgn_reject_reason", // 906 
+"coll_asgn_ref_id", // 907 
+"coll_rpt_id", // 908 
+"coll_inquiry_id", // 909 
+"coll_status", // 910 
+"tot_num_reports", // 911 
+"last_rpt_requested", // 912 
+"agreement_desc", // 913 
+"agreement_id", // 914 
+"agreement_date", // 915 
+"start_date", // 916 
+"end_date", // 917 
+"agreement_currency", // 918 
+"delivery_type", // 919 
+"end_accrued_interest_amt", // 920 
+"start_cash", // 921 
+"end_cash", // 922 
+"user_request_id", // 923 
+"user_request_type", // 924 
+"new_password", // 925 
+"user_status", // 926 
+"user_status_text", // 927 
+"status_value", // 928 
+"status_text", // 929 
+"ref_comp_id", // 930 
+"ref_sub_id", // 931 
+"network_response_id", // 932 
+"network_request_id", // 933 
+"last_network_response_id", // 934 
+"network_request_type", // 935 
+"no_comp_ids", // 936 
+"network_status_response_type", // 937 
+"no_coll_inquiry_qualifier", // 938 
+"trd_rpt_status", // 939 
+"affirm_status", // 940 
+"underlying_strike_currency", // 941 
+"leg_strike_currency", // 942 
+"time_bracket", // 943 
+"coll_action", // 944 
+"coll_inquiry_status", // 945 
+"coll_inquiry_result", // 946 
+"strike_currency", // 947 
+"no_nested3_party_ids", // 948 
+"nested3_party_id", // 949 
+"nested3_party_id_source", // 950 
+"nested3_party_role", // 951 
+"no_nested3_party_sub_ids", // 952 
+"nested3_party_sub_id", // 953 
+"nested3_party_sub_id_type", // 954 
+"leg_contract_settl_month", // 955 
+"leg_interest_accrual_date", // 956 
 "undefined"};
 
-ERL_NIF_TERM FIELD_ATOMS[954];
+ERL_NIF_TERM FIELD_ATOMS[961];
 
 struct ValueDesc CHOICE_VALUES[] = {
 {4, "B", "buy"},
@@ -1084,98 +1091,97 @@ struct ValueDesc CHOICE_VALUES[] = {
 {29, "3", "xp"},
 {29, "4", "p"},
 {35, "0", "heartbeat"},
-{35, "1", "testrequest"},
-{35, "2", "resendrequest"},
+{35, "1", "test_request"},
+{35, "2", "resend_request"},
 {35, "3", "reject"},
-{35, "4", "sequencereset"},
+{35, "4", "sequence_reset"},
 {35, "5", "logout"},
 {35, "6", "ioi"},
 {35, "7", "advertisement"},
-{35, "8", "executionreport"},
-{35, "9", "ordercancelreject"},
-{35, "a", "quotestatusrequest"},
+{35, "8", "execution_report"},
+{35, "9", "order_cancel_reject"},
 {35, "A", "logon"},
-{35, "AA", "derivativesecuritylist"},
-{35, "AB", "newordermultileg"},
-{35, "AC", "multilegordercancelreplace"},
-{35, "AD", "tradecapturereportrequest"},
-{35, "AE", "tradecapturereport"},
-{35, "AF", "ordermassstatusrequest"},
-{35, "AG", "quoterequestreject"},
-{35, "AH", "rfqrequest"},
-{35, "AI", "quotestatusreport"},
-{35, "AJ", "quoteresponse"},
-{35, "AK", "confirmation"},
-{35, "AL", "positionmaintenancerequest"},
-{35, "AM", "positionmaintenancereport"},
-{35, "AN", "requestforpositions"},
-{35, "AO", "requestforpositionsack"},
-{35, "AP", "positionreport"},
-{35, "AQ", "tradecapturereportrequestack"},
-{35, "AR", "tradecapturereportack"},
-{35, "AS", "allocationreport"},
-{35, "AT", "allocationreportack"},
-{35, "AU", "confirmationack"},
-{35, "AV", "settlementinstructionrequest"},
-{35, "AW", "assignmentreport"},
-{35, "AX", "collateralrequest"},
-{35, "AY", "collateralassignment"},
-{35, "AZ", "collateralresponse"},
 {35, "B", "news"},
-{35, "b", "massquoteacknowledgement"},
-{35, "BA", "collateralreport"},
-{35, "BB", "collateralinquiry"},
-{35, "BC", "networkcounterpartysystemstatusrequest"},
-{35, "BD", "networkcounterpartysystemstatusresponse"},
-{35, "BE", "userrequest"},
-{35, "BF", "userresponse"},
-{35, "BG", "collateralinquiryack"},
-{35, "BH", "confirmationrequest"},
 {35, "C", "email"},
-{35, "c", "securitydefinitionrequest"},
-{35, "d", "securitydefinition"},
-{35, "D", "newordersingle"},
-{35, "e", "securitystatusrequest"},
-{35, "E", "neworderlist"},
-{35, "F", "ordercancelrequest"},
-{35, "f", "securitystatus"},
-{35, "G", "ordercancelreplacerequest"},
-{35, "g", "tradingsessionstatusrequest"},
-{35, "H", "orderstatusrequest"},
-{35, "h", "tradingsessionstatus"},
-{35, "i", "massquote"},
-{35, "j", "businessmessagereject"},
-{35, "J", "allocationinstruction"},
-{35, "k", "b_idrequest"},
-{35, "K", "listcancelrequest"},
-{35, "l", "b_idresponse"},
-{35, "L", "listexecute"},
-{35, "m", "liststrikeprice"},
-{35, "M", "liststatusrequest"},
-{35, "n", "xmlnonfix"},
-{35, "N", "liststatus"},
-{35, "o", "registrationinstructions"},
-{35, "p", "registrationinstructionsresponse"},
-{35, "P", "allocationinstructionack"},
-{35, "q", "ordermasscancelrequest"},
-{35, "Q", "dontknowtradedk"},
-{35, "R", "quoterequest"},
-{35, "r", "ordermasscancelreport"},
+{35, "D", "new_order_single"},
+{35, "E", "new_order_list"},
+{35, "F", "order_cancel_request"},
+{35, "G", "order_cancel_replace_request"},
+{35, "H", "order_status_request"},
+{35, "J", "allocation_instruction"},
+{35, "K", "list_cancel_request"},
+{35, "L", "list_execute"},
+{35, "M", "list_status_request"},
+{35, "N", "list_status"},
+{35, "P", "allocation_instruction_ack"},
+{35, "Q", "dont_know_trade"},
+{35, "R", "quote_request"},
 {35, "S", "quote"},
-{35, "s", "newordercross"},
-{35, "T", "settlementinstructions"},
-{35, "t", "crossordercancelreplacerequest"},
-{35, "u", "crossordercancelrequest"},
-{35, "V", "marketdatarequest"},
-{35, "v", "securitytyperequest"},
-{35, "w", "securitytypes"},
-{35, "W", "marketdatasnapshotfullrefresh"},
-{35, "x", "securitylistrequest"},
-{35, "X", "marketdataincrementalrefresh"},
-{35, "Y", "marketdatarequestreject"},
-{35, "y", "securitylist"},
-{35, "Z", "quotecancel"},
-{35, "z", "derivativesecuritylistrequest"},
+{35, "T", "settlement_instructions"},
+{35, "V", "market_data_request"},
+{35, "W", "market_data_snapshot_full_refresh"},
+{35, "X", "market_data_incremental_refresh"},
+{35, "Y", "market_data_request_reject"},
+{35, "Z", "quote_cancel"},
+{35, "a", "quote_status_request"},
+{35, "b", "mass_quote_acknowledgement"},
+{35, "c", "security_definition_request"},
+{35, "d", "security_definition"},
+{35, "e", "security_status_request"},
+{35, "f", "security_status"},
+{35, "g", "trading_session_status_request"},
+{35, "h", "trading_session_status"},
+{35, "i", "mass_quote"},
+{35, "j", "business_message_reject"},
+{35, "k", "bid_request"},
+{35, "l", "bid_response"},
+{35, "m", "list_strike_price"},
+{35, "o", "registration_instructions"},
+{35, "p", "registration_instructions_response"},
+{35, "q", "order_mass_cancel_request"},
+{35, "r", "order_mass_cancel_report"},
+{35, "s", "new_order_cross"},
+{35, "t", "cross_order_cancel_replace_request"},
+{35, "u", "cross_order_cancel_request"},
+{35, "v", "security_type_request"},
+{35, "w", "security_types"},
+{35, "x", "security_list_request"},
+{35, "y", "security_list"},
+{35, "z", "derivative_security_list_request"},
+{35, "AA", "derivative_security_list"},
+{35, "AB", "new_order_multileg"},
+{35, "AC", "multileg_order_cancel_replace"},
+{35, "AD", "trade_capture_report_request"},
+{35, "AE", "trade_capture_report"},
+{35, "AF", "order_mass_status_request"},
+{35, "AG", "quote_request_reject"},
+{35, "AH", "rfq_request"},
+{35, "AI", "quote_status_report"},
+{35, "AJ", "quote_response"},
+{35, "AK", "confirmation"},
+{35, "AL", "position_maintenance_request"},
+{35, "AM", "position_maintenance_report"},
+{35, "AN", "request_for_positions"},
+{35, "AO", "request_for_positions_ack"},
+{35, "AP", "position_report"},
+{35, "AQ", "trade_capture_report_request_ack"},
+{35, "AR", "trade_capture_report_ack"},
+{35, "AS", "allocation_report"},
+{35, "AT", "allocation_report_ack"},
+{35, "AU", "confirmation_ack"},
+{35, "AV", "settlement_instruction_request"},
+{35, "AW", "assignment_report"},
+{35, "AX", "collateral_request"},
+{35, "AY", "collateral_assignment"},
+{35, "AZ", "collateral_response"},
+{35, "BA", "collateral_report"},
+{35, "BB", "collateral_inquiry"},
+{35, "BC", "network_counterparty_system_status_request"},
+{35, "BD", "network_counterparty_system_status_response"},
+{35, "BE", "user_request"},
+{35, "BF", "user_response"},
+{35, "BG", "collateral_inquiry_ack"},
+{35, "BH", "confirmation_request"},
 {39, "0", "new"},
 {39, "1", "partial"},
 {39, "2", "filled"},
@@ -2819,4 +2825,6 @@ struct ValueDesc CHOICE_VALUES[] = {
 {946, "99", "other"},
 {0, 0, 0}
 };
+
+#define MAX_FIELD_NUMBER 956
 

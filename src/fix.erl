@@ -81,17 +81,10 @@ decode(<<_/binary>>) ->
   error.
 
 decode_message(Message) ->
+  Fields = fix_splitter:split(Message),
   % ?D({in, dump(Message)}),
-  fix_parser:decode_message(Message).
+  fix_parser:decode_message(Fields).
   
-decode_fields(Message) ->
-  [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    Tag = fix_parser:field_by_number(K),
-    {Tag, fix_parser:decode_typed_field(Tag, V)}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0].
-
-
 parse_num(Bin) -> parse_num_erl(Bin).
 
 parse_num_erl(Bin) -> parse_num(Bin, 0, 0).
@@ -165,10 +158,6 @@ bench2() ->
   FIX = fix_tests:sample_md(),
   Num = 1000,
   Nums = lists:seq(1, Num),
-  T1 = erlang:now(),
-  [decode_fields(FIX) || _N <- Nums],
-  T2 = erlang:now(),
-  ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
 
   T3 = erlang:now(),
   [fix_splitter:split(FIX) || _N <- Nums],

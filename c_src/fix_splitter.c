@@ -17,6 +17,8 @@ struct ValueDesc {
 };
 
 static ERL_NIF_TERM atom_undefined;
+static ERL_NIF_TERM atom_true;
+static ERL_NIF_TERM atom_false;
 
 #include "splitter.h"
 
@@ -51,7 +53,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
   int code = 0;
   int ival = 0;
   double dval = 0.0;
-  double coeff = 0.0;
+  double coeff = 1.0;
   
   ERL_NIF_TERM *reply;
   int reply_capacity, reply_size;
@@ -77,13 +79,13 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           if(is_code(INT_CODE, code)) {
             state = READING_INT;
             dval = 0.0;
-            coeff = 0.0;
+            coeff = 1.0;
           } else if(is_code(BOOL_CODE, code)) {
             state = READING_BOOL;
           } else {
             state = READING_STRING;
           }
-          // fprintf(stderr, "Message %d\r\n", code);
+          // fprintf(stderr, "Message %d, %s\r\n", code, FIELD_NAMES[code]);
           
           if(reply_size >= reply_capacity - 2) {
             reply_capacity *= 2;
@@ -104,11 +106,11 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         if(ptr < end && *ptr == '.') {
           state = READING_DOUBLE;
           ptr++;
-          dval = ival;
+          dval = 1.0*ival;
 
-          while(*ptr >= '0' && *ptr <= '9' && ptr < end) {
+          while(ptr < end && *ptr >= '0' && *ptr <= '9') {
             coeff = coeff*0.1;
-            dval = dval + (*ptr - '0')*coeff;
+            dval += (*ptr - '0')*coeff;
             ptr++;
           }
         }
@@ -131,7 +133,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         
         ival = 0;
         dval = 0.0;
-        coeff = 0.0;
+        coeff = 1.0;
         if(ptr < end && *ptr == 1) {
           if(!is_code(LENGTH_CODE, code)) {
             reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
@@ -192,6 +194,30 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         continue;
       }
       
+      case READING_BOOL: {
+        ERL_NIF_TERM value;
+        if(*ptr == 'Y' || *ptr == 'y') {
+          value = atom_true;
+        } else {
+          value = atom_false;
+        }
+        ptr++;
+        if(ptr == end || *ptr != 1) {
+          //FIXME: clean reply
+          return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+        }
+        
+        reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+        state = READING_CODE;
+        code = 0;
+        ptr++;
+        continue;
+      }
+      default: {
+        //FIXME: clean reply
+        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+        
+      }
     }
   }
   
@@ -200,9 +226,31 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
   return list;
 }
 
+static ERL_NIF_TERM
+field_by_number(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ErlNifBinary bin;
+  char buf[100];
+  int code = 0;
+  if(enif_inspect_binary(env, argv[0], &bin)) {
+    strncpy(buf, (char *)bin.data, bin.size);
+    code = atoi(buf);
+  } else if(enif_get_string(env, argv[0], buf, sizeof(buf), ERL_NIF_LATIN1)) {
+    code = atoi(buf);
+  } else if(!enif_get_int(env, argv[0], &code)) {
+    return enif_make_badarg(env);
+  }
+  
+  if(code > 0 && code <= MAX_FIELD_NUMBER) {
+    return FIELD_ATOMS[code];
+  }
+  return atom_undefined;
+}
+
+
 static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
   int i;
-  for(i = 0; i < sizeof(FIELD_ATOMS) / sizeof(*FIELD_ATOMS); i++) {
+  for(i = 0; i <= MAX_FIELD_NUMBER; i++) {
     FIELD_ATOMS[i] = enif_make_atom(env, FIELD_NAMES[i]);
   }
   
@@ -211,8 +259,11 @@ static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
   }
   
   atom_undefined = enif_make_atom(env, "undefined");
+  atom_true = enif_make_atom(env, "true");
+  atom_false = enif_make_atom(env, "false");
   return 0;
 }
+
 
 
 static int upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info) {
@@ -225,7 +276,8 @@ static int reload(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
 
 static ErlNifFunc fix_splitter_funcs[] =
 {
-  {"split", 1, split}
+  {"split", 1, split},
+  {"field_by_number", 1, field_by_number}
 };
 
 
