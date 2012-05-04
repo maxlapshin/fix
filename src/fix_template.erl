@@ -295,7 +295,7 @@ generate_headers() ->
   "0};\n\n"],
   
   Table3 = ["unsigned char LENGTH_CODES[] = {\n",
-  build_table(Fields, <<0:1>>, fun(#field{raw_type = RawType}) -> RawType == "LENGTH" end),
+  build_table(Fields, <<0:1>>, fun(#field{raw_type = RawType, name = Name}) -> RawType == "LENGTH" andalso Name =/= "body_length" end),
   "0};\n\n"],
 
   Table4 = ["unsigned char CHOICE_CODES[] = {\n",

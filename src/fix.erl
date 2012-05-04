@@ -166,9 +166,14 @@ bench2() ->
   Num = 1000,
   Nums = lists:seq(1, Num),
   T1 = erlang:now(),
-  [decode(FIX) || _N <- Nums],
+  [decode_fields(FIX) || _N <- Nums],
   T2 = erlang:now(),
   ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
+
+  T3 = erlang:now(),
+  [fix_splitter:split(FIX) || _N <- Nums],
+  T4 = erlang:now(),
+  ?D({Num, timer:now_diff(T4,T3), round(timer:now_diff(T4,T3) / Num)}),
   ok.
   
 -include_lib("eunit/include/eunit.hrl").

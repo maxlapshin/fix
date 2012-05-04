@@ -60,6 +60,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
   reply = (ERL_NIF_TERM *)calloc(sizeof(ERL_NIF_TERM), reply_capacity);
   reply_size = 0;
   
+  int next_data_length = -1;
   
   // fprintf(stderr, "Splitting %.*s\r\n", 20, (char *)ptr);
   
@@ -115,6 +116,10 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         if(state == READING_INT) {
           // fprintf(stderr, "Read int %s = %d\r\n", FIELD_NAMES[code], ival);
           value = enif_make_int(env, ival);
+          
+          if(is_code(LENGTH_CODE, code)) {
+            next_data_length = ival;
+          }
         } else if (state == READING_DOUBLE) {
           // fprintf(stderr, "Read double %s = %.2f\r\n", FIELD_NAMES[code], dval);
           value = enif_make_double(env, dval);
@@ -128,7 +133,9 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         dval = 0.0;
         coeff = 0.0;
         if(ptr < end && *ptr == 1) {
-          reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+          if(!is_code(LENGTH_CODE, code)) {
+            reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+          }
           state = READING_CODE;
           code = 0;
           ptr++;
@@ -140,8 +147,18 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
       
       case READING_STRING: {
         unsigned char *string_begin = ptr;
-        while(ptr < end && *ptr != 1) {
-          ptr++;
+        
+        if(next_data_length >= 0) {
+          ptr += next_data_length;
+          if(ptr >= end || *ptr != 1) {
+            //FIXME: clean reply
+            return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+          }
+          next_data_length = -1;
+        } else {
+          while(ptr < end && *ptr != 1) {
+            ptr++;
+          }
         }
         
         if(ptr == end) {
