@@ -3,7 +3,7 @@
 -on_load(init_nif/0).
 -include("log.hrl").
 
--export([split/1, field_by_number/1, bench/0]).
+-export([split/1, field_by_number/1]).
 
 init_nif() ->
   Path = filename:dirname(code:which(?MODULE)) ++ "/../priv",
@@ -19,16 +19,6 @@ split(_Binary) ->
 
 field_by_number(_Field) ->
   erlang:error(not_implemented).
-
-decode_fields_erl(Message) ->
-  [begin
-    [K,V] = binary:split(Field, <<"=">>),
-    Tag = fix_parser:field_by_number(K),
-    {Tag, fix_parser:decode_typed_field(Tag, V)}
-  end || Field <- binary:split(Message, <<1>>, [global]), size(Field) > 0].
-
-bench() ->
-  ok.
 
 
 -include_lib("eunit/include/eunit.hrl").
