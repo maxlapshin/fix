@@ -10,11 +10,13 @@
 #include <time.h>
 
 struct ValueDesc {
-  int code;
+  int number;
   char *value;
   char *desc;
   ERL_NIF_TERM atom;
 };
+
+static ERL_NIF_TERM atom_undefined;
 
 #include "splitter.h"
 
@@ -51,7 +53,18 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
   double dval;
   double coeff;
   
+  ERL_NIF_TERM *reply;
+  int reply_capacity, reply_size;
+  
+  reply_capacity = 16;
+  reply = (ERL_NIF_TERM *)calloc(sizeof(ERL_NIF_TERM), reply_capacity);
+  reply_size = 0;
+  
   for(; ptr < input.data + input.size; ) {
+    if(reply_size >= reply_capacity - 2) {
+      reply_capacity *= 2;
+      reply = (ERL_NIF_TERM *)realloc(reply, reply_capacity*sizeof(ERL_NIF_TERM));
+    }
     switch(state) {
       case READING_CODE:
         while(*ptr >= '0' && *ptr <= '9' && ptr < end) {
@@ -73,6 +86,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           ptr++;
           continue;
         }
+        //FIXME: clean reply
         return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
       
       case READING_INT: {
@@ -91,18 +105,25 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             ptr++;
           }
         }
+        ERL_NIF_TERM value;
         if(state == READING_INT) {
-          fprintf(stderr, "Read int %s = %d\r\n", FIELD_NAMES[code], ival);
+          // fprintf(stderr, "Read int %s = %d\r\n", FIELD_NAMES[code], ival);
+          value = enif_make_int(env, ival);
+        } else if (state == READING_DOUBLE) {
+          // fprintf(stderr, "Read double %s = %.2f\r\n", FIELD_NAMES[code], dval);
+          value = enif_make_double(env, dval);
         } else {
-          fprintf(stderr, "Read double %s = %.2f\r\n", FIELD_NAMES[code], dval);
+          //FIXME: clean reply
+          return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
         }
         if(ptr < end && *ptr == 1) {
+          reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
           state = READING_CODE;
           ptr++;
           continue;
         }
-        
-        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));        
+        //FIXME: clean reply
+        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
       }
       
       case READING_STRING: {
@@ -111,7 +132,27 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           ptr++;
         }
         
-        fprintf(stderr, "Read string %s -> '%.*s'\r\n", FIELD_NAMES[code], (int)(ptr - string_begin), string_begin);
+        ERL_NIF_TERM value = atom_undefined;
+        if(is_code(CHOICE_CODE, code)) {
+          int i;
+          for(i = 0; CHOICE_VALUES[i].value; i++) {
+            if(CHOICE_VALUES[i].number == code && !strncmp(CHOICE_VALUES[i].value, (const char *)string_begin, ptr - string_begin)) {
+              value = CHOICE_VALUES[i].atom;
+              break;
+            }
+          }
+        }
+        if(value == atom_undefined) {
+          ErlNifBinary bin;
+          enif_alloc_binary(ptr - string_begin, &bin);
+          memcpy(bin.data, string_begin, ptr - string_begin);
+          value = enif_make_binary(env, &bin);
+        }
+        
+        reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+        
+        // fprintf(stderr, "Read string %s -> '%.*s'\r\n", FIELD_NAMES[code], (int)(ptr - string_begin), string_begin);
+        state = READING_CODE;
         ptr++;
         continue;
       }
@@ -119,7 +160,9 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
   }
   
-  return argv[0];
+  ERL_NIF_TERM list = enif_make_list_from_array(env, reply, reply_size);
+  free(reply);
+  return list;
 }
 
 static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
@@ -131,6 +174,8 @@ static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
   for(i = 0; CHOICE_VALUES[i].desc; i++) {
     CHOICE_VALUES[i].atom = enif_make_atom(env, CHOICE_VALUES[i].desc);
   }
+  
+  atom_undefined = enif_make_atom(env, "undefined");
   return 0;
 }
 
