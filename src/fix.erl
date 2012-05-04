@@ -85,15 +85,6 @@ decode_message(Message) ->
   % ?D({in, dump(Message)}),
   fix_parser:decode_message(Fields).
   
-parse_num(Bin) -> parse_num_erl(Bin).
-
-parse_num_erl(Bin) -> parse_num(Bin, 0, 0).
-parse_num(<<$., Bin/binary>>, Acc, 0) -> parse_num(Bin, Acc*1.0, 0.1);
-parse_num(<<X, Bin/binary>>, Acc, 0) -> parse_num(Bin, Acc*10 + X - $0, 0);
-parse_num(<<X, Bin/binary>>, Acc, Coeff) -> parse_num(Bin, Acc + (X - $0)*Coeff, Coeff*0.1);
-parse_num(<<>>, Acc, _) -> Acc.
-
-  
 
 
 sample_fix() ->
@@ -125,7 +116,7 @@ bench() ->
   Num = 100000,
   Nums = lists:seq(1, Num),
   T1 = erlang:now(),
-  [fix_parser:decode_message(FIX) || _N <- Nums],
+  [decode_message(FIX) || _N <- Nums],
   T2 = erlang:now(),
   ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
   ok.
@@ -136,23 +127,6 @@ measure(Fun) ->
   T2 = erlang:now(),
   timer:now_diff(T2,T1).
   
-  
-bench1() ->
-  Num = 10*1000,
-  Nums = lists:seq(1, Num),
-  Bins = [
-    {small_int, <<"123">>, list_to_integer},
-    {medium_int, <<"1234567890">>, list_to_integer},
-    {small_float, <<"123.45">>, list_to_float},
-    {medium_float, <<"123.4567890">>, list_to_float}
-  ],
-  Results = [begin
-    T1 = measure(fun() -> [erlang:F(binary_to_list(Bin)) || _N <- Nums] end),
-    T2 = measure(fun() -> [parse_num(Bin) || _N <- Nums] end),
-    T3 = measure(fun() -> [parse_num_erl(Bin) || _N <- Nums] end),
-    {Tag, T1, T2, T3}
-  end || {Tag, Bin, F} <- Bins],
-  ?D(Results).
  
 bench2() ->
   FIX = fix_tests:sample_md(),

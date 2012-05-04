@@ -7,13 +7,6 @@
 
 -compile(export_all).
 
-parse_num_test() ->
-  ?assertEqual(123, fix:parse_num(<<"123">>)),
-  ?assertEqual(0, fix:parse_num(<<"">>)),
-  ?assertMatch(123.4, fix:parse_num(<<"123.4">>)),
-  ?assertEqual(123.0, fix:parse_num(<<"123.">>)),
-  ok.
-
 encode_test() ->
   ?assertEqual(fix:sample_fix(), iolist_to_binary(fix:encode(fix_splitter:split(fix:sample_fix())))).
 
