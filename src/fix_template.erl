@@ -16,6 +16,7 @@
   code,
   type,
   admin = false,
+  modified_fields = false,
   fields = [],
   required = [],
   components = [],
@@ -66,13 +67,35 @@ root() ->
     Root_ when is_list(Root_) -> Root_
   end.
 
+
+config() ->
+  case file:path_consult(["priv", code:lib_dir(fix, priv)], "template.conf") of
+    {ok, Env, _Path} -> Env;
+    {error, enoent} -> [];
+    {error, Error} -> erlang:error({template_conf, Error})
+  end.
+
 parse() ->
   {ok, Xml} = file:read_file(root() ++"/spec/FIX44.xml"),
   {ok, #parser{messages = Messages} = State, _} = erlsom:parse_sax(Xml, #parser{}, fun handler/2, []),
-  Prepend = ["sender_comp_id","target_comp_id","msg_seq_num","sending_time"],
-  Trailer = ["signature"],
-  State#parser{messages = [Message#message{fields = Prepend ++ Fields ++ Trailer, required = Prepend ++ Required} || 
-  #message{fields = Fields, required = Required} = Message <- Messages]}.
+  Prepend = ["exchange", "sending_time"],
+  Config = config(),
+  MessagesConfig = proplists:get_value(messages, Config, []),
+
+  Messages1 = [begin
+    MsgConfig = proplists:get_value(list_to_atom(Name), MessagesConfig, []),
+    {Fields1, Flag} = case proplists:get_value(fields, MsgConfig) of
+      undefined -> {Prepend ++ Fields, false};
+      F -> {[atom_to_list(N) || N <- F], true}
+    end,    
+    Message#message{fields = Fields1, modified_fields = Flag}
+  end || #message{fields = Fields, name = Name} = Message <- Messages],
+  Messages2 = case proplists:get_value(business_messages, Config) of
+    undefined -> Messages1;
+    BusinessMessages ->
+      [Msg || #message{admin = Admin, name = Name} = Msg <- Messages1, Admin == true orelse true == lists:member(list_to_atom(Name), BusinessMessages)]
+  end,
+  State#parser{messages = Messages2}.
 
 
 generate_includes() ->
@@ -89,8 +112,6 @@ parser_body() ->
   Header = ["-module(fix_parser).\n-include(\"../include/admin.hrl\").\n-include(\"../include/business.hrl\").\n\n",
   "-export([decode_message/1, field_by_number/1, number_by_field/1, decode_typed_field/2, encode_typed_field/2, message_by_number/1, number_by_message/1]).\n\n"],
   Body1 = generate_decode_message(Messages, Fields),
-  Body2 = [],
-  Body3 = [],
   Body4 = generate_field_by_number(Fields),
   Body5 = generate_decode_typed_field(Fields),
   Body6 = generate_encode_typed_field(Fields),
@@ -98,7 +119,7 @@ parser_body() ->
   Body8 = generate_message_by_number(Messages),
   Body9 = generate_number_by_message(Messages),
   Body10 = add_parse_num(),
-  iolist_to_binary([Header, Body1, Body2, Body3, Body4, Body5, Body6, Body7, Body8, Body9, Body10]).
+  iolist_to_binary([Header, Body1, Body4, Body5, Body6, Body7, Body8, Body9, Body10]).
 
 generate_decode_message(Messages, Fields) ->
   Bodies1 = [
@@ -106,9 +127,13 @@ generate_decode_message(Messages, Fields) ->
   "  decode_fields(Message, #",Name,"{}, ",Name,", ",integer_to_list(default_field_offset(Msg, Fields)),")"]
   || #message{name = Name, code = Code} = Msg <- Messages],
   
+  Config = config(),
+  SkipFields = [atom_to_list(F) || F <- proplists:get_value(skip_fields, Config, [])],
   Bodies2_ = [begin
-    UsedFields = message_fields(Msg, Fields),
+    UsedFields = message_fields(Msg, Fields) -- SkipFields,
     Indexes = lists:zip(UsedFields, lists:seq(2, 1+length(UsedFields))),
+    
+    [["field_index(",RecordName,", ",FieldName,") -> false;\n"] || FieldName <- SkipFields] ++    
     [["field_index(",RecordName,", ",FieldName,") -> ",integer_to_list(Index),";\n"] || {FieldName,Index} <- Indexes]
   end|| #message{name = RecordName} = Msg <- Messages],
   Bodies2 = [Bodies2_, "field_index(_,_) -> undefined.\n\n"],
@@ -117,6 +142,7 @@ generate_decode_message(Messages, Fields) ->
   "decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->\n"
   "  Record1 = case field_index(RecordName, Code) of\n"
   "    undefined -> erlang:setelement(Default, Record, [{Code,Value}|erlang:element(Default,Record)]);\n"
+  "    false -> Record;\n"
   "    Index -> erlang:setelement(Index, Record, Value)\n"
   "  end,\n"
   "  decode_fields(Message, Record1, RecordName, Default);\n\n"
@@ -194,6 +220,9 @@ add_parse_num() ->
   "parse_num(<<>>, Acc, _) -> Acc.\n\n".
   
 
+message_fields(#message{modified_fields = true, fields = FieldNames}, _Fields) ->
+  FieldNames;
+  
 message_fields(#message{fields = FieldNames}, Fields) ->
   [Name || #field{raw_type = T, name = Name} <- [lists:keyfind(F, #field.name, Fields) || F <- FieldNames], T =/= "LENGTH"].
 

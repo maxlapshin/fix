@@ -1,8 +1,24 @@
-{host, "broker.com"}.
-{port, 9000}.
-{password, "Password"}.
-{target, "TargetCompID"}.
-{sender, "SenderCompID"}.
-{heartbeat, 30}.
-{symbol, "APPL"}.
-{security, "NYSE"}.
+{fix_proxy, [
+  {host, "yourhost"},
+  {port, 8500},
+  {password, "PASSWD"},
+  {target, "BROKER_FEED"},
+  {sender, "CLIENT_FEED"},
+  {heartbeat, 30}
+]}.
+{fix_read, [
+  {host, "broker"},
+  {port, 8600},
+  {password, "PASSWD"},
+  {target, "BROKER_FEED"},
+  {sender, "CLIENT_FEED"},
+  {heartbeat, 30}
+]}.
+{fix_write, [
+  {host, "broker"},
+  {port, 8601},
+  {password, "PASSWD"},
+  {target, "BROKER_FEED"},
+  {sender, "CLIENT_FEED"},
+  {heartbeat, 30}
+]}.

@@ -10,7 +10,20 @@
 -compile(export_all).
 
 
+start_listener() ->
+  application:start(ranch),
+  ranch:start_listener(fix_listener, 10,
+    ranch_tcp, [{port, 8102}],
+    fix_server, []
+  ).
+  
+
 -type fix_message() :: any().
+
+now() ->
+  {{YY,MM,DD},{H,M,S}} = calendar:universal_time(),
+  % 20120529-10:40:17.578
+  lists:flatten(io_lib:format("~4..0B~2..0B~2..0B-~2..0B:~2..0B:~2..0B", [YY, MM, DD, H, M, S])).
 
 pack(MessageType, Body) ->
   Seq = get(seq_num),
@@ -21,7 +34,7 @@ pack(MessageType, Body) ->
 pack(MessageType, Body, SeqNum, Sender, Target) ->
   Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum},
   {poss_dup_flag, "N"}] ++ case proplists:get_value(sending_time, Body) of
-    undefined -> [{sending_time, sending_time()}];
+    undefined -> [{sending_time, fix:now()}];
     _ -> []
   end,
   Body1 = encode(Header2 ++ Body),
@@ -45,22 +58,26 @@ encode_value(Value) when is_list(Value) -> Value;
 encode_value(Value) when is_binary(Value) -> Value.
 
 
-sending_time() ->
-  {{YY,MM,DD},{H,M,S}} = calendar:universal_time(),
-  lists:flatten(io_lib:format("~4..0B~2..0B~2..0B-~2..0B:~2..0B:~2..0B", [YY,MM,DD,H,M,S])).
-  
 dump(Bin) ->
   re:replace(iolist_to_binary(Bin), "\\001", "|", [{return,binary},global]).
 
 
 -spec decode(binary()) -> {ok, fix_message(), binary()} | {more, non_neg_integer()} | error.
-decode(<<"8=FIX.4.4",1,"9=", Bin/binary>>) ->
+decode(Bin) ->
+  case decode_fields(Bin) of
+    {ok, Fields, Rest} ->
+      {ok, fix_group:postprocess(fix_parser:decode_message(Fields)), Rest};
+    Else ->
+      Else
+  end.  
+
+decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>>) ->
   case binary:split(Bin, <<1>>) of
     [BinLen, Rest1] ->
       BodyLength = list_to_integer(binary_to_list(BinLen)),
       case Rest1 of
         <<Message:BodyLength/binary, "10=", _CheckSum:3/binary, 1, Rest2/binary>> ->
-          {ok, decode_message(Message), Rest2};
+          {ok, fix_splitter:split(Message), Rest2};
         _ ->
           {more, BodyLength + 3 + 3 + 1 - size(Rest1)}
       end;
@@ -68,23 +85,26 @@ decode(<<"8=FIX.4.4",1,"9=", Bin/binary>>) ->
       {more, 1}
   end;
 
-decode(<<"8", Rest/binary>>) when length(Rest) < 14 ->
+decode_fields(<<"8", Rest/binary>>) when length(Rest) < 14 ->
   {more, 14 - size(Rest)};
 
-decode(<<"8", _/binary>>) ->
+decode_fields(<<"8", _/binary>>) ->
   {more, 1};
 
-decode(<<>>) ->
+decode_fields(<<>>) ->
   {more, 14};
           
-decode(<<_/binary>>) ->
+decode_fields(<<_/binary>>) ->
   error.
 
-decode_message(Message) ->
-  Fields = fix_splitter:split(Message),
-  % ?D({in, dump(Message)}),
-  fix_parser:decode_message(Fields).
   
+stock_to_instrument(Stock) when is_atom(Stock) ->
+  case binary:split(atom_to_binary(Stock,latin1), <<".">>) of
+    [Sym] -> {undefined, Sym};
+    [Ex, Sym] -> {Ex, Sym}
+  end.
+
+
 
 
 sample_fix() ->
@@ -96,7 +116,7 @@ sample_fix() ->
   
 
 profile() ->
-  FIX = sample_fix(),
+  _FIX = sample_fix(),
   Num = 1000,
   Nums = lists:seq(1, Num),
   fprof:start(),
@@ -116,7 +136,7 @@ bench() ->
   Num = 100000,
   Nums = lists:seq(1, Num),
   T1 = erlang:now(),
-  [decode_message(FIX) || _N <- Nums],
+  [decode_fields(FIX) || _N <- Nums],
   T2 = erlang:now(),
   ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
   ok.

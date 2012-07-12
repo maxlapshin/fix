@@ -6,10 +6,16 @@
 
 %% Application callbacks
 -export([start/2, stop/1]).
+-export([restart/0]).
 
 %% ===================================================================
 %% Application callbacks
 %% ===================================================================
+
+restart() ->
+  application:stop(fix),
+  application:unload(fix),
+  application:start(fix).
 
 start(_StartType, _StartArgs) ->
   case file:path_consult(["."], "fix.conf") of

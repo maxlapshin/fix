@@ -18,8 +18,30 @@ Usage
 =====
 
 Edit fix.conf.sample and put it into root of your project.
+Mention that `fix_read` should be your broker and `fix_proxy` is for proxying your market requests via your server.
+But let us start from easy usage.
 
 Don't forget to `application:start(fix).`
 
-Now take a look at `fix_session:open/0`. This call creates session, login to broker and subscribe to market data.
 
+Now let's subscribe to market data:
+
+```
+fix_reader:subscribe(fix_read, 'NASDAQ.AAPL')
+```
+
+What is going now? Launch `appmon:start()` and see that there are new spawned processes in supervisor tree of fix application.
+You have connected to broker and now your process will receive market data.
+
+Include header:
+
+```
+-include_lib("fix/include/business.hrl").
+```
+
+and use structure
+```
+#market_data_snapshot_full_refresh{}
+```
+
+from it.
