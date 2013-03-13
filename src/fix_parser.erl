@@ -23,7 +23,7 @@ decode_message([{msg_type,logout}|Message]) -> % Logout
   decode_fields(Message, #logout{}, logout, 5);
 
 decode_message([{msg_type,execution_report}|Message]) -> % ExecutionReport
-  decode_fields(Message, #execution_report{}, execution_report, 25);
+  decode_fields(Message, #execution_report{}, execution_report, 26);
 
 decode_message([{msg_type,order_cancel_reject}|Message]) -> % OrderCancelReject
   decode_fields(Message, #order_cancel_reject{}, order_cancel_reject, 23);
@@ -115,14 +115,15 @@ field_index(execution_report, transact_time) -> 8;
 field_index(execution_report, leaves_qty) -> 9;
 field_index(execution_report, cum_qty) -> 10;
 field_index(execution_report, last_px) -> 11;
-field_index(execution_report, order_qty) -> 12;
-field_index(execution_report, ord_type) -> 13;
-field_index(execution_report, price) -> 14;
-field_index(execution_report, ord_rej_reason) -> 15;
-field_index(execution_report, text) -> 16;
-field_index(execution_report, security_exchange) -> 17;
-field_index(execution_report, symbol) -> 18;
-field_index(execution_report, avg_px) -> 19;
+field_index(execution_report, last_qty) -> 12;
+field_index(execution_report, order_qty) -> 13;
+field_index(execution_report, ord_type) -> 14;
+field_index(execution_report, price) -> 15;
+field_index(execution_report, ord_rej_reason) -> 16;
+field_index(execution_report, text) -> 17;
+field_index(execution_report, security_exchange) -> 18;
+field_index(execution_report, symbol) -> 19;
+field_index(execution_report, avg_px) -> 20;
 field_index(order_cancel_reject, sender_comp_id) -> false;
 field_index(order_cancel_reject, target_comp_id) -> false;
 field_index(order_cancel_reject, msg_seq_num) -> false;
@@ -3365,6 +3366,7 @@ encode_typed_field(_Key, V) when is_list(V) -> V;
 encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(_Key, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0])).
 
+number_by_field(Key) when is_integer(Key) -> list_to_binary(integer_to_list(Key));
 number_by_field(account) -> <<"1">>;
 number_by_field(adv_id) -> <<"2">>;
 number_by_field(adv_ref_id) -> <<"3">>;

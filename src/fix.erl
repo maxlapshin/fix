@@ -6,34 +6,85 @@
 -author('Max Lapshin <max@maxidoors.ru>').
 -include("log.hrl").
 % -include("../include/admin.hrl").
-% -include("../include/business.hrl").
+-include("../include/business.hrl").
 -compile(export_all).
 
-
+%% @doc Start acceptor with `ranch' on port, specified in application environment under fix_port
+%%
+-spec start_listener() -> {ok, pid()}.
 start_listener() ->
   application:start(ranch),
-  ranch:start_listener(fix_listener, 10,
-    ranch_tcp, [{port, 8102}],
+  Spec = ranch:child_spec(fix_listener, 10,
+    ranch_tcp, [{port, fix:get_value(fix_port)}],
     fix_server, []
-  ).
+  ),
+  {ok, Pid} = supervisor:start_child(fix_sup, Spec),
+  error_logger:info_msg("Starting FIX server on port ~p~n", [fix:get_value(fix_port)]),
+  {ok, Pid}.
+
+
+%% @doc returns value from application environment, or default value
+-spec get_value(any(), any()) -> any().
+get_value(Key, Default) ->
+  case application:get_env(fix, Key) of
+    {ok, Value} -> Value;
+    undefined -> Default
+  end.
+
+%% @doc returns value from application environment, or raise error
+-spec get_value(any()) -> any().
+get_value(Key) ->
+  case application:get_env(fix, Key) of
+    {ok, Value} -> Value;
+    undefined -> erlang:error({no_key,Key})
+  end.
   
+
+
+%% @doc starts fix connection by its well known name
+-spec start_connection(Name :: term()) -> {ok, Pid :: pid()}.
+start_connection(Name) ->
+  Options = fix:get_value(Name),
+  {ok, Fix} = fix_connection:start_link(self(), Options),
+  {ok, Fix}.
 
 -type fix_message() :: any().
 
+
+%% @doc fix local reimplementation of UTC as a string 
+-spec now() -> string().
 now() ->
-  {{YY,MM,DD},{H,M,S}} = calendar:universal_time(),
+  timestamp(to_date_ms(erlang:now())).
+
+timestamp({{YY,MM,DD},{H,M,S,Milli}}) ->
   % 20120529-10:40:17.578
-  lists:flatten(io_lib:format("~4..0B~2..0B~2..0B-~2..0B:~2..0B:~2..0B", [YY, MM, DD, H, M, S])).
+  lists:flatten(io_lib:format("~4..0B~2..0B~2..0B-~2..0B:~2..0B:~2..0B.~3..0B", [YY, MM, DD, H, M, S, Milli])).
 
-pack(MessageType, Body) ->
-  Seq = get(seq_num),
-  Bin = pack(MessageType, Body, Seq, get(sender_id), get(target_id)),
-  put(seq_num, Seq+1),
-  Bin.
 
-pack(MessageType, Body, SeqNum, Sender, Target) ->
-  Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum},
-  {poss_dup_flag, "N"}] ++ case proplists:get_value(sending_time, Body) of
+to_date_ms({Mega, Sec, Micro}) ->
+  Seconds = Mega*1000000 + Sec,
+  Milli = Micro div 1000,
+  {Date, {H,M,S}} = calendar:gregorian_seconds_to_datetime(Seconds + calendar:datetime_to_gregorian_seconds({{1970,1,1}, {0,0,0}})),
+  {Date, {H,M,S,Milli}}.
+
+
+-spec utc_ms() -> non_neg_integer().
+utc_ms() ->
+  utc_ms(erlang:now()).
+
+-spec utc_ms(erlang:timestamp()) -> non_neg_integer().
+utc_ms({Mega, Sec, Micro}) ->
+  (Mega*1000000+Sec)*1000 + Micro div 1000.
+
+
+
+%% @doc packs fix message into binary
+-spec pack(atom(), list(), non_neg_integer(), any(), any()) -> iolist().
+pack(MessageType, Body, SeqNum, Sender, Target) when 
+MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefined, Target =/= undefined ->
+  Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum}
+  % ,{poss_dup_flag, "N"}
+  ] ++ case proplists:get_value(sending_time, Body) of
     undefined -> [{sending_time, fix:now()}];
     _ -> []
   end,
@@ -62,22 +113,33 @@ dump(Bin) ->
   re:replace(iolist_to_binary(Bin), "\\001", "|", [{return,binary},global]).
 
 
--spec decode(binary()) -> {ok, fix_message(), binary()} | {more, non_neg_integer()} | error.
+-spec decode(binary()) -> {ok, fix_message(), binary(), binary()} | {more, non_neg_integer()} | error.
 decode(Bin) ->
+  try decode0(Bin) of
+    Result -> Result
+  catch
+    error:Error ->
+      ?DBG("Failed to decode fix '~s': ~p~n~p~n", [fix:dump(Bin), Error, erlang:get_stacktrace()]),
+      error(invalid_fix)
+  end.
+
+decode0(Bin) ->
   case decode_fields(Bin) of
-    {ok, Fields, Rest} ->
-      {ok, fix_group:postprocess(fix_parser:decode_message(Fields)), Rest};
+    {ok, Fields, MessageBin, Rest} ->
+      {ok, fix_group:postprocess(fix_parser:decode_message(Fields)), MessageBin, Rest};
     Else ->
       Else
   end.  
 
-decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>>) ->
+decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>> = FullBin) ->
   case binary:split(Bin, <<1>>) of
     [BinLen, Rest1] ->
       BodyLength = list_to_integer(binary_to_list(BinLen)),
       case Rest1 of
         <<Message:BodyLength/binary, "10=", _CheckSum:3/binary, 1, Rest2/binary>> ->
-          {ok, fix_splitter:split(Message), Rest2};
+          MessageLength = size(FullBin) - size(Rest2),
+          <<MessageBin:MessageLength/binary, _/binary>> = FullBin,
+          {ok, fix_splitter:split(Message), MessageBin, Rest2};
         _ ->
           {more, BodyLength + 3 + 3 + 1 - size(Rest1)}
       end;
@@ -99,12 +161,47 @@ decode_fields(<<_/binary>>) ->
 
   
 stock_to_instrument(Stock) when is_atom(Stock) ->
-  case binary:split(atom_to_binary(Stock,latin1), <<".">>) of
+  stock_to_instrument(atom_to_binary(Stock,latin1));
+
+stock_to_instrument(Stock) when is_binary(Stock) ->
+  case binary:split(Stock, <<".">>, [global]) of
+    [<<Currency1:3/binary, Currency2:3/binary>>] -> {undefined, <<Currency1/binary, "/", Currency2/binary>>};
     [Sym] -> {undefined, Sym};
-    [Ex, Sym] -> {Ex, Sym}
+    [<<"FX_", _/binary>> = Ex, <<Currency1:3/binary, Currency2:3/binary>>] -> {Ex, <<Currency1/binary, "/", Currency2/binary>>};
+    [Ex, Sym] -> {Ex, Sym};
+    [Ex, Sym, Date] -> {Ex, Sym, Date}
   end.
 
 
+instrument_to_stock({undefined, <<Currency1:3/binary, "/", Currency2:3/binary>>}) ->
+  binary_to_atom(<<Currency1/binary, Currency2/binary>>, latin1);
+
+instrument_to_stock({<<"FX_", _/binary>> = Exchange, <<Currency1:3/binary, "/", Currency2:3/binary>>}) ->
+  binary_to_atom(<<Exchange/binary, ".", Currency1/binary, Currency2/binary>>, latin1);
+
+instrument_to_stock({Exchange, Symbol, Maturity}) when is_binary(Exchange) andalso is_binary(Symbol) 
+  andalso is_binary(Maturity) ->
+  binary_to_atom(<<Exchange/binary, ".", Symbol/binary, ".", Maturity/binary>>, latin1);
+
+instrument_to_stock({Exchange, Symbol}) when is_binary(Exchange) andalso is_binary(Symbol) ->
+  binary_to_atom(<<Exchange/binary, ".", Symbol/binary>>, latin1).
+
+get_stock(#execution_report{security_exchange = Exchange, symbol = Symbol}) ->
+  instrument_to_stock({Exchange, Symbol}).
+
+cfi_code(futures) -> "F*****";
+cfi_code(undefined) -> "MRCXXX";
+cfi_code(<<"FX_TOD">>) -> "MRCXXX";
+cfi_code(<<"FX_TOM">>) -> "MRCXXX";
+cfi_code(_) -> "EXXXXX".
+
+stock_to_instrument_block(Stock) ->
+  case stock_to_instrument(Stock) of
+    {Exchange, Symbol} ->
+      [{symbol, Symbol}, {cfi_code, cfi_code(Exchange)}, {security_exchange, Exchange}];
+    {Exchange, Symbol, Date} ->
+      [{symbol, Symbol}, {cfi_code, cfi_code(futures)}, {maturity_month_year, Date}, {security_exchange, Exchange}]
+  end.
 
 
 sample_fix() ->

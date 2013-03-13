@@ -52,6 +52,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
   int state = READING_CODE;
   int code = 0;
   int ival = 0;
+  int sign = 1;
   double dval = 0.0;
   double coeff = 1.0;
   
@@ -80,6 +81,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             state = READING_INT;
             dval = 0.0;
             coeff = 1.0;
+            sign = 1;
           } else if(is_code(BOOL_CODE, code)) {
             state = READING_BOOL;
           } else {
@@ -96,9 +98,13 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           continue;
         }
         //FIXME: clean reply
-        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+        return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_code"), enif_make_int(env, ptr - input.data));
       
       case READING_INT: {
+        if(ptr < end && *ptr == '-') {
+          sign = -1;
+          ptr++;
+        }
         while(*ptr >= '0' && *ptr <= '9' && ptr < end) {
           ival = ival*10 + *ptr - '0';
           ptr++;
@@ -117,26 +123,27 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         ERL_NIF_TERM value;
         if(state == READING_INT) {
           // fprintf(stderr, "Read int %s = %d\r\n", FIELD_NAMES[code], ival);
-          value = enif_make_int(env, ival);
+          value = enif_make_int(env, ival*sign);
           
           if(is_code(LENGTH_CODE, code)) {
             next_data_length = ival;
           }
         } else if (state == READING_DOUBLE) {
           // fprintf(stderr, "Read double %s = %.2f\r\n", FIELD_NAMES[code], dval);
-          value = enif_make_double(env, dval);
+          value = enif_make_double(env, dval*sign);
         } else {
           //FIXME: clean reply
-          return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+          return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_int"), enif_make_int(env, ptr - input.data));
         }
         // fprintf(stderr, "Read int part of value: %d, %d\r\n", ival, *ptr);
         
         ival = 0;
         dval = 0.0;
         coeff = 1.0;
+        sign = 1;
         if(ptr < end && *ptr == 1) {
           if(!is_code(LENGTH_CODE, code)) {
-            reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+            reply[reply_size++] = enif_make_tuple2(env, code < MAX_FIELD_NUMBER ? FIELD_ATOMS[code] : enif_make_int(env, code), value);
           }
           state = READING_CODE;
           code = 0;
@@ -144,7 +151,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           continue;
         }
         //FIXME: clean reply
-        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+        return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_int_soh"), enif_make_int(env, ptr - input.data));
       }
       
       case READING_STRING: {
@@ -154,7 +161,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           ptr += next_data_length;
           if(ptr >= end || *ptr != 1) {
             //FIXME: clean reply
-            return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+            return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_string"), enif_make_int(env, ptr - input.data));
           }
           next_data_length = -1;
         } else {
@@ -165,7 +172,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         
         if(ptr == end) {
           //FIXME: clean reply
-          return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+          return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_string_soh"), enif_make_int(env, ptr - input.data));
         }
         
         ERL_NIF_TERM value = atom_undefined;
@@ -185,7 +192,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
           value = enif_make_binary(env, &bin);
         }
         
-        reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+        reply[reply_size++] = enif_make_tuple2(env, code < MAX_FIELD_NUMBER ? FIELD_ATOMS[code] : enif_make_int(env, code), value);
         
         // fprintf(stderr, "Read string %s -> '%.*s'\r\n", FIELD_NAMES[code], (int)(ptr - string_begin), string_begin);
         state = READING_CODE;
@@ -204,10 +211,10 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         ptr++;
         if(ptr == end || *ptr != 1) {
           //FIXME: clean reply
-          return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+          return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_bool_soh"), enif_make_int(env, ptr - input.data));
         }
         
-        reply[reply_size++] = enif_make_tuple2(env, FIELD_ATOMS[code], value);
+        reply[reply_size++] = enif_make_tuple2(env, code < MAX_FIELD_NUMBER ? FIELD_ATOMS[code] : enif_make_int(env, code), value);
         state = READING_CODE;
         code = 0;
         ptr++;
@@ -215,7 +222,7 @@ split(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
       }
       default: {
         //FIXME: clean reply
-        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_int(env, ptr - input.data));
+        return enif_make_tuple3(env, enif_make_atom(env, "error"), enif_make_atom(env, "reading_fix"), enif_make_int(env, ptr - input.data));
         
       }
     }
@@ -241,10 +248,7 @@ field_by_number(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_badarg(env);
   }
   
-  if(code > 0 && code <= MAX_FIELD_NUMBER) {
-    return FIELD_ATOMS[code];
-  }
-  return atom_undefined;
+  return (code > 0 && code <= MAX_FIELD_NUMBER) ? FIELD_ATOMS[code] : enif_make_int(env, code);
 }
 
 

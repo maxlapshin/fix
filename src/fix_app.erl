@@ -18,14 +18,13 @@ restart() ->
   application:start(fix).
 
 start(_StartType, _StartArgs) ->
-  case file:path_consult(["."], "fix.conf") of
-    {ok, Env, Path} ->
-      error_logger:info_msg("Load FIX config from ~s~n", [Path]),
-      application:set_env(fix, config, Env);
-    {error, enoent} ->
-      ok
-  end,  
-  fix_sup:start_link().
+  {ok, Pid} = fix_sup:start_link(),
+  case fix:get_value(fix_port, undefined) of
+    undefined -> ok;
+    Port -> fix:start_listener()
+  end,
+  {ok, Pid}.
+  
 
 stop(_State) ->
     ok.

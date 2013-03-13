@@ -17,11 +17,18 @@ decode_test() ->
   {md_entry_type,offer}, {md_entry_px,219.03}, {md_entry_size,140}], fix_splitter:split(fix:sample_fix())).
 
 pack_test() ->
-  Out = fix:pack(market_data_request, [{sending_time,"20120502-13:08:35"}, {md_req_id,42},{subscription_request_type,1},{market_depth,0},{md_update_type,0},{no_md_entry_types,2},
-  {md_entry_type,bid},{md_entry_type,offer},{no_related_sym,1},{symbol,"URKA"},{cfi_code,"EXXXXX"},{security_exchange,"MICEX"}], 31, "SENDER", "TARGET"),  
-  Fix = <<"8=FIX.4.4|9=135|35=V|49=SENDER|56=TARGET|34=31|43=N|52=20120502-13:08:35|262=42|263=1|264=0|265=0|267=2|269=0|269=1|146=1|55=URKA|461=EXXXXX|207=MICEX|10=158|">>,
+  Body = [{sending_time,"20120502-13:08:35"}, {md_req_id,42},{subscription_request_type,1},
+    {market_depth,0},{md_update_type,0},{no_md_entry_types,2},
+    {md_entry_type,bid},{md_entry_type,offer},{no_related_sym,1},
+    {symbol,"URKA"},{cfi_code,"EXXXXX"},{security_exchange,"MICEX"}],
+  Out = fix:pack(market_data_request, Body, 31, "SENDER", "TARGET"),  
+  Fix = <<"8=FIX.4.4|9=130|35=V|49=SENDER|56=TARGET|34=31|52=20120502-13:08:35|262=42|263=1|264=0|265=0|267=2|269=0|269=1|146=1|55=URKA|461=EXXXXX|207=MICEX|10=166|">>,
 
-  ?assertEqual(Fix, fix:dump(iolist_to_binary(Out))).
+  OutPD = fix:pack(market_data_request, [{poss_dup_flag, "N"}|Body], 31, "SENDER", "TARGET"),  
+  FixPD = <<"8=FIX.4.4|9=135|35=V|49=SENDER|56=TARGET|34=31|43=N|52=20120502-13:08:35|262=42|263=1|264=0|265=0|267=2|269=0|269=1|146=1|55=URKA|461=EXXXXX|207=MICEX|10=158|">>,
+
+  ?assertEqual(Fix, fix:dump(iolist_to_binary(Out))),
+  ?assertEqual(FixPD, fix:dump(iolist_to_binary(OutPD))).
 
 
 % fix_decode_1_test() ->
@@ -29,8 +36,9 @@ pack_test() ->
 
 
 fix_decode_2_test() ->
-  {ok, Record, <<>>} =
-  fix:decode(<<"8=FIX.4.4",1,"9=135",1,"35=V",1,"49=SENDER",1,"56=TARGET",1,"34=31",1,"43=N",1,"52=20120502-13:08:35",1,"262=42",1,"263=1",1,"264=0",1,"265=0",1,"267=2",1,"269=0",1,"269=1",1,"146=1",1,"55=URKA",1,"461=EXXXXX",1,"207=MICEX",1,"10=158",1,"">>),
+  Result = fix:decode(<<"8=FIX.4.4",1,"9=135",1,"35=V",1,"49=SENDER",1,"56=TARGET",1,"34=31",1,"43=N",1,"52=20120502-13:08:35",1,"262=42",1,"263=1",1,"264=0",1,"265=0",1,"267=2",1,"269=0",1,"269=1",1,"146=1",1,"55=URKA",1,"461=EXXXXX",1,"207=MICEX",1,"10=158",1,"">>),  
+  ?assertMatch({ok, _Record, _Bin, <<>>}, Result),
+  {ok, Record, _, <<>>} = Result,
   ?assertMatch(#market_data_request{
     % sender_comp_id = <<"SENDER">>,
     % target_comp_id = <<"TARGET">>,
@@ -51,7 +59,7 @@ fix_decode_2_test() ->
       {security_exchange,<<"MICEX">>}
     ]
   }, Record).
-  
+
 sample_md() ->
   <<"8=FIX.4.4",1,"9=1084",1,"35=W",1,"34=2",1,"49=TARGET_FEED_UAT",1,"52=20120504-08:03:28.693",1,
   "56=SENDER1_FEED_UAT",1,"55=APPL",1,"262=1",1,"268=40",1,"269=0",1,"270=215.34",1,"271=320",1,"269=0",1,"270=215.24",1,"271=3200",1,"269=0",1,"270=215.17",1,
@@ -66,8 +74,8 @@ sample_md() ->
   "270=216.45",1,"271=410",1,"269=1",1,"270=216.47",1,"271=500",1,"269=1",1,"270=216.48",1,"271=250",1,"10=156",1>>.
   
 fix_decode_3_test() ->
-  {ok, Record, <<>>} = fix:decode(sample_md()),
+  {ok, Record, _, <<>>} = fix:decode(sample_md()),
   ?assertMatch(#market_data_snapshot_full_refresh{
     md_entries = [[{md_entry_type,bid},{md_entry_px,215.34},{md_entry_size,320}]|_]
   }, Record).
-  
+

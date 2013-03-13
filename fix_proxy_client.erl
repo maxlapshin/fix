@@ -8,10 +8,17 @@ main([]) ->
 
 main(Args) ->
   Root = filename:dirname(escript:script_name()),
-  code:add_pathz(Root ++ "/ebin"),
+  [code:add_pathz(Path) || Path <- filelib:wildcard(Root ++ "/../../apps/*/ebin")],
   [code:add_pathz(Path) || Path <- filelib:wildcard(Root ++ "/../../deps/*/ebin")],
+  helper:load_conf(),
   application:start(fix),
-  {Exchange, Symbol} = case Args of
+  {Debug, Args1} = case Args of
+    ["-d" | Arg_] -> {true, Arg_};
+    _ -> {false, Args}
+  end,
+  
+  application:set_env(fix, debug, Debug),
+  {Exchange, Symbol} = case Args1 of
     [Sym] -> {undefined, Sym};
     [Exch, Sym] -> {Exch, Sym}
   end,

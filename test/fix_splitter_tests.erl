@@ -25,12 +25,17 @@ split_4_test() ->
 split_5_test() ->
   ?assertEqual([{poss_dup_flag,false},{sending_time,<<"20120502-13:08:35">>}], fix_splitter:split(<<"43=N",1,"52=20120502-13:08:35",1>>)).
 
+split_6_test() ->
+  ?assertEqual([{order_qty,-287},{ord_status,pendingnew}], fix_splitter:split(<<"38=-287",1, "39=A",1>>)).
+
+dont_fail_on_unknown_code_test() ->
+  ?assertEqual(10001, fix_splitter:field_by_number(10001)),
+  ?assertEqual([{10001,<<"Y">>}], fix_splitter:split(<<"10001=Y",1>>)).
+
 good_field_names_test() ->
-  io:format("z2~n", []),
-  Pairs = [{N,fix_parser:field_by_number(list_to_binary(integer_to_list(N))), fix_splitter:field_by_number(N)} || N <- lists:seq(1, 1000)],
+  Pairs = [{N,fix_parser:field_by_number(list_to_binary(integer_to_list(N))), fix_splitter:field_by_number(N)} || N <- lists:seq(1, 956)],
   % SplitterPairs = [{Number, } || {Number, _Name} <- Pairs],
   % ?assertEqual(Pairs, SplitterPairs).
-  io:format("~p~n", [zzz]),
   [?assertEqual({Number,Field1}, {Number,Field2}) || {Number, Field1, Field2} <- Pairs],
   ok.
 

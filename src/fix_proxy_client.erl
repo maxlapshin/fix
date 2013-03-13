@@ -2,10 +2,11 @@
 
 -compile(export_all).
 -include("../include/business.hrl").
+-include("../include/fix.hrl").
 
 
 run(Exchange, Symbol) ->
-  {ok, Pid} = fix_connection:start_link(self(), fix_connection:options(fix_proxy)),
+  {ok, Pid} = fix_connection:start_link(self(), fix:get_value(fix_proxy)),
   fix_connection:logon(Pid),
   fix_connection:subscribe(Pid, Exchange, Symbol),
 
@@ -14,7 +15,7 @@ run(Exchange, Symbol) ->
 
 loop(Pid) ->
   receive
-    {fix, Pid, #market_data_snapshot_full_refresh{md_entries = MdEntries}} ->
+    #fix{pid = Pid, message = #market_data_snapshot_full_refresh{md_entries = MdEntries}} ->
       Bid = [Entry || Entry <- MdEntries, proplists:get_value(md_entry_type,Entry) == bid],
       Ask = [Entry || Entry <- MdEntries, proplists:get_value(md_entry_type,Entry) == offer],
       if

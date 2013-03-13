@@ -160,6 +160,7 @@ generate_field_by_number(Fields) ->
 
 generate_number_by_field(Fields) ->
   [
+  "number_by_field(Key) when is_integer(Key) -> list_to_binary(integer_to_list(Key));\n",
   [["number_by_field(",Name,") -> <<\"",Number,"\">>;\n"] || #field{name = Name, number = Number} <- Fields],
   "number_by_field(Key) when is_binary(Key) -> Key.\n\n"
   ].

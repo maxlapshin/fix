@@ -9,6 +9,7 @@
   leaves_qty,
   cum_qty,
   last_px,
+  last_qty,
   order_qty,
   ord_type,
   price,
