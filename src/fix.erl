@@ -42,10 +42,10 @@ get_value(Key) ->
 
 
 %% @doc starts fix connection by its well known name
--spec start_connection(Name :: term()) -> {ok, Pid :: pid()}.
-start_connection(Name) ->
+-spec start_exec_conn(Name :: term()) -> {ok, Pid :: pid()}.
+start_exec_conn(Name) ->
   Options = fix:get_value(Name),
-  {ok, Fix} = fix_connection:start_link(self(), Options),
+  {ok, Fix} = fix_sup:start_exec_conn(Name, Options),
   {ok, Fix}.
 
 -type fix_message() :: any().

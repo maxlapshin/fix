@@ -4,7 +4,7 @@
 -behaviour(supervisor).
 
 %% API
--export([start_link/0, start_connection/2, start_worker/3]).
+-export([start_link/0, start_exec_conn/2, start_worker/3]).
 -export([start_read_conn/2, stop_read_conn/1, stocks/1]).
 -export([start_reader/1, start_stock/2, stop_stock/2, stop_reader/1]).
 
@@ -28,14 +28,15 @@ stocks_sup(Reader) when is_atom(Reader) ->
 start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
-start_connection(Consumer, Options) ->
-  supervisor:start_child(fix_connection_sup, [Consumer, Options]).
-
 start_read_conn(Name, Options) when is_atom(Name) ->
   SupName = read_sup(Name),
   supervisor:start_child(SupName, {connection,
       {fix_read_conn, start_link, [Name, Options]},
       temporary, 3000, worker, []}).
+
+start_exec_conn(Name, Options) when is_atom(Name) ->
+  supervisor:start_child(fix_exec_conn_sup, [Name, Options]).
+
 
 stop_read_conn(Name) when is_atom(Name) ->
   SupName = read_sup(Name),
@@ -101,11 +102,11 @@ init([fix_server]) ->
     }
   };
 
-%% Generic Fix connection (used for execution)
-init([fix_connection]) ->
+%% Execution connection.
+init([fix_exec_conn_sup]) ->
   {ok, {{simple_one_for_one, 5, 60}, [
     {   undefined,                               % Id       = internal id
-      {fix_connection,start_link,[]},             % StartFun = {M, F, A}
+      {fix_exec_conn,start_link,[]},             % StartFun = {M, F, A}
             temporary,                               % Restart  = permanent | transient | temporary
             2000,                                    % Shutdown = brutal_kill | int() >= 0 | infinity
             worker,                                  % Type     = worker | supervisor
@@ -146,7 +147,7 @@ init([]) ->
       []                                       % Modules  = [Module] | dynamic
     },
     {fix_connection_sup,
-      {supervisor,start_link,[{local, fix_connection_sup}, ?MODULE, [fix_connection]]},
+      {supervisor,start_link,[{local, fix_exec_conn_sup}, ?MODULE, [fix_exec_conn_sup]]},
       permanent,                               % Restart  = permanent | transient | temporary
       infinity,                                % Shutdown = brutal_kill | int() >= 0 | infinity
       supervisor,                              % Type     = worker | supervisor
