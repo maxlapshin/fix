@@ -13,6 +13,7 @@
 
 % Public API
 -export([id/1, start_link/2, connect/2]).
+-export([attach/2, attach/3, mirror_to/2]).
 -export([order_status/4, new_order_single/6, cancel_order/7]).
 
 -export([status/1]).
@@ -45,6 +46,7 @@
 
     order_owners = [],
     status_requesters = [],
+    mirror = [],
 
     buffer = <<>>
   }).
@@ -68,6 +70,15 @@ connect(Pid, Options, Timeout) when is_integer(Timeout), is_list(Options) ->
 
 status(Pid) ->
   gen_server:call(Pid, status).
+
+attach(Fix, OrderId) ->
+  attach(Fix, OrderId, self()).
+
+attach(Fix, OrderId, Destination) ->
+  gen_server:call(Fix, {attach, OrderId, Destination}).
+
+mirror_to(Fix, Destination) ->
+  gen_server:call(Fix, {mirror_to, Destination}).
 
 
 % Request new order placement
@@ -129,6 +140,15 @@ init([Name, GivenOptions]) ->
 handle_call(status, _From, #conn{status_requesters = SRs, order_owners = OOwners} = Conn) ->
   Result = [{order_owners, OOwners}, {status_requesters, SRs}],
   {reply, Result, Conn};
+
+handle_call({attach, OrderId, Destination}, _From, #conn{} = Conn) ->
+  NewConn = remember_request(attach, OrderId, Destination, Conn),
+  {reply, ok, NewConn};
+
+handle_call({mirror_to, Destination}, _From, #conn{mirror = Mirror0} = Conn) ->
+  erlang:monitor(process, Destination),
+  Mirror = lists:umerge([Destination], Mirror0),
+  {reply, ok, Conn#conn{mirror = Mirror}};
 
 handle_call({connect_logon, Options}, From, #conn{} = Conn) ->
   Connected = #conn{} = do_connect(Conn),
@@ -231,7 +251,7 @@ terminate(_,_) ->
 
 
 remember_request(NewRequest, Id, Pid, #conn{order_owners = Owners} = Conn)
-when NewRequest == order_cancel_request; NewRequest == new_order_single ->
+when NewRequest == order_cancel_request; NewRequest == new_order_single; NewRequest == attach ->
   Conn#conn{order_owners = do_remember(Id, Pid, Owners)};
 
 remember_request(order_status_request, Id, Pid, #conn{status_requesters = Owners} = Conn) ->
@@ -251,10 +271,11 @@ maybe_monitor_new(Pid, Mapping) ->
     false -> erlang:monitor(process, Pid)
   end.
 
-unsubscribe_owner(Owner, #conn{status_requesters = SRs, order_owners = OOwners} = Conn) ->
+unsubscribe_owner(Owner, #conn{status_requesters = SRs, order_owners = OOwners, mirror = Mirror} = Conn) ->
   Conn#conn{
     status_requesters = [SR || SR = {_id, Pid} <- SRs, Pid /= Owner],
-    order_owners = [OO || OO = {_id, Pid} <- OOwners, Pid /= Owner] }.
+    order_owners = [OO || OO = {_id, Pid} <- OOwners, Pid /= Owner],
+    mirror = [M || M <- Mirror, M /= Owner] }.
 
 
 handle_messages([{#heartbeat{},_}|Messages], #conn{} = Conn) ->
@@ -291,24 +312,25 @@ handle_messages([], #conn{} = Conn) ->
 
 
 % Perform message pass
-pass_message(Message, Bin, ClOrdId, #conn{status_requesters = SRs, order_owners = OOwners} = Conn, Final) when is_boolean(Final) ->
+pass_message(Message, Bin, ClOrdId, #conn{status_requesters = SRs, order_owners = OOwners, mirror = Mirror} = Conn, Final) when is_boolean(Final) ->
+  {OPids, NewOwners} = which_pass(ClOrdId, OOwners, Final),
+  {SPids, NewSRs} = which_pass(ClOrdId, SRs, true),
+
   ToPass = #fix{pid = self(), message = Message, bin = Bin},
-  Conn#conn{
-    order_owners = do_pass(ToPass, ClOrdId, OOwners, Final),
-    status_requesters = do_pass(ToPass, ClOrdId, SRs, true) }.
+  [Pid ! ToPass || Pid <- lists:umerge([OPids, SPids, Mirror])],
+
+  Conn#conn{order_owners = NewOwners, status_requesters = NewSRs}.
 
 
-do_pass(Msg, ClOrdId, Map, Final) when not is_list(ClOrdId) ->
-  do_pass(Msg, [ClOrdId], Map, Final);
+which_pass(ClOrdId, Map, Final) when not is_list(ClOrdId) ->
+  which_pass([ClOrdId], Map, Final);
 
-do_pass(Msg, ClOrdIds, Map, false) ->
+which_pass(ClOrdIds, Map, false) ->
   Pids = lists:usort([Pid || {Id, Pid} <- Map, lists:member(Id, ClOrdIds)]),
-  [Pid ! Msg || Pid <- Pids],
-  Map;
+  {Pids, Map};
 
-do_pass(Msg, ClOrdIds, Map, true) ->
+which_pass(ClOrdIds, Map, true) ->
   {Matched, Kept} = lists:partition(fun({Id, _}) -> lists:member(Id, ClOrdIds) end, Map),
   Pids = lists:usort([Pid || {_Id, Pid} <- Matched]),
-  [Pid ! Msg || Pid <- Pids],
-  Kept.
+  {Pids, Kept}.
 
