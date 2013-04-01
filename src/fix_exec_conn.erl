@@ -26,7 +26,7 @@
     name,
 
     debug = false,
-    log,
+    logging, log,
 
     socket,
     seq = 1,
@@ -120,15 +120,12 @@ init([Name, GivenOptions]) ->
     _ -> false
   end,
 
-  Log = case proplists:get_value(logging, Options) of
-    undefined -> undefined;
-    Profile -> fix_connection:open_next_log(Profile)
-  end,
+  Logging = proplists:get_value(logging, Options),
 
   {ok, #conn{
       name = Name,
       debug = Debug,
-      log = Log,
+      logging = Logging, log = {buffer, ""},
 
       host = Host,
       port = Port,
@@ -176,14 +173,22 @@ handle_info(timeout, #conn{logon_from = {_, _} = From} = Conn) ->
 handle_info({Trans, Socket, Data}, #conn{buffer = PrevBuf, debug = Debug, log = Log} = Conn)
 when Trans == tcp; Trans == ssl; Trans == test ->
   Buffer = <<PrevBuf/binary, Data/binary>>,
-  {Messages, Rest} = fix_connection:decode_messages(Buffer, Debug, Log),
+
+  % decode_messages may return new log when log is pre-buffer
+  {Messages, NextConn} = case fix_connection:decode_messages(Buffer, Debug, Log) of
+    {Msgs, Rest} ->
+      {Msgs, Conn#conn{buffer = Rest}};
+    {Msgs, Rest, NewLog} ->
+      {Msgs, Conn#conn{buffer = Rest, log = NewLog}}
+  end,
 
   case Trans of
     tcp -> inet:setopts(Socket, [{active,once}]);
     ssl -> ssl:setopts(Socket, [{active,once}]);
     test -> ok
   end,
-  handle_messages(Messages, Conn#conn{buffer = Rest});
+
+  handle_messages(Messages, NextConn);
 
 handle_info({test_messages, Messages}, #conn{} = Conn) ->
   MsgsBins = [{Msg, <<>>} || Msg <- Messages],
@@ -245,15 +250,12 @@ send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target,
   if Debug == true andalso MessageType =/= heartbeat -> ?D({send, fix:dump(Bin)}); true -> ok end,
   Result = Transport:send(Socket, Bin),
 
-  if % Log to file after data is sent
-    MessageType =/= heartbeat andalso Log =/= undefined ->
-      catch file:write(Log, ["out ", fix:now(), " ", fix:dump(Bin), "\n"]);
-    true -> ok
-  end,
+  % Write log
+  NextLog = fix_connection:write_log(Log, out, MessageType, Bin),
 
   ok = Result, % Crash on send failure
 
-  Conn#conn{seq = Seq + 1}.
+  Conn#conn{seq = Seq + 1, log = NextLog}.
 
 terminate(_,_) ->
   ok.
@@ -292,11 +294,15 @@ handle_messages([{#heartbeat{},_}|Messages], #conn{} = Conn) ->
   handle_messages(Messages, Conn);
 
 % Reply to pending logon request
-handle_messages([{#logon{},_}|Messages], #conn{logon_from = {Pid, _} = From} = Conn) ->
+handle_messages([{#logon{},_}|Messages], #conn{logon_from = {Pid, _} = From, log = LogBuffer, logging = Logging} = Conn) ->
+  % Open log at successful logon and flush buffer
+  Log = fix_connection:open_next_log(Logging, LogBuffer),
+
   gen_server:reply(From, ok),
   erlang:monitor(process, Pid),
-  LoggedOn = Conn#conn{logon_from = undefined, consumer = Pid},
-  handle_messages(Messages, LoggedOn);
+
+  handle_messages(Messages, Conn#conn{logon_from = undefined, consumer = Pid, log = Log});
+
 
 handle_messages([{#logout{} = Logout, Bin}|_Messages], #conn{consumer = undefined, logon_from = {_, _} = From} = Conn) ->
   ?D(Logout),
