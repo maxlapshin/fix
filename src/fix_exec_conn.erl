@@ -14,7 +14,7 @@
 % Public API
 -export([id/1, start_link/2, connect/2]).
 -export([attach/2, attach/3, mirror_to/2]).
--export([order_status/4, new_order_single/6, cancel_order/7]).
+-export([order_status/4, order_status_attach/4, new_order_single/6, cancel_order/7]).
 
 -export([status/1]).
 
@@ -96,6 +96,10 @@ cancel_order(Pid, OrderId, CancelId, Stock, Side, Quantity, Options) ->
 % Request order status
 order_status(Pid, OrderId, Side, Stock) ->
   gen_server:call(Pid, {msg, order_status_request, OrderId, Side, Stock, []}).
+
+% Request order status
+order_status_attach(Pid, OrderId, Side, Stock) ->
+  gen_server:call(Pid, {msg, {order_status_request, attach}, OrderId, Side, Stock, []}).
 
 
 % Initialize
@@ -229,6 +233,11 @@ send_logon(#conn{password = Password, heartbeat = Heartbeat} = Conn, Options) ->
 
 
 
+% Special cases
+send({MessageType, _Option}, Body, #conn{} = Conn) ->
+  send(MessageType, Body, Conn);
+
+% Do actual message send
 send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target,
     socket = Socket, debug = Debug, transport = Transport, log = Log} = Conn) ->
   % if MessageType =/= heartbeat -> ?D({pack, MessageType, Body, Seq, Sender, Target}); true -> ok end,
@@ -251,7 +260,7 @@ terminate(_,_) ->
 
 
 remember_request(NewRequest, Id, Pid, #conn{order_owners = Owners} = Conn)
-when NewRequest == order_cancel_request; NewRequest == new_order_single; NewRequest == attach ->
+when NewRequest == order_cancel_request; NewRequest == new_order_single; NewRequest == attach; NewRequest == {order_status_request, attach} ->
   Conn#conn{order_owners = do_remember(Id, Pid, Owners)};
 
 remember_request(order_status_request, Id, Pid, #conn{status_requesters = Owners} = Conn) ->
