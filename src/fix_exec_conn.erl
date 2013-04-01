@@ -168,7 +168,7 @@ handle_info(heartbeat, #conn{} = Conn) ->
 
 handle_info(timeout, #conn{logon_from = {_, _} = From} = Conn) ->
   gen_server:reply(From, {error, logon_timeout}),
-  {noreply, Conn#conn{logon_from = undefined}};
+  {stop, {shutdown, logon_timeout}, Conn#conn{logon_from = undefined}};
 
 handle_info({Trans, Socket, Data}, #conn{buffer = PrevBuf, debug = Debug, log = Log} = Conn)
 when Trans == tcp; Trans == ssl; Trans == test ->
@@ -197,10 +197,10 @@ handle_info({test_messages, Messages}, #conn{} = Conn) ->
 handle_info({Closed, Socket}, #conn{socket = Socket, host = Host, port = Port} = Conn)
 when Closed == tcp_closed; Closed == ssl_closed ->
   ?D({fix_connection,socket_closed, Host, Port}),
-  {stop, socket_closed, Conn};
+  {stop, {shutdown, socket_closed}, Conn};
 
 handle_info({'DOWN', _, _, Consumer, _}, #conn{consumer = Consumer} = Conn) ->
-  {stop, consumer_dead, Conn};
+  {stop, {shutdown, consumer_dead}, Conn};
 
 handle_info({'DOWN', _, _, Owner, _}, #conn{} = Conn) when is_pid(Owner) ->
   {noreply, unsubscribe_owner(Owner, Conn)};
@@ -223,7 +223,7 @@ do_connect(#conn{host = Host, port = Port, ssl = SSL} = Conn) ->
     {ok, Socket} ->
       Conn#conn{socket = Socket, transport = Transport};
     {error, Error} ->
-      erlang:throw({reply, {error, {connect, Error}}, Conn})
+      erlang:throw({stop, {shutdown, {connect, Error}}, {error, {connect, Error}}, Conn})
   end.
 
 send_logon(#conn{password = Password, heartbeat = Heartbeat} = Conn, Options) ->
@@ -307,7 +307,7 @@ handle_messages([{#logon{},_}|Messages], #conn{logon_from = {Pid, _} = From, log
 handle_messages([{#logout{} = Logout, Bin}|_Messages], #conn{consumer = undefined, logon_from = {_, _} = From} = Conn) ->
   ?D(Logout),
   gen_server:reply(From, {error, {Logout, Bin}}),
-  {stop, logged_out, Conn};
+  {stop, {shutdown, logged_out}, Conn};
 
 handle_messages([{#order_cancel_reject{cl_ord_id = ClOrdId} = Reject, Bin}|Messages], #conn{} = Conn) ->
   Handled = pass_message(Reject, Bin, ClOrdId, Conn, true),
