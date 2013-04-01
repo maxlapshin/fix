@@ -312,12 +312,21 @@ handle_messages([], #conn{} = Conn) ->
 
 
 % Perform message pass
-pass_message(Message, Bin, ClOrdId, #conn{status_requesters = SRs, order_owners = OOwners, mirror = Mirror} = Conn, Final) when is_boolean(Final) ->
+pass_message(Message, Bin, ClOrdId,
+  #conn{status_requesters = SRs, order_owners = OOwners, mirror = Mirror, consumer = Consumer} = Conn, Final)
+when is_boolean(Final) ->
   {OPids, NewOwners} = which_pass(ClOrdId, OOwners, Final),
   {SPids, NewSRs} = which_pass(ClOrdId, SRs, true),
 
   ToPass = #fix{pid = self(), message = Message, bin = Bin},
-  [Pid ! ToPass || Pid <- lists:umerge([OPids, SPids, Mirror])],
+  Acceptors = case {OPids, SPids} of
+    {[], []} -> % No route for message, pass it to consumer
+      lists:usort([Consumer|Mirror]);
+    {_, _} -> % Route OK
+      lists:umerge([OPids, SPids, Mirror])
+  end,
+
+  [Pid ! ToPass || Pid <- Acceptors],
 
   Conn#conn{order_owners = NewOwners, status_requesters = NewSRs}.
 
