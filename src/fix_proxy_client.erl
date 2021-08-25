@@ -1,9 +1,9 @@
 -module(fix_proxy_client).
 
--compile(export_all).
 -include("../include/business.hrl").
 -include("../include/fix.hrl").
 
+-export([run/2]).
 
 run(Exchange, Symbol) ->
   {ok, Pid} = fix_connection:start_link(self(), fix:get_value(fix_proxy)),
@@ -36,4 +36,3 @@ loop(Pid) ->
       io:format("Else: ~p~n", [Else])
   end,
   loop(Pid).
-  

@@ -2,7 +2,9 @@
 -author('Max Lapshin <max@maxidoors.ru>').
 
 -include("log.hrl").
--compile(export_all).
+-export([generate_headers/0,
+         generate_includes/0,
+         generate_parser/0]).
 
 
 

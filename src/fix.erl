@@ -7,7 +7,24 @@
 -include("log.hrl").
 % -include("../include/admin.hrl").
 -include("../include/business.hrl").
--compile(export_all).
+-export([start_listener/0,
+         get_value/2,
+         get_value/1,
+         start_exec_conn/1,
+         now/0,
+         timestamp/1,
+         utc_ms/0,
+         pack/5,
+         checksum/1,
+         encode/1,
+         encode_value/1,
+         dump/1,
+         decode/1,
+         stock_to_instrument/1,
+         instrument_to_stock/1,
+         get_stock/1,
+         cfi_code/1,
+         stock_to_instrument_block/1]).
 
 %% @doc Start acceptor with `ranch' on port, specified in application environment under fix_port
 %%
@@ -54,7 +71,7 @@ start_exec_conn(Name) ->
 %% @doc fix local reimplementation of UTC as a string 
 -spec now() -> string().
 now() ->
-  timestamp(to_date_ms(erlang:now())).
+  timestamp(to_date_ms(erlang:timestamp())).
 
 timestamp({{YY,MM,DD},{H,M,S,Milli}}) ->
   % 20120529-10:40:17.578
@@ -70,7 +87,7 @@ to_date_ms({Mega, Sec, Micro}) ->
 
 -spec utc_ms() -> non_neg_integer().
 utc_ms() ->
-  utc_ms(erlang:now()).
+  utc_ms(erlang:timestamp()).
 
 -spec utc_ms(erlang:timestamp()) -> non_neg_integer().
 utc_ms({Mega, Sec, Micro}) ->
@@ -118,8 +135,8 @@ decode(Bin) ->
   try decode0(Bin) of
     Result -> Result
   catch
-    error:Error ->
-      ?DBG("Failed to decode fix '~s': ~p~n~p~n", [fix:dump(Bin), Error, erlang:get_stacktrace()]),
+    error:Error:StackTrace ->
+      ?DBG("Failed to decode fix '~s': ~p~n~p~n", [fix:dump(Bin), Error, StackTrace]),
       error(invalid_fix)
   end.
 
@@ -203,6 +220,7 @@ stock_to_instrument_block(Stock) ->
       [{symbol, Symbol}, {cfi_code, cfi_code(futures)}, {maturity_month_year, Date}, {security_exchange, Exchange}]
   end.
 
+-ifdef(TEST).
 
 sample_fix() ->
   <<51,53,61,87,1,51,52,61,51,1,53,50,61,50,48,49,50,48,52,50,54,45,48,54,58,51,
@@ -212,37 +230,40 @@ sample_fix() ->
     52,48,1>>.
   
 
+print_time_diff(T1, T2, Num) ->
+  ?D({Num, T2 - T1, round(erlang:convert_time_unit(T2 - T1, native, microsecond) / Num)}).
+
 profile() ->
   _FIX = sample_fix(),
   Num = 1000,
   Nums = lists:seq(1, Num),
   fprof:start(),
-  T1 = erlang:now(),
+  T1 = erlang:monotonic_time(),
   fprof:apply(fun() ->
     % [fix_parser:decode_message(FIX) || _N <- Nums]
     [decode(fix_tests:sample_md()) || _N <- Nums]
   end, []),
-  T2 = erlang:now(),
+  T2 = erlang:monotonic_time(),
   fprof:profile(),
-  fprof:analyse(),  
-  ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
+  fprof:analyse(),
+  print_time_diff(T1, T2, Num),
   ok.
 
 bench() ->
   FIX = sample_fix(),
   Num = 100000,
   Nums = lists:seq(1, Num),
-  T1 = erlang:now(),
+  T1 = erlang:monotonic_time(),
   [decode_fields(FIX) || _N <- Nums],
-  T2 = erlang:now(),
-  ?D({Num, timer:now_diff(T2,T1), round(timer:now_diff(T2,T1) / Num)}),
+  T2 = erlang:monotonic_time(),
+  print_time_diff(T1, T2, Num),
   ok.
 
 measure(Fun) ->
-  T1 = erlang:now(),
+  T1 = erlang:monotonic_time(),
   Fun(),
-  T2 = erlang:now(),
-  timer:now_diff(T2,T1).
+  T2 = erlang:monotonic_time(),
+  erlang:convert_time_unit(T2 - T1, native, microsecond).
   
  
 bench2() ->
@@ -250,15 +271,15 @@ bench2() ->
   Num = 1000,
   Nums = lists:seq(1, Num),
 
-  T3 = erlang:now(),
+  T3 = erlang:monotonic_time(),
   [fix_splitter:split(FIX) || _N <- Nums],
-  T4 = erlang:now(),
-  ?D({Num, timer:now_diff(T4,T3), round(timer:now_diff(T4,T3) / Num)}),
+  T4 = erlang:monotonic_time(),
+  print_time_diff(T3, T4, Num),
   ok.
   
 -include_lib("eunit/include/eunit.hrl").
 
-
+-endif.
   
   
   
