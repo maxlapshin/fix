@@ -1,10 +1,10 @@
 all:
-	./rebar compile
+	./rebar3 compile
 
 .PHONY: test
 
 test:
-	./rebar eunit -v
+	./rebar3 eunit --verbose
 
 header:
 	erl -pa ebin -noshell -s fix_template generate_headers -s init stop
@@ -14,4 +14,4 @@ parser:
 
 
 clean:
-	./rebar clean
+	./rebar3 clean
