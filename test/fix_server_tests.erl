@@ -55,8 +55,8 @@ test_subscribe_failed() ->
   {ok, Socket} = login(),
   {ok, _} = gen_tcp:recv(Socket, 0),
 
-  meck:new(fix_reader, [{passthrough, true}]),
-  meck:expect(fix_reader, subscribe, fun(_,'MICEX.URKA', _) -> {error, rejected} end),
+  ok = meck:new(fix_reader, [passthrough]),
+  ok = meck:expect(fix_reader, subscribe, fun(_,'MICEX.URKA', _) -> {error, rejected} end),
 
   Request = [{md_req_id, 1}, {subscription_request_type, 1}, {market_depth, 0}, {md_update_type, 0}, {no_related_sym,1}]++
     fix:stock_to_instrument_block('MICEX.URKA') ++ fix_connection:entry_types('MICEX.URKA'),

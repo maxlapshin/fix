@@ -20,18 +20,29 @@
          encode_value/1,
          dump/1,
          decode/1,
+         decode_fields/1,
          stock_to_instrument/1,
          instrument_to_stock/1,
          get_stock/1,
          cfi_code/1,
-         stock_to_instrument_block/1]).
+         stock_to_instrument_block/1,
+         pretty_print/1]).
+
+-ifdef(TEST).
+
+-include_lib("eunit/include/eunit.hrl").
+
+-export([sample_fix/0]).
+
+-endif.
+
 
 %% @doc Start acceptor with `ranch' on port, specified in application environment under fix_port
 %%
 -spec start_listener() -> {ok, pid()}.
 start_listener() ->
   application:start(ranch),
-  Spec = ranch:child_spec(fix_listener, 10,
+  Spec = ranch:child_spec(fix_listener,
     ranch_tcp, [{port, fix:get_value(fix_port)}],
     fix_server, []
   ),
@@ -220,6 +231,10 @@ stock_to_instrument_block(Stock) ->
       [{symbol, Symbol}, {cfi_code, cfi_code(futures)}, {maturity_month_year, Date}, {security_exchange, Exchange}]
   end.
 
+-spec pretty_print(iolist()) -> string().
+pretty_print(Encoded) ->
+    io:format("~s~n", [binary:replace(erlang:iolist_to_binary(Encoded), <<1>>, <<"|">>, [global])]).
+
 -ifdef(TEST).
 
 sample_fix() ->
@@ -277,10 +292,4 @@ bench2() ->
   print_time_diff(T3, T4, Num),
   ok.
   
--include_lib("eunit/include/eunit.hrl").
-
 -endif.
-  
-  
-  
-  
