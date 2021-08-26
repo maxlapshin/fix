@@ -231,7 +231,7 @@ stock_to_instrument_block(Stock) ->
       [{symbol, Symbol}, {cfi_code, cfi_code(futures)}, {maturity_month_year, Date}, {security_exchange, Exchange}]
   end.
 
--spec pretty_print(iolist()) -> string().
+-spec pretty_print(iolist()) -> ok.
 pretty_print(Encoded) ->
     io:format("~s~n", [binary:replace(erlang:iolist_to_binary(Encoded), <<1>>, <<"|">>, [global])]).
 

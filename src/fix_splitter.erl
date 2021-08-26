@@ -21,13 +21,9 @@ field_by_number(_Field) ->
   erlang:error(not_implemented).
 
 
--include_lib("eunit/include/eunit.hrl").
-
-
 -spec to_i(binary() | string() | number()) -> number().
 to_i(B) when is_binary(B) -> list_to_integer(binary_to_list(B));
-to_i(L) when is_list(L) -> list_to_integer(L);
-to_i(I) when is_number(I) -> I.
+to_i(L) when is_list(L) -> list_to_integer(L).
 
 parse_date(Time) ->
   % <<"20120525-09:40:03.062">> or <<"20120525-09:40:03">>
@@ -46,3 +42,14 @@ parse_date(Time) ->
   end,
 
   {{Year, Month, Day}, {Hour, Minute, Second, MilliSecond}}.
+
+-ifdef(TEST).
+
+-include_lib("eunit/include/eunit.hrl").
+
+parse_date_test() ->
+  ?assertEqual({{2012, 5, 25}, {9, 40, 03, 62}}, parse_date(<<"20120525-09:40:03.062">>)),
+  ?assertEqual({{2012, 5, 25}, {9, 40, 03, 0}}, parse_date(<<"20120525-09:40:03">>)),
+  ?assertEqual({{2012, 5, 25}, {9, 40, 03, 0}}, parse_date(<<"20120525-09:40:03.0">>)).
+
+-endif.
