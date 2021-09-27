@@ -80,7 +80,7 @@ start_exec_conn(Name) ->
 %% @doc fix local reimplementation of UTC as a string 
 -spec now() -> string().
 now() ->
-  timestamp(to_date_ms(erlang:timestamp())).
+  timestamp(to_date_ms(os:timestamp())).
 
 -spec timestamp({calendar:date(), {0..23, 0..59, 0..59, non_neg_integer()}}) -> string().
 timestamp({{YY,MM,DD},{H,M,S,Milli}}) ->
