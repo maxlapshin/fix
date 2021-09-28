@@ -3,7 +3,6 @@
 
 -include("log.hrl").
 -include("../include/fix.hrl").
--include("../include/business.hrl").
 
 % Public API
 -export([start_link/1, new_stock/2]).
