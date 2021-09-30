@@ -69,10 +69,8 @@ do_add_save_handler(StockPid, Stock, Options) ->
 autostart(Name) when is_atom(Name) ->
   case erlang:whereis(Name) of
     undefined -> 
-      case fix_sup:start_reader(Name) of
-        {ok, Pid} -> Pid;
-        {error, {already_started, Pid}} -> Pid
-      end;
+      {ok, Pid} = fix_sup:start_reader(Name),
+      Pid;
     Pid -> Pid
   end.
 

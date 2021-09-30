@@ -226,10 +226,10 @@ test_stock_subscribe() ->
 
 test_stock_route() ->
   % Construct event proxy for monitoring stock events
-  meck:new(test_ev_proxy),
-  meck:expect(test_ev_proxy, init, fun(Arg) -> {ok, Arg} end),
-  meck:expect(test_ev_proxy, handle_event, fun(Ev, [Dest, Self]) -> Dest ! {event, Self, Ev}, {ok, [Dest, Self]} end),
-  meck:expect(test_ev_proxy, handle_info,  fun(Ev, [Dest, Self]) -> Dest ! {info,  Self, Ev}, {ok, [Dest, Self]} end),
+  ok = meck:new(test_ev_proxy, [non_strict]),
+  ok = meck:expect(test_ev_proxy, init, fun(Arg) -> {ok, Arg} end),
+  ok = meck:expect(test_ev_proxy, handle_event, fun(Ev, [Dest, Self]) -> Dest ! {event, Self, Ev}, {ok, [Dest, Self]} end),
+  ok = meck:expect(test_ev_proxy, handle_info,  fun(Ev, [Dest, Self]) -> Dest ! {info,  Self, Ev}, {ok, [Dest, Self]} end),
 
   % Pre-requisites
   {ok, ReadersSup} = supervisor:start_link({local, fix_readers_sup}, fix_sup, [readers]),

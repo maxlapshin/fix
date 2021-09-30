@@ -14,7 +14,7 @@ fetch_md_entries(Fields) ->
 fetch_md_entries([], []) ->
   {[], []};
 
-fetch_md_entries([{no_md_entries,0}|Fields], Acc) ->
+fetch_md_entries([{no_md_entries,0}|_Fields], _Acc) ->
   {[], []};
 
 fetch_md_entries([{no_md_entries,_Count},{md_entry_type,Type}|Fields], Acc) ->

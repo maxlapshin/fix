@@ -21,7 +21,7 @@ start(_StartType, _StartArgs) ->
   {ok, Pid} = fix_sup:start_link(),
   case fix:get_value(fix_port, undefined) of
     undefined -> ok;
-    Port -> fix:start_listener()
+    _Port -> fix:start_listener()
   end,
   {ok, Pid}.
   

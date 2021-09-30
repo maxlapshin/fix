@@ -104,8 +104,6 @@ parse_md_entry([_|Fields], Entry) ->
   parse_md_entry(Fields, Entry).
 
 % Date to millisecond timestamp convertion
-date_to_ms({{_Y,_Mon,_D} = Day,{H,Min,S}}) ->
-  date_to_ms({Day, {H,Min,S, 0}});
 date_to_ms({{_Y,_Mon,_D} = Day,{H,Min,S, Milli}}) ->
   GregSeconds_Zero = calendar:datetime_to_gregorian_seconds({{1970,1,1}, {0,0,0}}),
   GregSeconds_Now = calendar:datetime_to_gregorian_seconds({Day,{H,Min,S}}),
