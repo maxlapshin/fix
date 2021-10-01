@@ -12,11 +12,13 @@
 %% Application callbacks
 %% ===================================================================
 
+-spec restart() -> 'ok' | {'error', term()}.
 restart() ->
   application:stop(fix),
   application:unload(fix),
   application:start(fix).
 
+-spec start(any(),any()) -> {'ok',pid()}.
 start(_StartType, _StartArgs) ->
   {ok, Pid} = fix_sup:start_link(),
   case fix:get_value(fix_port, undefined) of
@@ -26,6 +28,7 @@ start(_StartType, _StartArgs) ->
   {ok, Pid}.
   
 
+-spec stop(_) -> 'ok'.
 stop(_State) ->
     ok.
 

@@ -5,6 +5,9 @@
 
 -export([split/1, field_by_number/1, parse_date/1]).
 
+-type decoded_message() :: list({atom(), integer() | binary() | atom()}).
+-export_type([decoded_message/0]).
+
 init_nif() ->
   Path = filename:dirname(code:which(?MODULE)) ++ "/../priv",
   Load = erlang:load_nif(Path ++ "/fix_splitter", 0),
@@ -14,9 +17,11 @@ init_nif() ->
   end,
   ok.
 
+-spec split(binary()) -> decoded_message().
 split(_Binary) ->
   erlang:error(not_implemented).
 
+-spec field_by_number(atom()) -> integer().
 field_by_number(_Field) ->
   erlang:error(not_implemented).
 
@@ -25,6 +30,7 @@ field_by_number(_Field) ->
 to_i(B) when is_binary(B) -> list_to_integer(binary_to_list(B));
 to_i(L) when is_list(L) -> list_to_integer(L).
 
+-spec parse_date(binary()) -> {calendar:date(), {0..23, 0..59, 0..59, non_neg_integer()}}.
 parse_date(Time) ->
   % <<"20120525-09:40:03.062">> or <<"20120525-09:40:03">>
   {match, [YY, MM, DD, H, M, S]} = re:run(Time, "(\\d{4})(\\d{2})(\\d{2})-(\\d{2}):(\\d{2}):([\\d\\.]+)", [{capture,all_but_first,list}]),
