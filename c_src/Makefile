@@ -57,6 +57,7 @@ link_verbose_0 = @echo " LD    " $(@F);
 link_verbose = $(link_verbose_$(V))
 
 SOURCES := $(shell find $(C_SRC_DIR) -type f \( -name "*.c" -o -name "*.C" -o -name "*.cc" -o -name "*.cpp" \))
+HEADERS := $(shell find $(C_SRC_DIR) -type f \( -name "*.h" -o -name "*.H" -o -name "*.hh" -o -name "*.hpp" \))
 OBJECTS = $(addsuffix .o, $(basename $(SOURCES)))
 
 COMPILE_C = $(c_verbose) $(CC) $(CFLAGS) $(CPPFLAGS) -c
@@ -66,16 +67,16 @@ $(C_SRC_OUTPUT): $(OBJECTS)
 	@mkdir -p $(BASEDIR)/priv/
 	$(link_verbose) $(CC) $(OBJECTS) $(LDFLAGS) $(LDLIBS) -o $(C_SRC_OUTPUT)
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	$(COMPILE_C) $(OUTPUT_OPTION) $<
 
-%.o: %.cc
+%.o: %.cc $(HEADERS)
 	$(COMPILE_CPP) $(OUTPUT_OPTION) $<
 
-%.o: %.C
+%.o: %.C $(HEADERS)
 	$(COMPILE_CPP) $(OUTPUT_OPTION) $<
 
-%.o: %.cpp
+%.o: %.cpp $(HEADERS)
 	$(COMPILE_CPP) $(OUTPUT_OPTION) $<
 
 clean:
