@@ -76,19 +76,18 @@ start_exec_conn(Name) ->
   {ok, Fix} = fix_sup:start_exec_conn(Name, Options),
   {ok, Fix}.
 
--type fix_message() :: any().
-
 
 %% @doc fix local reimplementation of UTC as a string 
 -spec now() -> string().
 now() ->
   timestamp(to_date_ms(erlang:timestamp())).
 
+-spec timestamp({calendar:date(), {0..23, 0..59, 0..59, non_neg_integer()}}) -> string().
 timestamp({{YY,MM,DD},{H,M,S,Milli}}) ->
   % 20120529-10:40:17.578
   lists:flatten(io_lib:format("~4..0B~2..0B~2..0B-~2..0B:~2..0B:~2..0B.~3..0B", [YY, MM, DD, H, M, S, Milli])).
 
-
+-spec to_date_ms(erlang:timestamp()) -> {calendar:date(), {0..23, 0..59, 0..59, non_neg_integer()}}.
 to_date_ms({Mega, Sec, Micro}) ->
   Seconds = Mega*1000000 + Sec,
   Milli = Micro div 1000,
@@ -124,24 +123,30 @@ MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefin
   % ?D({out,Header2, dump(Body3)}),
   Body3.
 
+-spec checksum(binary()) -> string().
 checksum(Packet) ->
   lists:flatten(io_lib:format("~3..0B", [lists:sum([Char || <<Char>> <=iolist_to_binary(encode(Packet))]) rem 256])).
 
+-spec encode(binary() | proplists:proplist()) -> iolist().
 encode(Packet) when is_binary(Packet) -> Packet;
 encode([{_K,_V}|_] = Packet) ->
   [[fix_parser:number_by_field(Key), "=", fix_parser:encode_typed_field(Key, Value), 1] || {Key, Value} <- Packet].
 
-encode_value(Value) when is_number(Value) -> integer_to_list(Value);
+-spec encode_value(float() | integer() | string() | binary()) -> string().
 encode_value(Value) when is_float(Value) -> io_lib:format("~.2f", [Value]);
+encode_value(Value) when is_number(Value) -> integer_to_list(Value);
 encode_value(Value) when is_list(Value) -> Value;
 encode_value(Value) when is_binary(Value) -> Value.
 
 
+-spec dump(iolist()) -> binary().
 dump(Bin) ->
   re:replace(iolist_to_binary(Bin), "\\001", "|", [{return,binary},global]).
 
 
--spec decode(binary()) -> {ok, fix_message(), binary(), binary()} | {more, non_neg_integer()} | error.
+-spec decode(binary()) -> {ok, fix_splitter:decoded_message(), binary(), binary()}
+                          | {more, non_neg_integer()}
+                          | error.
 decode(Bin) ->
   try decode0(Bin) of
     Result -> Result
@@ -159,6 +164,9 @@ decode0(Bin) ->
       Else
   end.  
 
+-spec decode_fields(binary()) -> {'ok',fix_splitter:decode_message(),binary(),binary()}
+                                 | {'more',integer()}
+                                 | error.
 decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>> = FullBin) ->
   case binary:split(Bin, <<1>>) of
     [BinLen, Rest1] ->
@@ -175,7 +183,7 @@ decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>> = FullBin) ->
       {more, 1}
   end;
 
-decode_fields(<<"8", Rest/binary>>) when length(Rest) < 14 ->
+decode_fields(<<"8", Rest/binary>>) when byte_size(Rest) < 14 ->
   {more, 14 - size(Rest)};
 
 decode_fields(<<"8", _/binary>>) ->
@@ -188,6 +196,8 @@ decode_fields(<<_/binary>>) ->
   error.
 
   
+-spec stock_to_instrument(atom() | binary()) -> {'undefined' | binary(),binary()}
+                                                | {binary(),binary(),binary()}.
 stock_to_instrument(Stock) when is_atom(Stock) ->
   stock_to_instrument(atom_to_binary(Stock,latin1));
 
@@ -201,6 +211,7 @@ stock_to_instrument(Stock) when is_binary(Stock) ->
   end.
 
 
+-spec instrument_to_stock({'undefined' | binary(),binary()} | {binary(),binary(),binary()}) -> atom().
 instrument_to_stock({undefined, <<Currency1:3/binary, "/", Currency2:3/binary>>}) ->
   binary_to_atom(<<Currency1/binary, Currency2/binary>>, latin1);
 
@@ -214,15 +225,18 @@ instrument_to_stock({Exchange, Symbol, Maturity}) when is_binary(Exchange) andal
 instrument_to_stock({Exchange, Symbol}) when is_binary(Exchange) andalso is_binary(Symbol) ->
   binary_to_atom(<<Exchange/binary, ".", Symbol/binary>>, latin1).
 
+-spec get_stock(#execution_report{}) -> atom().
 get_stock(#execution_report{security_exchange = Exchange, symbol = Symbol}) ->
   instrument_to_stock({Exchange, Symbol}).
 
+-spec cfi_code(_) -> string().
 cfi_code(futures) -> "F*****";
 cfi_code(undefined) -> "MRCXXX";
 cfi_code(<<"FX_TOD">>) -> "MRCXXX";
 cfi_code(<<"FX_TOM">>) -> "MRCXXX";
 cfi_code(_) -> "EXXXXX".
 
+-spec stock_to_instrument_block(atom() | binary()) -> proplists:proplist().
 stock_to_instrument_block(Stock) ->
   case stock_to_instrument(Stock) of
     {Exchange, Symbol} ->

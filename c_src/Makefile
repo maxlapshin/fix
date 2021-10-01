@@ -64,7 +64,6 @@ COMPILE_CPP = $(cpp_verbose) $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
 
 $(C_SRC_OUTPUT): $(OBJECTS)
 	@mkdir -p $(BASEDIR)/priv/
-	env
 	$(link_verbose) $(CC) $(OBJECTS) $(LDFLAGS) $(LDLIBS) -o $(C_SRC_OUTPUT)
 
 %.o: %.c
