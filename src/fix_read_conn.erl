@@ -162,6 +162,10 @@ when Closed == tcp_closed; Closed == ssl_closed ->
   ?D({fix_connection,socket_closed, Host, Port}),
   {stop, socket_closed, Conn};
 
+handle_info({tcp_error, Socket, Reason}, #conn{socket = Socket, host = Host, port = Port} = Conn) ->
+  ?D({fix_connection,socket_error, Host, Port, Reason}),
+  {stop, socket_closed, Conn};
+
 % We monitor only stocks, so try to unsubscribe
 handle_info({'DOWN', _, _, {Stock, _}, _}, #conn{} = Conn) when is_atom(Stock) ->
   case unsubscribe_stock(Stock, Conn) of
