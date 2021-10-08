@@ -30,7 +30,9 @@ start(Port, Options) ->
   client_seq = 1,
   sender,
   on_fix,
-  target
+  target,
+  password,
+  version
 }).
 
 on_fix(_, _) -> ok.
@@ -49,12 +51,22 @@ init(ListenerPid, Socket, Opts) ->
   ok = ranch:accept_ack(ListenerPid),
   ok = inet:setopts(Socket, [{active,true}]),
   OnFix = proplists:get_value(on_fix, Opts, fun ?MODULE:on_fix/2),
+  Password = proplists:get_value(password, Opts, <<"TestPw">>),
+  Version = proplists:get_value(version, Opts, 'FIX_4.4'),
+  Sender = proplists:get_value(sender, Opts, <<"TestTarget">>),
+  Target = proplists:get_value(target, Opts, <<"TestSender">>),
   register(fix_test_server, self()),
-  gen_server:enter_loop(?MODULE, [], #fix{socket = Socket, on_fix = OnFix}).
+  gen_server:enter_loop(?MODULE, [], #fix{socket = Socket,
+                                          on_fix = OnFix,
+                                          sender = Sender,
+                                          target = Target,
+                                          password = Password,
+                                          version = Version
+                                         }).
 
 
 handle_info({tick, {MdReqId, Exchange, Symbol}, AvgPrice}, #fix{} = Fix) ->
-  MdEntries = [[{md_entry_type, trade}, {md_entry_px, AvgPrice * (1+ 0.1*(random:uniform() - 0.5))}, {md_entry_size, 10 + random:uniform(50)}]],
+  MdEntries = [[{md_entry_type, trade}, {md_entry_px, AvgPrice * (1+ 0.1*(rand:uniform() - 0.5))}, {md_entry_size, 10 + rand:uniform(50)}]],
 
   Instrument = [{md_req_id,MdReqId},{security_exchange,Exchange},{symbol,Symbol}],
   Body = Instrument ++ [{sending_time,fix:now()},{no_md_entries,length(MdEntries)}|lists:flatten(MdEntries)],
@@ -92,15 +104,20 @@ handle_input(Bin, #fix{socket = Socket, client_seq = CliSeq, on_fix = Onfix} = F
   end.
 
 
-handle_fix(#message{type = logon, sender = Sender, target = Target, body = M}, #fix{} = Fix) ->
-  Password = proplists:get_value(password, M),
-  Grant = 
-  Sender == <<"TestSender">> andalso
-  Target == <<"TestTarget">> andalso
-  Password == <<"TestPw">>,
+handle_fix(#message{type = logon, sender = Sender, target = Target, body = M},
+           #fix{password = ExpectedPassword,
+                sender = ExpectedTarget,
+                target = ExpectedSender} = Fix) ->
+  GrantPassword =
+    case ExpectedPassword of
+      no_password -> true;
+      _ -> ExpectedPassword == proplists:get_value(password, M)
+    end,
+  GrantSender = (ExpectedSender == Sender),
+  GrantTarget = (ExpectedTarget == Target),
 
-  Grant == true orelse throw({stop, invalid_password, Fix}),
-  send(#message{type = logon}, Fix#fix{sender = Target, target = Sender});
+  GrantPassword and GrantSender and GrantTarget orelse throw({stop, invalid_password, Fix}),
+  send(#message{type = logon}, Fix);
 
 handle_fix(#message{type = logout}, #fix{} = Fix) ->
   throw({stop, normal, Fix});
