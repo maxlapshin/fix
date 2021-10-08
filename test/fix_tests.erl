@@ -79,3 +79,54 @@ fix_decode_3_test() ->
     md_entries = [[{md_entry_type,bid},{md_entry_px,215.34},{md_entry_size,320}]|_]
   }, Record).
 
+quote_encoding_test() ->
+    Sender = <<"Crypto-LP-Q">>,
+    Target = <<"Crypto-RFQ-Q">>,
+    SendingTime = "20210907-11:42:41.654",
+    Encoded = fix:pack(quote,
+           [{sending_time, SendingTime},
+            {symbol, <<"USD/JPY">>},
+            {quote_id, <<"q_id_USD/JPY">>},
+            {quote_req_id, <<"QRS_11631014961606">>},
+            {bid_px, <<"99.53816278537646">>},
+            {offer_px, <<"105.48890454985164">>},
+            {bid_size, 5000000},
+            {offer_size, 5000000},
+            {quote_type, tradeable},
+            {quote_msg_id, <<"q_msg_id_USD/JPY_1">>}],
+           3,
+           Sender,
+           Target),
+    Expected = "8=FIX.4.4|9=216|35=S|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=3|52=20210907-11:42:41.654|55=USD/JPY|117=q_id_USD/JPY|131=QRS_11631014961606|132=99.53816278537646|133=105.48890454985164|134=5000000|135=5000000|537=1|1166=q_msg_id_USD/JPY_1|10=036|",
+    compare(Expected, fix:convert_pretty(Encoded)),
+    ?assertEqual(Expected, fix:convert_pretty(Encoded)).
+
+quote_decoding_test() ->
+    Quote1 = <<"8=FIXT.1.1|9=207|35=S|34=2|49=Crypto-LP-Q|52=20210907-11:42:41.653|56=Crypto-RFQ-Q|55=LTC/USD|117=q_id_LTC/USD|131=QRS_11631014961606|132=299.5514016087717|133=330.0882584096762|134=349|135=351|537=1|1166=q_msg_id_LTC/USD_1|10=132|">>,
+    {ok, DecodedQuote1, _, <<>>} = fix:decode_printable(Quote1),
+    ?assertMatch(#quote{
+                    symbol = <<"LTC/USD">>,
+                    quote_id = <<"q_id_LTC/USD">>,
+                    quote_req_id = <<"QRS_11631014961606">>,
+                    bid_px = 299.5514016087717,
+                    offer_px = _, %330.0882584096762, % float conversion is not precise!
+                    bid_size = 349,
+                    offer_size = 351,
+                    quote_type = tradeable,
+                    quote_msg_id = <<"q_msg_id_LTC/USD_1">>,
+                    fields = []
+                   }, DecodedQuote1).
+
+compare(Expected, Encoded) ->
+    ExpectedList = string:split(Expected, "|", all),
+    EncodedList = string:split(Encoded, "|", all),
+    compare_lists(ExpectedList, EncodedList).
+
+compare_lists([], []) ->
+    ok;
+compare_lists([X | ExpectedRest], [X | EncodedRest]) ->
+    compare_lists(ExpectedRest, EncodedRest);
+compare_lists([ExpectedElement | ExpectedRest], [EncodedElement | EncodedRest]) ->
+    io:format("~p ~p:~p EncodedElement: '~p'~n", [calendar:local_time(), ?MODULE, ?LINE, EncodedElement]),
+    io:format("~p ~p:~p ExpectedElement: '~p'~n", [calendar:local_time(), ?MODULE, ?LINE, ExpectedElement]),
+    compare_lists(ExpectedRest, EncodedRest).

@@ -62,7 +62,10 @@ decode_message([{msg_type,request_for_positions}|Message]) -> % RequestForPositi
   decode_fields(Message, #request_for_positions{}, request_for_positions, 7);
 
 decode_message([{msg_type,position_report}|Message]) -> % PositionReport
-  decode_fields(Message, #position_report{}, position_report, 5).
+  decode_fields(Message, #position_report{}, position_report, 5);
+
+decode_message([{msg_type,quote}|Message]) -> % Quote
+  decode_fields(Message, #quote{}, quote, 11).
 
 field_index(heartbeat, sender_comp_id) -> false;
 field_index(heartbeat, target_comp_id) -> false;
@@ -281,6 +284,19 @@ field_index(position_report, sender_comp_id) -> false;
 field_index(position_report, target_comp_id) -> false;
 field_index(position_report, msg_seq_num) -> false;
 field_index(position_report, pos_req_id) -> 2;
+field_index(quote, sender_comp_id) -> false;
+field_index(quote, target_comp_id) -> false;
+field_index(quote, msg_seq_num) -> false;
+field_index(quote, sending_time) -> false;
+field_index(quote, quote_id) -> 2;
+field_index(quote, quote_req_id) -> 3;
+field_index(quote, bid_px) -> 4;
+field_index(quote, offer_px) -> 5;
+field_index(quote, bid_size) -> 6;
+field_index(quote, offer_size) -> 7;
+field_index(quote, quote_type) -> 8;
+field_index(quote, quote_msg_id) -> 9;
+field_index(quote, symbol) -> 10;
 field_index(_,_) -> undefined.
 
 decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->
@@ -1247,6 +1263,9 @@ field_by_number(<<"953">>) -> nested3_party_sub_id;
 field_by_number(<<"954">>) -> nested3_party_sub_id_type;
 field_by_number(<<"955">>) -> leg_contract_settl_month;
 field_by_number(<<"956">>) -> leg_interest_accrual_date;
+field_by_number(<<"1128">>) -> appl_ver_id;
+field_by_number(<<"1137">>) -> default_appl_ver_id;
+field_by_number(<<"1166">>) -> quote_msg_id;
 field_by_number(_Key) -> undefined.
 
 decode_typed_field(account, V) -> V;
@@ -2529,6 +2548,8 @@ decode_typed_field(nested3_party_sub_id, V) -> V;
 decode_typed_field(nested3_party_sub_id_type, V) -> parse_num(V);
 decode_typed_field(leg_contract_settl_month, V) -> V;
 decode_typed_field(leg_interest_accrual_date, V) -> V;
+decode_typed_field(appl_ver_id, V) -> V;
+decode_typed_field(default_appl_ver_id, V) -> V;
 decode_typed_field(_Key, V) -> V.
 
 encode_typed_field(adv_side, 'buy') -> <<"B">>;
@@ -2752,8 +2773,8 @@ encode_typed_field(dk_reason, 'calculationdifference') -> <<"F">>;
 encode_typed_field(dk_reason, 'other') -> <<"Z">>;
 encode_typed_field(ioi_natural_flag, true) -> <<"Y">>;
 encode_typed_field(ioi_natural_flag,false) -> <<"N">>;
-encode_typed_field(bid_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
-encode_typed_field(offer_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.3f", [V*1.0]));
+encode_typed_field(bid_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.13f", [V*1.0]));
+encode_typed_field(offer_px, V) when is_float(V) -> iolist_to_binary(io_lib:format("~.13f", [V*1.0]));
 encode_typed_field(bid_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(offer_size, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_misc_fees, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -3121,6 +3142,11 @@ encode_typed_field(mass_cancel_reject_reason, 'other') -> <<"99">>;
 encode_typed_field(total_affected_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_affected_orders, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(quote_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(quote_type, indicative) -> <<"0">>;
+encode_typed_field(quote_type, tradeable) -> <<"1">>;
+encode_typed_field(quote_type, restrictedtradeable) -> <<"2">>;
+encode_typed_field(quote_type, counter) -> <<"3">>;
+encode_typed_field(quote_type, initiallytradeable) -> <<"4">>;
 encode_typed_field(nested_party_role, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_nested_party_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(cash_margin, 'cash') -> <<"1">>;
@@ -4320,6 +4346,9 @@ number_by_field(nested3_party_sub_id) -> <<"953">>;
 number_by_field(nested3_party_sub_id_type) -> <<"954">>;
 number_by_field(leg_contract_settl_month) -> <<"955">>;
 number_by_field(leg_interest_accrual_date) -> <<"956">>;
+number_by_field(appl_ver_id) -> <<"1128">>;
+number_by_field(default_appl_ver_id) -> <<"1137">>;
+number_by_field(quote_msg_id) -> <<"1166">>;
 number_by_field(Key) when is_binary(Key) -> Key.
 
 message_by_number(<<"0">>) -> heartbeat;
@@ -4342,6 +4371,8 @@ message_by_number(<<"j">>) -> business_message_reject;
 message_by_number(<<"AF">>) -> order_mass_status_request;
 message_by_number(<<"AN">>) -> request_for_positions;
 message_by_number(<<"AP">>) -> position_report;
+message_by_number(<<"R">>) -> quote_request;
+message_by_number(<<"S">>) -> quote;
 message_by_number(Type) when is_binary(Type) -> Type.
 
 number_by_message(heartbeat) -> <<"0">>;
@@ -4364,6 +4395,8 @@ number_by_message(business_message_reject) -> <<"j">>;
 number_by_message(order_mass_status_request) -> <<"AF">>;
 number_by_message(request_for_positions) -> <<"AN">>;
 number_by_message(position_report) -> <<"AP">>;
+number_by_message(quote_request) -> <<"S">>;
+number_by_message(quote) -> <<"S">>;
 number_by_message(Type) when is_binary(Type) -> Type.
 
 parse_num(Bin) -> parse_num_erl(Bin).
