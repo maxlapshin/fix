@@ -15,10 +15,12 @@
          timestamp/1,
          utc_ms/0,
          pack/5,
+         pack/6,
          checksum/1,
          encode/1,
          encode_value/1,
          dump/1,
+         decode_printable/1,
          decode/1,
          decode_fields/1,
          stock_to_instrument/1,
@@ -26,7 +28,8 @@
          get_stock/1,
          cfi_code/1,
          stock_to_instrument_block/1,
-         pretty_print/1]).
+         pretty_print/1,
+         convert_pretty/1]).
 
 -ifdef(TEST).
 
@@ -107,7 +110,11 @@ utc_ms({Mega, Sec, Micro}) ->
 
 %% @doc packs fix message into binary
 -spec pack(atom(), list(), non_neg_integer(), any(), any()) -> iolist().
-pack(MessageType, Body, SeqNum, Sender, Target) when 
+pack(MessageType, Body, SeqNum, Sender, Target) ->
+    pack(MessageType, Body, SeqNum, Sender, Target, 'FIX_4.4').
+
+-spec pack(atom(), list(), non_neg_integer(), any(), any(), 'FIX_4.4' | 'FIXT_1.1') -> iolist().
+pack(MessageType, Body, SeqNum, Sender, Target, BeginAtom) when
 MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefined, Target =/= undefined ->
   Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum}
   % ,{poss_dup_flag, "N"}
@@ -117,7 +124,11 @@ MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefin
   end,
   Body1 = encode(Header2 ++ Body),
   BodyLength = iolist_size(Body1),
-  Body2 = iolist_to_binary([encode([{begin_string, "FIX.4.4"}, {body_length, BodyLength}]), Body1]),
+  BeginString = case BeginAtom of
+                    'FIX_4.4' -> "FIX.4.4";
+                    'FIXT_1.1' -> "FIXT.1.1"
+                end,
+  Body2 = iolist_to_binary([encode([{begin_string, BeginString}, {body_length, BodyLength}]), Body1]),
   CheckSum = checksum(Body2),
   Body3 = [Body2, encode([{check_sum, CheckSum}])],
   % ?D({out,Header2, dump(Body3)}),
@@ -143,6 +154,10 @@ encode_value(Value) when is_binary(Value) -> Value.
 dump(Bin) ->
   re:replace(iolist_to_binary(Bin), "\\001", "|", [{return,binary},global]).
 
+-spec decode_printable(binary()) -> term().
+decode_printable(Text) ->
+  Bin = re:replace(Text, "\\|", <<1>>, [{return,binary},global]),
+  decode(Bin).
 
 -spec decode(binary()) -> {ok, fix_splitter:decoded_message(), binary(), binary()}
                           | {more, non_neg_integer()}
@@ -168,6 +183,24 @@ decode0(Bin) ->
                                  | {'more',integer()}
                                  | error.
 decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>> = FullBin) ->
+  decode_bin(Bin, FullBin);
+
+decode_fields(<<"8=FIXT.1.1",1,"9=", Bin/binary>> = FullBin) ->
+  decode_bin(Bin, FullBin);
+
+decode_fields(<<"8", Rest/binary>>) when byte_size(Rest) < 14 ->
+  {more, 14 - size(Rest)};
+
+decode_fields(<<"8", _/binary>>) ->
+  {more, 1};
+
+decode_fields(<<>>) ->
+  {more, 14};
+
+decode_fields(<<_/binary>>) ->
+  error.
+
+decode_bin(Bin, FullBin) ->
   case binary:split(Bin, <<1>>) of
     [BinLen, Rest1] ->
       BodyLength = list_to_integer(binary_to_list(BinLen)),
@@ -181,19 +214,8 @@ decode_fields(<<"8=FIX.4.4",1,"9=", Bin/binary>> = FullBin) ->
       end;
     _ ->
       {more, 1}
-  end;
+  end.
 
-decode_fields(<<"8", Rest/binary>>) when byte_size(Rest) < 14 ->
-  {more, 14 - size(Rest)};
-
-decode_fields(<<"8", _/binary>>) ->
-  {more, 1};
-
-decode_fields(<<>>) ->
-  {more, 14};
-          
-decode_fields(<<_/binary>>) ->
-  error.
 
   
 -spec stock_to_instrument(atom() | binary()) -> {'undefined' | binary(),binary()}
@@ -247,7 +269,11 @@ stock_to_instrument_block(Stock) ->
 
 -spec pretty_print(iolist()) -> ok.
 pretty_print(Encoded) ->
-    io:format("~s~n", [binary:replace(erlang:iolist_to_binary(Encoded), <<1>>, <<"|">>, [global])]).
+  io:format("~s~n", [convert_pretty(Encoded)]).
+
+-spec convert_pretty(iolist()) -> string().
+convert_pretty(Encoded) ->
+  lists:flatten(io_lib:format("~s", [binary:replace(erlang:iolist_to_binary(Encoded), <<1>>, <<"|">>, [global])])).
 
 -ifdef(TEST).
 

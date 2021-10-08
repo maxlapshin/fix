@@ -203,3 +203,15 @@
   fields = []
 }).
 
+-record(quote, {
+  quote_id,
+  quote_req_id,
+  bid_px,
+  offer_px,
+  bid_size,
+  offer_size,
+  quote_type,
+  quote_msg_id,
+  symbol,
+  fields = []
+}).
