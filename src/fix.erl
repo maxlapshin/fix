@@ -6,6 +6,7 @@
 -author('Max Lapshin <max@maxidoors.ru>').
 -include("log.hrl").
 % -include("../include/admin.hrl").
+-include("fix_version.hrl").
 -include("../include/business.hrl").
 -export([start_listener/0,
          get_value/2,
@@ -111,10 +112,10 @@ utc_ms({Mega, Sec, Micro}) ->
 %% @doc packs fix message into binary
 -spec pack(atom(), list(), non_neg_integer(), any(), any()) -> iolist().
 pack(MessageType, Body, SeqNum, Sender, Target) ->
-    pack(MessageType, Body, SeqNum, Sender, Target, 'FIX_4.4').
+    pack(MessageType, Body, SeqNum, Sender, Target, ?FIX_4_4).
 
--spec pack(atom(), list(), non_neg_integer(), any(), any(), 'FIX_4.4' | 'FIXT_1.1') -> iolist().
-pack(MessageType, Body, SeqNum, Sender, Target, BeginAtom) when
+-spec pack(atom(), list(), non_neg_integer(), any(), any(), fix_version()) -> iolist().
+pack(MessageType, Body, SeqNum, Sender, Target, Version) when
 MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefined, Target =/= undefined ->
   Header2 = [{msg_type, MessageType},{sender_comp_id, Sender}, {target_comp_id, Target}, {msg_seq_num, SeqNum}
   % ,{poss_dup_flag, "N"}
@@ -124,9 +125,9 @@ MessageType =/= undefined, is_list(Body), is_integer(SeqNum), Sender =/= undefin
   end,
   Body1 = encode(Header2 ++ Body),
   BodyLength = iolist_size(Body1),
-  BeginString = case BeginAtom of
-                    'FIX_4.4' -> "FIX.4.4";
-                    'FIXT_1.1' -> "FIXT.1.1"
+  BeginString = case Version of
+                    ?FIX_4_4 -> "FIX.4.4";
+                    ?FIX_5_0_SP2 -> "FIXT.1.1"
                 end,
   Body2 = iolist_to_binary([encode([{begin_string, BeginString}, {body_length, BodyLength}]), Body1]),
   CheckSum = checksum(Body2),

@@ -2,6 +2,7 @@
 -export([start/2, stop/0, start_link/4, init/3]).
 -export([handle_info/2, terminate/2]).
 -export([on_fix/2]).
+-include("fix_version.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 
@@ -52,7 +53,7 @@ init(ListenerPid, Socket, Opts) ->
   ok = inet:setopts(Socket, [{active,true}]),
   OnFix = proplists:get_value(on_fix, Opts, fun ?MODULE:on_fix/2),
   Password = proplists:get_value(password, Opts, <<"TestPw">>),
-  Version = proplists:get_value(version, Opts, 'FIX_4.4'),
+  Version = proplists:get_value(version, Opts, ?FIX_4_4),
   Sender = proplists:get_value(sender, Opts, <<"TestTarget">>),
   Target = proplists:get_value(target, Opts, <<"TestSender">>),
   register(fix_test_server, self()),

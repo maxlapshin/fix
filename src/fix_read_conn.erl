@@ -6,6 +6,7 @@
 -include("../include/admin.hrl").
 -include("../include/business.hrl").
 -include("../include/fix.hrl").
+-include("../include/fix_version.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 -define(NETWORK_TIMEOUT, 500).
@@ -34,7 +35,7 @@
     password,
     sender,
     target,
-    version = 'FIX_4.4',
+    version = ?FIX_4_4,
 
     heartbeat,
     consumer,
@@ -80,7 +81,7 @@ init([Name, GivenOptions]) ->
   Password = proplists:get_value(password, Options, no_password),
   {sender, Sender} = lists:keyfind(sender, 1, Options),
   {target, Target} = lists:keyfind(target, 1, Options),
-  Version = proplists:get_value(version, Options, 'FIX_4.4'),
+  Version = proplists:get_value(version, Options, ?FIX_4_4),
 
   SSL = proplists:get_value(ssl, Options),
   Heartbeat = proplists:get_value(heartbeat, Options, 30),
@@ -222,7 +223,7 @@ send_logon(#conn{password = Password, version = Version, heartbeat = Heartbeat} 
     end,
   VersionParams =
     case Version of
-      'FIXT_1.1' -> [{default_appl_ver_id, 9}]; % TODO: use something like fix_50_sp2
+      ?FIX_5_0_SP2 -> [{default_appl_ver_id, 9}]; % TODO: use something like fix_50_sp2
         _ -> []
     end,
   MsgBody = CommonParams ++ PasswordParams ++ VersionParams ++ CoD,
