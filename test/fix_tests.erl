@@ -143,7 +143,7 @@ quote_decoding_test() ->
                     fields = []
                    }, DecodedQuote1).
 
-security_list_encoding_test() ->
+security_list_request_encoding_test() ->
     Sender = <<"Crypto-LP-T">>,
     Target = <<"Crypto-RFQ-T">>,
 
@@ -162,7 +162,7 @@ security_list_encoding_test() ->
     ok = compare(ExpectedSecurityListRequest, fix:convert_pretty(EncodedSecurityListRequest)),
     ?assertEqual(ExpectedSecurityListRequest, fix:convert_pretty(EncodedSecurityListRequest)).
 
-security_list_decoding_test() ->
+security_list_request_decoding_test() ->
     SecurityListRequest = <<"8=FIXT.1.1|9=108|35=x|34=2|49=Crypto-RFQ-T|52=20210907-11:42:41.468|56=Crypto-LP-T|263=0|320=SLR_01631014961437|559=4|1470=2|10=206|">>,
 
     {ok, DecodedSLR, _, <<>>} = fix:decode_printable(SecurityListRequest),
@@ -171,6 +171,47 @@ security_list_decoding_test() ->
                     security_req_id = <<"SLR_01631014961437">>,
                     security_list_request_type = allsecurities,
                     security_list_type = tradinglist}, DecodedSLR).
+
+security_list_encoding_test() ->
+    Sender = <<"Crypto-LP-T">>,
+    Target = <<"Crypto-RFQ-T">>,
+
+    EncodedSecurityList = fix:pack(security_list,
+           [{sending_time, "20210907-11:42:41.582"},
+            {security_req_id, <<"SLR_01631014961437">>},
+            {security_request_result, 0},
+            {no_related_sym, 6},
+            {symbol, <<"EUR/USD">>},
+            {security_type, <<"FXSPOT">>},
+            {symbol, <<"EUR/USD">>},
+            {security_type, <<"FXFWD">>},
+            {symbol, <<"USD/JPY">>},
+            {security_type, <<"FXSPOT">>},
+            {symbol, <<"USD/JPY">>},
+            {security_type, <<"FXFWD">>},
+            {symbol, <<"XRP/USD">>},
+            {security_type, <<"CASH">>},
+            {symbol, <<"LTC/USD">>},
+            {security_type, <<"CASH">>}
+           ],
+           2,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedSecurityList = "8=FIXT.1.1|9=227|35=y|49=Crypto-LP-T|56=Crypto-RFQ-T|34=2|52=20210907-11:42:41.582|320=SLR_01631014961437|560=0|146=6|55=EUR/USD|167=FXSPOT|55=EUR/USD|167=FXFWD|55=USD/JPY|167=FXSPOT|55=USD/JPY|167=FXFWD|55=XRP/USD|167=CASH|55=LTC/USD|167=CASH|10=229|",
+    ok = compare(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)),
+    ?assertEqual(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)).
+
+
+security_list_decoding_test() ->
+    SecurityList = <<"8=FIXT.1.1|9=227|35=y|34=2|49=Crypto-LP-T|52=20210907-11:42:41.582|56=Crypto-RFQ-T|320=SLR_01631014961437|560=0|146=6|55=EUR/USD|167=FXSPOT|55=EUR/USD|167=FXFWD|55=USD/JPY|167=FXSPOT|55=USD/JPY|167=FXFWD|55=XRP/USD|167=CASH|55=LTC/USD|167=CASH|10=229|">>,
+    {ok, DecodedSL, _, <<>>} = fix:decode_printable(SecurityList),
+    ?assertMatch(#security_list{
+                    security_req_id= <<"SLR_01631014961437">>,
+                    subscription_request_result = 0,
+                    symbols = _, % TODO: the symbols should be here
+                    fields = _   % TODO: this should be empty
+                   }, DecodedSL).
 
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),

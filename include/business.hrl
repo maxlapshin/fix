@@ -223,3 +223,10 @@
   security_list_type,
   fields = []
 }).
+
+-record(security_list, {
+  security_req_id,
+  subscription_request_result,
+  symbols = [],
+  fields = []
+}).
