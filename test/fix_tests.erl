@@ -202,16 +202,151 @@ security_list_encoding_test() ->
     ok = compare(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)),
     ?assertEqual(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)).
 
-
 security_list_decoding_test() ->
     SecurityList = <<"8=FIXT.1.1|9=227|35=y|34=2|49=Crypto-LP-T|52=20210907-11:42:41.582|56=Crypto-RFQ-T|320=SLR_01631014961437|560=0|146=6|55=EUR/USD|167=FXSPOT|55=EUR/USD|167=FXFWD|55=USD/JPY|167=FXSPOT|55=USD/JPY|167=FXFWD|55=XRP/USD|167=CASH|55=LTC/USD|167=CASH|10=229|">>,
     {ok, DecodedSL, _, <<>>} = fix:decode_printable(SecurityList),
     ?assertMatch(#security_list{
                     security_req_id= <<"SLR_01631014961437">>,
                     subscription_request_result = 0,
-                    symbols = _, % TODO: the symbols should be here
-                    fields = _   % TODO: this should be empty
+                    symbols = _,
+                    fields = _
                    }, DecodedSL).
+
+quote_request_encoding_test() ->
+    Sender = <<"Crypto-LP-Q">>,
+    Target = <<"Crypto-RFQ-Q">>,
+
+    EncodedQuoteRequest = fix:pack(quote_request,
+           [{sending_time, "20210907-11:42:41.619"},
+            {quote_req_id, <<"QRS_11631014961606">>},
+            {private_quote, <<"N">>},
+            {no_related_sym, 3},
+
+            {symbol, <<"EUR/USD">>},
+            {security_type, <<"FXSPOT">>},
+            {quote_type, tradeable},
+            {settl_type, regular},
+            {settl_date, <<"20210909">>},
+            {transact_time, <<"20210907-11:42:41.618">>},
+
+            {symbol, <<"LTC/USD">>},
+            {security_type, <<"CASH">>},
+            {quote_type, tradeable},
+            {settl_type, cash},
+            {settl_date, <<"20210907">>},
+            {transact_time, <<"20210907-11:42:41.619">>},
+
+            {symbol, <<"USD/JPY">>},
+            {security_type, <<"FXSPOT">>},
+            {quote_type, tradeable},
+            {settl_type, regular},
+            {settl_date, <<"20210909">>},
+            {transact_time, <<"20210907-11:42:41.619">>}
+           ],
+           2,
+           Target,
+           Sender,
+           ?FIX_5_0_SP2),
+    ExpectedQuoteRequest = "8=FIXT.1.1|9=310|35=R|49=Crypto-RFQ-Q|56=Crypto-LP-Q|34=2|52=20210907-11:42:41.619|131=QRS_11631014961606|1171=N|146=3|55=EUR/USD|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.618|55=LTC/USD|167=CASH|537=1|63=1|64=20210907|60=20210907-11:42:41.619|55=USD/JPY|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.619|10=022|",
+    ?assertEqual(ExpectedQuoteRequest, fix:convert_pretty(EncodedQuoteRequest)).
+
+quote_request_decoding_test() ->
+    QuoteRequest = <<"8=FIXT.1.1|9=310|35=R|34=2|49=Crypto-RFQ-Q|52=20210907-11:42:41.619|56=Crypto-LP-Q|131=QRS_11631014961606|1171=N|146=3|55=EUR/USD|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.618|55=LTC/USD|167=CASH|537=1|63=1|64=20210907|60=20210907-11:42:41.619|55=USD/JPY|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.619|10=022|">>,
+    {ok, DecodedQuoteRequest, _, <<>>} = fix:decode_printable(QuoteRequest),
+    ?assertMatch(#quote_request{
+                    quote_req_id = <<"QRS_11631014961606">>,
+                    no_related_sym = 3,
+                    private_quote = <<"N">>,
+                    symbols = _,
+                    fields = _
+                   }, DecodedQuoteRequest).
+
+quote_request_reject_encoding_test() ->
+    Sender = <<"Crypto-LP-Q">>,
+    Target = <<"Crypto-RFQ-Q">>,
+
+    EncodedQuoteRequestReject = fix:pack(quote_request_reject,
+           [{sending_time, "20210908-12:51:24.473"},
+            {text, <<"Text...">>},
+            {quote_req_id, <<"QRS_11631105484440">>},
+            {quote_request_reject_reason, <<"99">>},
+            {no_related_sym, 1},
+            {symbol, <<"LTC/USD">>}
+           ],
+           2,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedQuoteRequestReject = "8=FIXT.1.1|9=125|35=AG|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=2|52=20210908-12:51:24.473|58=Text...|131=QRS_11631105484440|658=99|146=1|55=LTC/USD|10=090|",
+    ok = compare(ExpectedQuoteRequestReject, fix:convert_pretty(EncodedQuoteRequestReject)),
+    ?assertEqual(ExpectedQuoteRequestReject, fix:convert_pretty(EncodedQuoteRequestReject)).
+
+quote_request_reject_decoding_test() ->
+    QuoteRequestReject = <<"8=FIXT.1.1|9=125|35=AG|34=2|49=Crypto-LP-Q|52=20210908-12:51:24.473|56=Crypto-RFQ-Q|58=Text...|131=QRS_11631105484440|658=99|146=1|55=LTC/USD|10=090|">>,
+    {ok, DecodedQuoteRequestReject, _, <<>>} = fix:decode_printable(QuoteRequestReject),
+    ?assertMatch(#quote_request_reject{
+                    quote_req_id = <<"QRS_11631105484440">>,
+                    quote_request_reject_reason = other,
+                    no_related_sym = 1,
+                    symbols = _,
+                    fields = _
+                   }, DecodedQuoteRequestReject).
+
+mass_quote_encoding_test() ->
+    Sender = <<"Crypto-LP-Q">>,
+    Target = <<"Crypto-RFQ-Q">>,
+
+    EncodedMassQuote = fix:pack(mass_quote,
+           [{sending_time, "20210907-11:42:41.671"},
+            {quote_id, <<"q_id_mass_EUR/USD">>},
+            {quote_req_id, <<"QRS_11631014961606">>},
+            {quote_type, tradeable},
+            {no_quote_sets, 1},
+            {quote_set_id, <<"1">>},
+            {underlying_symbol, <<"EUR/USD">>},
+            {tot_no_quote_entries, 3},
+            {no_quote_entries, 3},
+            {quote_entry_id, <<"q_entry_id_EUR/USD_1">>},
+            {bid_px, <<"-0.17776730575781">>},
+            {offer_px, <<"2.57776730575781">>},
+            {bid_size, <<"1000000">>},
+            {offer_size, <<"1000000">>},
+            {transact_time, <<"20210907-13:42:41.670">>},
+            {currency, <<"EUR">>},
+            {quote_entry_id, <<"q_entry_id_EUR/USD_2">>},
+            {bid_px, <<"-1.17776730575781">>},
+            {offer_px, <<"3.57776730575781">>},
+            {bid_size, <<"5000000">>},
+            {offer_size, <<"5000000">>},
+            {transact_time, <<"20210907-13:42:41.671">>},
+            {currency, <<"EUR">>},
+            {quote_entry_id, <<"q_entry_id_EUR/USD_3">>},
+            {bid_px, <<"-2.17776730575781">>},
+            {offer_px, <<"4.57776730575781">>},
+            {bid_size, <<"10000000">>},
+            {offer_size, <<"10000000">>},
+            {transact_time, <<"20210907-13:42:41.671">>},
+            {currency, <<"EUR">>}
+           ],
+           4,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedMassQuote = "8=FIXT.1.1|9=527|35=i|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=4|52=20210907-11:42:41.671|117=q_id_mass_EUR/USD|131=QRS_11631014961606|537=1|296=1|302=1|311=EUR/USD|304=3|295=3|299=q_entry_id_EUR/USD_1|132=-0.17776730575781|133=2.57776730575781|134=1000000|135=1000000|60=20210907-13:42:41.670|15=EUR|299=q_entry_id_EUR/USD_2|132=-1.17776730575781|133=3.57776730575781|134=5000000|135=5000000|60=20210907-13:42:41.671|15=EUR|299=q_entry_id_EUR/USD_3|132=-2.17776730575781|133=4.57776730575781|134=10000000|135=10000000|60=20210907-13:42:41.671|15=EUR|10=056|",
+    ok = compare(ExpectedMassQuote, fix:convert_pretty(EncodedMassQuote)),
+    ?assertEqual(ExpectedMassQuote, fix:convert_pretty(EncodedMassQuote)).
+
+mass_quote_decoding_test() ->
+    MassQuote = <<"8=FIXT.1.1|9=527|35=i|34=4|49=Crypto-LP-Q|52=20210907-11:42:41.671|56=Crypto-RFQ-Q|117=q_id_mass_EUR/USD|131=QRS_11631014961606|537=1|296=1|302=1|311=EUR/USD|304=3|295=3|299=q_entry_id_EUR/USD_1|132=-0.17776730575781|133=2.57776730575781|134=1000000|135=1000000|60=20210907-13:42:41.670|15=EUR|299=q_entry_id_EUR/USD_2|132=-1.17776730575781|133=3.57776730575781|134=5000000|135=5000000|60=20210907-13:42:41.671|15=EUR|299=q_entry_id_EUR/USD_3|132=-2.17776730575781|133=4.57776730575781|134=10000000|135=10000000|60=20210907-13:42:41.671|15=EUR|10=056|">>,
+    {ok, DecodedMassQuote, _, <<>>} = fix:decode_printable(MassQuote),
+    ?assertMatch(#mass_quote{
+                    quote_id = <<"q_id_mass_EUR/USD">>,
+                    quote_req_id = <<"QRS_11631014961606">>,
+                    quote_type = tradeable,
+                    no_quote_sets = 1,
+                    quote_sets = _, % TODO: should have values
+                    fields = _  % TODO: should be []
+                   }, DecodedMassQuote).
 
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),
