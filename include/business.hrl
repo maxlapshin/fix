@@ -215,3 +215,11 @@
   symbol,
   fields = []
 }).
+
+-record(security_list_request, {
+  subscription_request_type,
+  security_req_id,
+  security_list_request_type,
+  security_list_type,
+  fields = []
+}).

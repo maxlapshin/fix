@@ -143,6 +143,35 @@ quote_decoding_test() ->
                     fields = []
                    }, DecodedQuote1).
 
+security_list_encoding_test() ->
+    Sender = <<"Crypto-LP-T">>,
+    Target = <<"Crypto-RFQ-T">>,
+
+    EncodedSecurityListRequest = fix:pack(security_list_request,
+           [{sending_time, "20210907-11:42:41.468"},
+            {subscription_request_type, snapshot},
+            {security_req_id, <<"SLR_01631014961437">>},
+            {security_list_request_type, allsecurities},
+            {security_list_type, tradinglist}
+           ],
+           2,
+           Target,
+           Sender,
+           ?FIX_5_0_SP2),
+    ExpectedSecurityListRequest = "8=FIXT.1.1|9=108|35=x|49=Crypto-RFQ-T|56=Crypto-LP-T|34=2|52=20210907-11:42:41.468|263=0|320=SLR_01631014961437|559=4|1470=2|10=206|",
+    ok = compare(ExpectedSecurityListRequest, fix:convert_pretty(EncodedSecurityListRequest)),
+    ?assertEqual(ExpectedSecurityListRequest, fix:convert_pretty(EncodedSecurityListRequest)).
+
+security_list_decoding_test() ->
+    SecurityListRequest = <<"8=FIXT.1.1|9=108|35=x|34=2|49=Crypto-RFQ-T|52=20210907-11:42:41.468|56=Crypto-LP-T|263=0|320=SLR_01631014961437|559=4|1470=2|10=206|">>,
+
+    {ok, DecodedSLR, _, <<>>} = fix:decode_printable(SecurityListRequest),
+    ?assertMatch(#security_list_request{
+                    subscription_request_type = snapshot,
+                    security_req_id = <<"SLR_01631014961437">>,
+                    security_list_request_type = allsecurities,
+                    security_list_type = tradinglist}, DecodedSLR).
+
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),
     EncodedList = string:split(Encoded, "|", all),
