@@ -6,6 +6,7 @@
 -include("../include/admin.hrl").
 -include("../include/business.hrl").
 -include("../include/fix.hrl").
+-include("../include/fix_version.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 -define(NETWORK_TIMEOUT, 500).
@@ -34,6 +35,7 @@
     password,
     sender,
     target,
+    version = ?FIX_4_4,
 
     heartbeat,
     consumer,
@@ -76,9 +78,10 @@ init([Name, GivenOptions]) ->
 
   {host, Host} = lists:keyfind(host, 1, Options),
   {port, Port} = lists:keyfind(port, 1, Options),
-  {password, Password} = lists:keyfind(password, 1, Options),
+  Password = proplists:get_value(password, Options, no_password),
   {sender, Sender} = lists:keyfind(sender, 1, Options),
   {target, Target} = lists:keyfind(target, 1, Options),
+  Version = proplists:get_value(version, Options, ?FIX_4_4),
 
   SSL = proplists:get_value(ssl, Options),
   Heartbeat = proplists:get_value(heartbeat, Options, 30),
@@ -107,6 +110,7 @@ init([Name, GivenOptions]) ->
 
       sender = Sender,
       target = Target,
+      version = Version,
       heartbeat = Heartbeat
     }}.
 
@@ -204,12 +208,25 @@ do_connect(#conn{host = Host, port = Port, ssl = SSL} = Conn) ->
       erlang:throw({reply, {error, {connect, Error}}, Conn})
   end.
 
-send_logon(#conn{password = Password, heartbeat = Heartbeat} = Conn, Options) ->
+send_logon(#conn{password = Password, version = Version, heartbeat = Heartbeat} = Conn, Options) ->
   CoD = case proplists:get_value(cancel_on_disconnect, Options) of
     true -> [{10001,"Y"}];
     _ -> []
   end,
-  MsgBody = [{encrypt_method, 0},{heart_bt_int, Heartbeat},{reset_seq_num_flag, "Y"},{password, Password}] ++ CoD,
+  CommonParams = [{encrypt_method, 0},
+                  {heart_bt_int, Heartbeat},
+                  {reset_seq_num_flag, "Y"}],
+  PasswordParams =
+    case Password of
+      no_password -> [];
+      _ -> [{password, Password}]
+    end,
+  VersionParams =
+    case Version of
+      ?FIX_5_0_SP2 -> [{default_appl_ver_id, fix_50_sp2}];
+        _ -> []
+    end,
+  MsgBody = CommonParams ++ PasswordParams ++ VersionParams ++ CoD,
 
   timer:send_interval(Heartbeat*1000, heartbeat),
   send(logon, MsgBody, Conn).
@@ -217,9 +234,9 @@ send_logon(#conn{password = Password, heartbeat = Heartbeat} = Conn, Options) ->
 
 
 send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target, transport = Transport, socket = Socket,
-    debug = Debug, log = Log} = Conn) ->
+    version = Version, debug = Debug, log = Log} = Conn) ->
   % if MessageType =/= heartbeat -> ?D({pack, MessageType, Body, Seq, Sender, Target}); true -> ok end,
-  Bin = fix:pack(MessageType, Body, Seq, Sender, Target),
+  Bin = fix:pack(MessageType, Body, Seq, Sender, Target, Version),
   % ?DBG("~s  ~s", [MessageType, fix:dump(Bin)]),
   if MessageType =/= heartbeat andalso Log =/= undefined->
     catch file:write(Log, ["out ", fix:now(), " ", fix:dump(Bin), "\n"]);

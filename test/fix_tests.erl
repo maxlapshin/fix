@@ -2,10 +2,11 @@
 -author('Max Lapshin <max@maxidoors.ru>').
 
 -include_lib("eunit/include/eunit.hrl").
--include("../include/admin.hrl").
--include("../include/business.hrl").
+-include("admin.hrl").
+-include("business.hrl").
+-include("fix_version.hrl").
 
--compile(export_all).
+-export([sample_md/0]).
 
 encode_test() ->
   ?assertEqual(fix:sample_fix(), iolist_to_binary(fix:encode(fix_splitter:split(fix:sample_fix())))).
@@ -78,6 +79,31 @@ fix_decode_3_test() ->
   ?assertMatch(#market_data_snapshot_full_refresh{
     md_entries = [[{md_entry_type,bid},{md_entry_px,215.34},{md_entry_size,320}]|_]
   }, Record).
+
+logon_50_test() ->
+  SendingTime = <<"20210907-11:42:41.654">>,
+  Encoded = fix:pack(logon,
+                   [{sending_time, SendingTime},
+                    {encrypt_method, 0},
+                    {heart_bt_int, 30},
+                    {reset_seq_num_flag, "Y"} ,
+                    {appl_ver_id, fix_50_sp1},
+                    {default_appl_ver_id, fix_50_sp1}],
+                   2,
+                   <<"Sender">>,
+                   <<"Target">>,
+                   ?FIX_5_0_SP2),
+  Expected = "8=FIXT.1.1|9=87|35=A|49=Sender|56=Target|34=2|52=20210907-11:42:41.654|98=0|108=30|141=Y|1128=8|1137=8|10=206|",
+  ?assertEqual(Expected, fix:convert_pretty(Encoded)),
+
+  {ok, Decoded, _, <<>>} = fix:decode(iolist_to_binary(Encoded)),
+  ?assertMatch(#logon{sending_time = SendingTime,
+                      encrypt_method = 0,
+                      heart_bt_int = 30,
+                      reset_seq_num_flag = true,
+                      fields = [{appl_ver_id,fix_50_sp1},
+                                {default_appl_ver_id, fix_50_sp1}]},
+               Decoded).
 
 quote_encoding_test() ->
     Sender = <<"Crypto-LP-Q">>,

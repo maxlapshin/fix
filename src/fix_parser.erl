@@ -3387,6 +3387,17 @@ encode_typed_field(no_nested3_party_ids, V) when is_integer(V) -> list_to_binary
 encode_typed_field(nested3_party_role, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_nested3_party_sub_ids, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(nested3_party_sub_id_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(appl_ver_id, fix_27) -> <<"0">>;
+encode_typed_field(appl_ver_id, fix_30) -> <<"1">>;
+encode_typed_field(appl_ver_id, fix_40) -> <<"2">>;
+encode_typed_field(appl_ver_id, fix_41) -> <<"3">>;
+encode_typed_field(appl_ver_id, fix_42) -> <<"4">>;
+encode_typed_field(appl_ver_id, fix_43) -> <<"5">>;
+encode_typed_field(appl_ver_id, fix_44) -> <<"6">>;
+encode_typed_field(appl_ver_id, fix_50) -> <<"7">>;
+encode_typed_field(appl_ver_id, fix_50_sp1) -> <<"8">>;
+encode_typed_field(appl_ver_id, fix_50_sp2) -> <<"9">>;
+encode_typed_field(default_appl_ver_id, VerId) -> encode_typed_field(appl_ver_id, VerId);
 encode_typed_field(_Key, V) when is_binary(V) -> V;
 encode_typed_field(_Key, V) when is_list(V) -> V;
 encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
