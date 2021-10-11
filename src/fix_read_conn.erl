@@ -223,7 +223,7 @@ send_logon(#conn{password = Password, version = Version, heartbeat = Heartbeat} 
     end,
   VersionParams =
     case Version of
-      ?FIX_5_0_SP2 -> [{default_appl_ver_id, 9}]; % TODO: use something like fix_50_sp2
+      ?FIX_5_0_SP2 -> [{default_appl_ver_id, fix_50_sp2}];
         _ -> []
     end,
   MsgBody = CommonParams ++ PasswordParams ++ VersionParams ++ CoD,
