@@ -12,7 +12,7 @@
 -define(NETWORK_TIMEOUT, 500).
 
 % Public API
--export([id/1, start_link/2, connect/2, subscribe/2, unsubscribe/2]).
+-export([id/1, start_link/2, send/3, connect/1, connect/2, subscribe/2, unsubscribe/2]).
 -export([status/1]).
 
 % gen_server callbacks
@@ -50,9 +50,11 @@ id(Name) ->
   list_to_atom(atom_to_list(Name) ++ "_conn").
 
 
-
 start_link(Name, Options) ->
   gen_server:start_link({local, id(Name)}, ?MODULE, [Name, Options], []).
+
+connect(Pid) ->
+  connect(Pid, []).
 
 connect(Pid, Timeout) when is_integer(Timeout) ->
   connect(Pid, [], Timeout);
@@ -72,6 +74,9 @@ unsubscribe(Pid, Stock) ->
 status(Pid) ->
   gen_server:call(Pid, status).
 
+
+send(Pid, MsgType, Body) ->
+  gen_server:call(Pid, {send, MsgType, Body}).
 
 init([Name, GivenOptions]) ->
   Options = GivenOptions ++ fix:get_value(Name),
@@ -123,6 +128,9 @@ handle_call({connect_logon, Options}, From, #conn{} = Conn) ->
   Logon_sent = send_logon(Connected#conn{logon_from = From}, Options),
   {noreply, Logon_sent, ?NETWORK_TIMEOUT};
 
+handle_call({send, MsgType, Body}, _From, #conn{} = Conn) ->
+  NewConn = do_send(MsgType, Body, Conn),
+  {reply, ok, NewConn};
 
 handle_call({subscribe, Stock}, _From, #conn{} = Conn) ->
   {ReqId, NewConn} = subscribe_stock(Stock, Conn),
@@ -139,7 +147,7 @@ handle_call({unsubscribe, Stock}, _From, #conn{} = Conn) ->
 
 
 handle_info(heartbeat, #conn{} = Conn) ->
-  {noreply, send(heartbeat, [], Conn)};
+  {noreply, do_send(heartbeat, [], Conn)};
 
 handle_info(timeout, #conn{logon_from = {_, _} = From} = Conn) ->
   gen_server:reply(From, {error, logon_timeout}),
@@ -229,11 +237,11 @@ send_logon(#conn{password = Password, version = Version, heartbeat = Heartbeat} 
   MsgBody = CommonParams ++ PasswordParams ++ VersionParams ++ CoD,
 
   timer:send_interval(Heartbeat*1000, heartbeat),
-  send(logon, MsgBody, Conn).
+  do_send(logon, MsgBody, Conn).
 
 
 
-send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target, transport = Transport, socket = Socket,
+do_send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target, transport = Transport, socket = Socket,
     version = Version, debug = Debug, log = Log} = Conn) ->
   % if MessageType =/= heartbeat -> ?D({pack, MessageType, Body, Seq, Sender, Target}); true -> ok end,
   Bin = fix:pack(MessageType, Body, Seq, Sender, Target, Version),
@@ -243,7 +251,7 @@ send(MessageType, Body, #conn{seq = Seq, sender = Sender, target = Target, trans
   true -> ok
   end,
     
-  if Debug == true andalso MessageType =/= heartbeat -> ?D({send, fix:dump(Bin)}); true -> ok end,
+  if Debug == true andalso MessageType =/= heartbeat -> ?D({do_send, fix:dump(Bin)}); true -> ok end,
   Transport:send(Socket, Bin),
   Conn#conn{seq = Seq + 1}.
 
@@ -329,7 +337,7 @@ subscribe_stock(Stock, #conn{md_req_id = ReqId, subscriptions = Subs} = Conn) ->
   % Monitor to unsubscribe stock on death
   erlang:monitor(process, Stock),
   % Send request, report success
-  {ReqId, send(market_data_request, RqBody, NewConn)}.
+  {ReqId, do_send(market_data_request, RqBody, NewConn)}.
 
 
 unsubscribe_stock(Stock, #conn{subscriptions = Subs} = Conn) ->
@@ -347,4 +355,4 @@ do_unsubscribe_stock(ReqId, Stock, Conn) ->
     {subscription_request_type, 2}, {market_depth, 0}, {no_related_sym,1} |
     fix:stock_to_instrument_block(Stock) ++ fix_connection:entry_types(Stock)],
   % Send request
-  send(market_data_request, RqBody, Conn).
+  do_send(market_data_request, RqBody, Conn).

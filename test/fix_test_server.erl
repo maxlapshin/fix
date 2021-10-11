@@ -33,7 +33,8 @@ start(Port, Options) ->
   on_fix,
   target,
   password,
-  version
+  version,
+  forward_pid
 }).
 
 on_fix(_, _) -> ok.
@@ -56,13 +57,15 @@ init(ListenerPid, Socket, Opts) ->
   Version = proplists:get_value(version, Opts, ?FIX_4_4),
   Sender = proplists:get_value(sender, Opts, <<"TestTarget">>),
   Target = proplists:get_value(target, Opts, <<"TestSender">>),
+  ForwardPid = proplists:get_value(forward_pid, Opts, no_forward),
   register(fix_test_server, self()),
   gen_server:enter_loop(?MODULE, [], #fix{socket = Socket,
                                           on_fix = OnFix,
                                           sender = Sender,
                                           target = Target,
                                           password = Password,
-                                          version = Version
+                                          version = Version,
+                                          forward_pid = ForwardPid
                                          }).
 
 
@@ -136,8 +139,12 @@ handle_fix(#message{type = market_data_request, body = Msg}, Fix) ->
       send(#message{type = market_data_request_reject, body = [{md_req_id,MdReqId},{md_req_rej_reason,unknownsym},{text,<<"MDRequest failed">>}]}, Fix)
   end;
 
-handle_fix(Msg, Fix) ->
+handle_fix(Msg, #fix{forward_pid = no_forward} = Fix) ->
   ?debugFmt("fix ~240p", [Msg]),
+  Fix;
+
+handle_fix(Msg, #fix{forward_pid = ForwardPid} = Fix) ->
+  ForwardPid ! Msg,
   Fix.
 
 
