@@ -11,11 +11,13 @@ unsigned char INT_CODES[] = {
 0x03,0x42,0x80,0x01,0xEA,0x0C,0x04,0x00,0x18,0x62,0xBD,0xA5,0x33,0x0B,0x00,0x08,0x0F,0x88,0x21,0xC4,
 0x00,0x48,0x00,0x0A,0xA5,0x78,0x69,0x80,0x20,0x81,0x18,0x30,0x08,0xDB,0x00,0x01,0x27,0xED,0x80,0x19,
 0x52,0x3E,0x38,0x2A,0xAA,0xAA,0xD4,0x2B,0xB0,0x73,0x40,0x43,0xCB,0xFF,0x04,0x44,0x0E,0x4A,0x40,0x44,
-0x01,0x09,0x00,0x12,0x03,0x20,0x06,0x30,0x06,0x97,0xF7,0x40,0xCE,0x40,0x00,0x01,0x08,0x24,0x33,0x06,
+0x01,0x09,0x00,0x12,0x03,0x20,0x06,0x30,0x06,0x96,0xF7,0x40,0xCE,0x40,0x00,0x01,0x08,0x24,0x33,0x06,
 0x87,0x9C,0x2F,0x6E,0x41,0xDF,0x2A,0x62,0xE5,0x82,0x3D,0xFF,0x00,0x4F,0xC9,0x00,0xA7,0xAC,0xAC,0xAB,
 0xFF,0xAF,0x90,0x3C,0x9F,0xFF,0x17,0xCF,0xD3,0x11,0x31,0x19,0xC1,0x63,0x01,0x0A,0x81,0xF8,0xE9,0xA0,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,
 0};
 
 unsigned char BOOL_CODES[] = {
@@ -26,7 +28,9 @@ unsigned char BOOL_CODES[] = {
 0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x01,0x80,0x00,0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x04,
 0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x80,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,
 0};
 
 unsigned char LENGTH_CODES[] = {
@@ -37,7 +41,9 @@ unsigned char LENGTH_CODES[] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,
 0};
 
 unsigned char CHOICE_CODES[] = {
@@ -48,7 +54,9 @@ unsigned char CHOICE_CODES[] = {
 0x00,0x24,0x28,0x68,0x00,0x00,0x2A,0x01,0x34,0x82,0x3C,0xD0,0x00,0x97,0x80,0x00,0x27,0x08,0x18,0xAA,
 0x10,0x83,0x10,0x38,0x1E,0xFB,0x1E,0xC0,0x41,0x10,0x00,0x15,0x81,0x62,0x81,0x0A,0x81,0x58,0xE0,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x80,0x40,0x00,0x00,0x00,
+0x00,0x80,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00,0x00,0x00,0x02,
 0};
 
 const char *FIELD_NAMES[] = {
@@ -1219,9 +1227,313 @@ const char *FIELD_NAMES[] = {
 "undefined", // 1164
 "undefined", // 1165
 "quote_msg_id", // 1166
+"undefined", // 1167
+"undefined", // 1168
+"undefined", // 1169
+"undefined", // 1170
+"undefined", // 1171
+"undefined", // 1172
+"undefined", // 1173
+"undefined", // 1174
+"undefined", // 1175
+"undefined", // 1176
+"undefined", // 1177
+"undefined", // 1178
+"undefined", // 1179
+"undefined", // 1180
+"undefined", // 1181
+"undefined", // 1182
+"undefined", // 1183
+"undefined", // 1184
+"undefined", // 1185
+"undefined", // 1186
+"undefined", // 1187
+"undefined", // 1188
+"undefined", // 1189
+"undefined", // 1190
+"undefined", // 1191
+"undefined", // 1192
+"undefined", // 1193
+"undefined", // 1194
+"undefined", // 1195
+"undefined", // 1196
+"undefined", // 1197
+"undefined", // 1198
+"undefined", // 1199
+"undefined", // 1200
+"undefined", // 1201
+"undefined", // 1202
+"undefined", // 1203
+"undefined", // 1204
+"undefined", // 1205
+"undefined", // 1206
+"undefined", // 1207
+"undefined", // 1208
+"undefined", // 1209
+"undefined", // 1210
+"undefined", // 1211
+"undefined", // 1212
+"undefined", // 1213
+"undefined", // 1214
+"undefined", // 1215
+"undefined", // 1216
+"undefined", // 1217
+"undefined", // 1218
+"undefined", // 1219
+"undefined", // 1220
+"undefined", // 1221
+"undefined", // 1222
+"undefined", // 1223
+"undefined", // 1224
+"undefined", // 1225
+"undefined", // 1226
+"undefined", // 1227
+"undefined", // 1228
+"undefined", // 1229
+"undefined", // 1230
+"undefined", // 1231
+"undefined", // 1232
+"undefined", // 1233
+"undefined", // 1234
+"undefined", // 1235
+"undefined", // 1236
+"undefined", // 1237
+"undefined", // 1238
+"undefined", // 1239
+"undefined", // 1240
+"undefined", // 1241
+"undefined", // 1242
+"undefined", // 1243
+"undefined", // 1244
+"undefined", // 1245
+"undefined", // 1246
+"undefined", // 1247
+"undefined", // 1248
+"undefined", // 1249
+"undefined", // 1250
+"undefined", // 1251
+"undefined", // 1252
+"undefined", // 1253
+"undefined", // 1254
+"undefined", // 1255
+"undefined", // 1256
+"undefined", // 1257
+"undefined", // 1258
+"undefined", // 1259
+"undefined", // 1260
+"undefined", // 1261
+"undefined", // 1262
+"undefined", // 1263
+"undefined", // 1264
+"undefined", // 1265
+"undefined", // 1266
+"undefined", // 1267
+"undefined", // 1268
+"undefined", // 1269
+"undefined", // 1270
+"undefined", // 1271
+"undefined", // 1272
+"undefined", // 1273
+"undefined", // 1274
+"undefined", // 1275
+"undefined", // 1276
+"undefined", // 1277
+"undefined", // 1278
+"undefined", // 1279
+"undefined", // 1280
+"undefined", // 1281
+"undefined", // 1282
+"undefined", // 1283
+"undefined", // 1284
+"undefined", // 1285
+"undefined", // 1286
+"undefined", // 1287
+"undefined", // 1288
+"undefined", // 1289
+"undefined", // 1290
+"undefined", // 1291
+"undefined", // 1292
+"undefined", // 1293
+"undefined", // 1294
+"undefined", // 1295
+"undefined", // 1296
+"undefined", // 1297
+"undefined", // 1298
+"undefined", // 1299
+"undefined", // 1300
+"undefined", // 1301
+"undefined", // 1302
+"undefined", // 1303
+"undefined", // 1304
+"undefined", // 1305
+"undefined", // 1306
+"undefined", // 1307
+"undefined", // 1308
+"undefined", // 1309
+"undefined", // 1310
+"undefined", // 1311
+"undefined", // 1312
+"undefined", // 1313
+"undefined", // 1314
+"undefined", // 1315
+"undefined", // 1316
+"undefined", // 1317
+"undefined", // 1318
+"undefined", // 1319
+"undefined", // 1320
+"undefined", // 1321
+"undefined", // 1322
+"undefined", // 1323
+"undefined", // 1324
+"undefined", // 1325
+"undefined", // 1326
+"undefined", // 1327
+"undefined", // 1328
+"undefined", // 1329
+"undefined", // 1330
+"undefined", // 1331
+"undefined", // 1332
+"undefined", // 1333
+"undefined", // 1334
+"undefined", // 1335
+"undefined", // 1336
+"undefined", // 1337
+"undefined", // 1338
+"undefined", // 1339
+"undefined", // 1340
+"undefined", // 1341
+"undefined", // 1342
+"undefined", // 1343
+"undefined", // 1344
+"undefined", // 1345
+"undefined", // 1346
+"undefined", // 1347
+"undefined", // 1348
+"undefined", // 1349
+"undefined", // 1350
+"undefined", // 1351
+"undefined", // 1352
+"undefined", // 1353
+"undefined", // 1354
+"undefined", // 1355
+"undefined", // 1356
+"undefined", // 1357
+"undefined", // 1358
+"undefined", // 1359
+"undefined", // 1360
+"undefined", // 1361
+"undefined", // 1362
+"undefined", // 1363
+"undefined", // 1364
+"undefined", // 1365
+"undefined", // 1366
+"undefined", // 1367
+"undefined", // 1368
+"undefined", // 1369
+"undefined", // 1370
+"undefined", // 1371
+"undefined", // 1372
+"undefined", // 1373
+"undefined", // 1374
+"undefined", // 1375
+"undefined", // 1376
+"undefined", // 1377
+"undefined", // 1378
+"undefined", // 1379
+"undefined", // 1380
+"undefined", // 1381
+"undefined", // 1382
+"undefined", // 1383
+"undefined", // 1384
+"undefined", // 1385
+"undefined", // 1386
+"undefined", // 1387
+"undefined", // 1388
+"undefined", // 1389
+"undefined", // 1390
+"undefined", // 1391
+"undefined", // 1392
+"undefined", // 1393
+"undefined", // 1394
+"undefined", // 1395
+"undefined", // 1396
+"undefined", // 1397
+"undefined", // 1398
+"undefined", // 1399
+"undefined", // 1400
+"undefined", // 1401
+"undefined", // 1402
+"undefined", // 1403
+"undefined", // 1404
+"undefined", // 1405
+"undefined", // 1406
+"undefined", // 1407
+"undefined", // 1408
+"undefined", // 1409
+"undefined", // 1410
+"undefined", // 1411
+"undefined", // 1412
+"undefined", // 1413
+"undefined", // 1414
+"undefined", // 1415
+"undefined", // 1416
+"undefined", // 1417
+"undefined", // 1418
+"undefined", // 1419
+"undefined", // 1420
+"undefined", // 1421
+"undefined", // 1422
+"undefined", // 1423
+"undefined", // 1424
+"undefined", // 1425
+"undefined", // 1426
+"undefined", // 1427
+"undefined", // 1428
+"undefined", // 1429
+"undefined", // 1430
+"undefined", // 1431
+"undefined", // 1432
+"undefined", // 1433
+"undefined", // 1434
+"undefined", // 1435
+"undefined", // 1436
+"undefined", // 1437
+"undefined", // 1438
+"undefined", // 1439
+"undefined", // 1440
+"undefined", // 1441
+"undefined", // 1442
+"undefined", // 1443
+"undefined", // 1444
+"undefined", // 1445
+"undefined", // 1446
+"undefined", // 1447
+"undefined", // 1448
+"undefined", // 1449
+"undefined", // 1450
+"undefined", // 1451
+"undefined", // 1452
+"undefined", // 1453
+"undefined", // 1454
+"undefined", // 1455
+"undefined", // 1456
+"undefined", // 1457
+"undefined", // 1458
+"undefined", // 1459
+"undefined", // 1460
+"undefined", // 1461
+"undefined", // 1462
+"undefined", // 1463
+"undefined", // 1464
+"undefined", // 1465
+"undefined", // 1466
+"undefined", // 1467
+"undefined", // 1468
+"undefined", // 1469
+"security_list_type", // 1470
 "undefined"};
 
-#define MAX_FIELD_NUMBER 1167
+#define MAX_FIELD_NUMBER 1471
 
 ERL_NIF_TERM FIELD_ATOMS[MAX_FIELD_NUMBER + 1];
 
@@ -1333,6 +1645,7 @@ struct ValueDesc CHOICE_VALUES[] = {
 {35, "X", "market_data_incremental_refresh"},
 {35, "Y", "market_data_request_reject"},
 {35, "j", "business_message_reject"},
+{35, "x", "security_list_request"},
 {39, "0", "new"},
 {39, "1", "partial"},
 {39, "2", "filled"},
@@ -2435,6 +2748,7 @@ struct ValueDesc CHOICE_VALUES[] = {
 {559, "2", "product"},
 {559, "3", "tradingsession_id"},
 {559, "4", "allsecurities"},
+{559, "5", "marketid"},
 {560, "0", "val_idreq"},
 {560, "1", "inval_idreq"},
 {560, "2", "noinstrumentsfound"},
@@ -2995,5 +3309,9 @@ struct ValueDesc CHOICE_VALUES[] = {
 {1137, "7", "fix_50"},
 {1137, "8", "fix_50_sp1"},
 {1137, "9", "fix_50_sp2"},
+{1470, "1", "industryclassification"},
+{1470, "2", "tradinglist"},
+{1470, "3", "market"},
+{1470, "4", "newspaperlist"},
 {0, 0, 0}
 };
