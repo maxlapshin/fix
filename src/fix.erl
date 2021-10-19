@@ -151,7 +151,7 @@ encode_value(Value) when is_list(Value) -> Value;
 encode_value(Value) when is_binary(Value) -> Value.
 
 
--spec dump(iolist()) -> binary().
+-spec dump(binary() | iolist()) -> binary().
 dump(Bin) ->
   re:replace(iolist_to_binary(Bin), "\\001", "|", [{return,binary},global]).
 
@@ -160,7 +160,7 @@ decode_printable(Text) ->
   Bin = re:replace(Text, "\\|", <<1>>, [{return,binary},global]),
   decode(Bin).
 
--spec decode(binary()) -> {ok, fix_splitter:decoded_message(), binary(), binary()}
+-spec decode(binary()) -> {ok, tuple(), binary(), binary()}
                           | {more, non_neg_integer()}
                           | error.
 decode(Bin) ->
@@ -268,11 +268,11 @@ stock_to_instrument_block(Stock) ->
       [{symbol, Symbol}, {cfi_code, cfi_code(futures)}, {maturity_month_year, Date}, {security_exchange, Exchange}]
   end.
 
--spec pretty_print(iolist()) -> ok.
+-spec pretty_print(binary() | iolist()) -> ok.
 pretty_print(Encoded) ->
   io:format("~s~n", [convert_pretty(Encoded)]).
 
--spec convert_pretty(iolist()) -> string().
+-spec convert_pretty(binary() | iolist()) -> string().
 convert_pretty(Encoded) ->
   lists:flatten(io_lib:format("~s", [binary:replace(erlang:iolist_to_binary(Encoded), <<1>>, <<"|">>, [global])])).
 

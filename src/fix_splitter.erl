@@ -19,11 +19,11 @@ init_nif() ->
 
 -spec split(binary()) -> decoded_message().
 split(_Binary) ->
-  erlang:error(not_implemented).
+  erlang:nif_error({not_loaded, [{module, ?MODULE}, {line, ?LINE}]}).
 
 -spec field_by_number(atom()) -> integer().
 field_by_number(_Field) ->
-  erlang:error(not_implemented).
+  erlang:nif_error({not_loaded, [{module, ?MODULE}, {line, ?LINE}]}).
 
 
 -spec to_i(binary() | string() | number()) -> number().
