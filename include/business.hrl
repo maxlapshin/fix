@@ -216,10 +216,42 @@
   fields = []
 }).
 
+-record(quote_request, {
+          quote_req_id,
+          private_quote,
+          no_related_sym,
+          symbols = [],
+          fields = []
+}).
+
+-record(mass_quote, {
+  quote_id,
+  quote_req_id,
+  quote_type,
+  no_quote_sets,
+  quote_sets = [],
+  fields = []
+}).
+
+-record(quote_request_reject, {
+  quote_req_id,
+  quote_request_reject_reason,
+  no_related_sym,
+  symbols = [],
+  fields = []
+}).
+
 -record(security_list_request, {
   subscription_request_type,
   security_req_id,
   security_list_request_type,
   security_list_type,
+  fields = []
+}).
+
+-record(security_list, {
+  security_req_id,
+  subscription_request_result,
+  symbols = [],
   fields = []
 }).

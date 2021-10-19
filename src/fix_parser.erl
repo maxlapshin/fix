@@ -67,8 +67,20 @@ decode_message([{msg_type,position_report}|Message]) -> % PositionReport
 decode_message([{msg_type,quote}|Message]) -> % Quote
   decode_fields(Message, #quote{}, quote, 11);
 
+decode_message([{msg_type,quote_request}|Message]) -> % QuoteRequest
+  decode_fields(Message, #quote_request{}, quote_request, 6);
+
+decode_message([{msg_type,quote_request_reject}|Message]) -> % QuoteRequestReject
+  decode_fields(Message, #quote_request_reject{}, quote_request_reject, 6);
+
+decode_message([{msg_type,mass_quote}|Message]) -> % MassQuote
+  decode_fields(Message, #mass_quote{}, mass_quote, 7);
+
 decode_message([{msg_type,security_list_request}|Message]) -> % SecurityListRequest
-  decode_fields(Message, #security_list_request{}, security_list_request, 6).
+  decode_fields(Message, #security_list_request{}, security_list_request, 6);
+
+decode_message([{msg_type,security_list}|Message]) -> % SecurityList
+  decode_fields(Message, #security_list{}, security_list, 5).
 
 field_index(heartbeat, sender_comp_id) -> false;
 field_index(heartbeat, target_comp_id) -> false;
@@ -300,6 +312,28 @@ field_index(quote, offer_size) -> 7;
 field_index(quote, quote_type) -> 8;
 field_index(quote, quote_msg_id) -> 9;
 field_index(quote, symbol) -> 10;
+field_index(quote_request, sender_comp_id) -> false;
+field_index(quote_request, target_comp_id) -> false;
+field_index(quote_request, msg_seq_num) -> false;
+field_index(quote_request, sending_time) -> false;
+field_index(quote_request, quote_req_id) -> 2;
+field_index(quote_request, private_quote) -> 3;
+field_index(quote_request, no_related_sym) -> 4;
+field_index(mass_quote, sender_comp_id) -> false;
+field_index(mass_quote, target_comp_id) -> false;
+field_index(mass_quote, msg_seq_num) -> false;
+field_index(mass_quote, sending_time) -> false;
+field_index(mass_quote, quote_id) -> 2;
+field_index(mass_quote, quote_req_id) -> 3;
+field_index(mass_quote, quote_type) -> 4;
+field_index(mass_quote, no_quote_sets) -> 5;
+field_index(quote_request_reject, sender_comp_id) -> false;
+field_index(quote_request_reject, target_comp_id) -> false;
+field_index(quote_request_reject, msg_seq_num) -> false;
+field_index(quote_request_reject, sending_time) -> false;
+field_index(quote_request_reject, quote_req_id) -> 2;
+field_index(quote_request_reject, quote_request_reject_reason) -> 3;
+field_index(quote_request_reject, no_related_sym) -> 4;
 field_index(security_list_request, sender_comp_id) -> false;
 field_index(security_list_request, target_comp_id) -> false;
 field_index(security_list_request, msg_seq_num) -> false;
@@ -308,6 +342,12 @@ field_index(security_list_request, subscription_request_type) -> 2;
 field_index(security_list_request, security_req_id) -> 3;
 field_index(security_list_request, security_list_request_type) -> 4;
 field_index(security_list_request, security_list_type) -> 5;
+field_index(security_list, sender_comp_id) -> false;
+field_index(security_list, target_comp_id) -> false;
+field_index(security_list, msg_seq_num) -> false;
+field_index(security_list, sending_time) -> false;
+field_index(security_list, security_req_id) -> 2;
+field_index(security_list, security_request_result) -> 3;
 field_index(_,_) -> undefined.
 
 decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->
@@ -1502,7 +1542,13 @@ decode_typed_field(email_type, <<"2">>) -> 'adminreply';
 decode_typed_field(raw_data_length, V) -> parse_num(V);
 decode_typed_field(raw_data, V) -> V;
 decode_typed_field(poss_resend, V) -> V == <<"Y">>;
-decode_typed_field(encrypt_method, V) -> parse_num(V);
+decode_typed_field(encrypt_method, 0) -> noneother;
+decode_typed_field(encrypt_method, 1) -> pkcs;
+decode_typed_field(encrypt_method, 2) -> des;
+decode_typed_field(encrypt_method, 3) -> pkcs_des;
+decode_typed_field(encrypt_method, 4) -> pgp_des;
+decode_typed_field(encrypt_method, 5) -> pgp_des_md5;
+decode_typed_field(encrypt_method, 6) -> pem_des_md5;
 decode_typed_field(stop_px, V) -> parse_num(V)*1.0;
 decode_typed_field(ex_destination, V) -> V;
 decode_typed_field(cxl_rej_reason, V) -> parse_num(V);
@@ -3420,6 +3466,25 @@ encode_typed_field(security_list_type, industryclassification) -> <<"1">>;
 encode_typed_field(security_list_type, tradinglist) -> <<"2">>;
 encode_typed_field(security_list_type, market) -> <<"3">>;
 encode_typed_field(security_list_type, newspaperlist) -> <<"4">>;
+encode_typed_field(security_request_result, val_idreq) -> <<"0">>;
+encode_typed_field(security_request_result, inval_idreq) -> <<"1">>;
+encode_typed_field(security_request_result, noinstrumentsfound) -> <<"2">>;
+encode_typed_field(security_request_result, notauthorized) -> <<"3">>;
+encode_typed_field(security_request_result, instrumentunavailable) -> <<"4">>;
+encode_typed_field(security_request_result, notsupported) -> <<"5">>;
+encode_typed_field(ref_msg_type, V) -> number_by_message(V);
+encode_typed_field(business_reject_reason, other) -> <<"0">>;
+encode_typed_field(business_reject_reason, unkn_id) -> <<"1">>;
+encode_typed_field(business_reject_reason, unknsec) -> <<"2">>;
+encode_typed_field(business_reject_reason, unknmsgtype) -> <<"3">>;
+encode_typed_field(business_reject_reason, appna) -> <<"4">>;
+encode_typed_field(business_reject_reason, condfldmiss) -> <<"5">>;
+encode_typed_field(business_reject_reason, notauth) -> <<"6">>;
+encode_typed_field(business_reject_reason, nodelivtofirm) -> <<"7">>;
+encode_typed_field(business_reject_reason, throttlelimitexceeded) -> <<"8">>;
+encode_typed_field(business_reject_reason, throttlelimitexceeded_session) -> <<"9">>;
+encode_typed_field(business_reject_reason, throttled_messages) -> <<"10">>;
+encode_typed_field(business_reject_reason, invalidpriceincrement) -> <<"18">>;
 encode_typed_field(_Key, V) when is_binary(V) -> V;
 encode_typed_field(_Key, V) when is_list(V) -> V;
 encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -4382,6 +4447,7 @@ number_by_field(leg_interest_accrual_date) -> <<"956">>;
 number_by_field(appl_ver_id) -> <<"1128">>;
 number_by_field(default_appl_ver_id) -> <<"1137">>;
 number_by_field(quote_msg_id) -> <<"1166">>;
+number_by_field(private_quote) -> <<"1171">>;
 number_by_field(security_list_type) -> <<"1470">>;
 number_by_field(Key) when is_binary(Key) -> Key.
 
@@ -4408,6 +4474,7 @@ message_by_number(<<"AP">>) -> position_report;
 message_by_number(<<"R">>) -> quote_request;
 message_by_number(<<"S">>) -> quote;
 message_by_number(<<"x">>) -> security_list_request;
+message_by_number(<<"y">>) -> security_list;
 message_by_number(Type) when is_binary(Type) -> Type.
 
 number_by_message(heartbeat) -> <<"0">>;
@@ -4428,11 +4495,14 @@ number_by_message(market_data_incremental_refresh) -> <<"X">>;
 number_by_message(market_data_request_reject) -> <<"Y">>;
 number_by_message(business_message_reject) -> <<"j">>;
 number_by_message(order_mass_status_request) -> <<"AF">>;
+number_by_message(quote_request_reject) -> <<"AG">>;
 number_by_message(request_for_positions) -> <<"AN">>;
 number_by_message(position_report) -> <<"AP">>;
-number_by_message(quote_request) -> <<"S">>;
+number_by_message(quote_request) -> <<"R">>;
 number_by_message(quote) -> <<"S">>;
+number_by_message(mass_quote) -> <<"i">>;
 number_by_message(security_list_request) -> <<"x">>;
+number_by_message(security_list) -> <<"y">>;
 number_by_message(Type) when is_binary(Type) -> Type.
 
 parse_num(Bin) -> parse_num_erl(Bin).
