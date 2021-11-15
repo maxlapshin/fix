@@ -207,7 +207,7 @@ security_list_decoding_test() ->
     {ok, DecodedSL, _, <<>>} = fix:decode_printable(SecurityList),
     ?assertMatch(#security_list{
                     security_req_id= <<"SLR_01631014961437">>,
-                    subscription_request_result = 0,
+                    security_request_result = 0,
                     symbols = _,
                     fields = _
                    }, DecodedSL).
