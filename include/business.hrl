@@ -251,7 +251,7 @@
 
 -record(security_list, {
   security_req_id,
-  subscription_request_result,
+  security_request_result,
   symbols = [],
   fields = []
 }).
