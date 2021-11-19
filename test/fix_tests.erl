@@ -348,6 +348,36 @@ mass_quote_decoding_test() ->
                     fields = _  % TODO: should be []
                    }, DecodedMassQuote).
 
+quote_cancel_encoding_test() ->
+    Sender = <<"Crypto-LP-Q">>,
+    Target = <<"Crypto-RFQ-Q">>,
+
+    EncodedQuoteCancel = fix:pack(quote_cancel,
+           [{sending_time, "20211119-18:09:16.770"},
+            {quote_req_id, <<"foo_id">>},
+            {no_quote_entries, 1},
+            {quote_cancel_type, cxlsym},
+            {symbol, <<"USD/UAH">>}
+           ],
+           1,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedQuoteCancel = "8=FIXT.1.1|9=100|35=Z|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=1|52=20211119-18:09:16.770|131=foo_id|295=1|298=1|55=USD/UAH|10=095|",
+    ok = compare(ExpectedQuoteCancel, fix:convert_pretty(EncodedQuoteCancel)),
+    ?assertEqual(ExpectedQuoteCancel, fix:convert_pretty(EncodedQuoteCancel)).
+
+quote_cancel_decoding_test() ->
+    QuoteCancel = <<"8=FIXT.1.1|9=100|35=Z|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=1|52=20211119-18:09:16.770|131=foo_id|298=1|295=1|55=USD/UAH|10=095|">>,
+    {ok, DecodedQuoteCancel, _, <<>>} = fix:decode_printable(QuoteCancel),
+    ?assertMatch(#quote_cancel{
+                    quote_req_id = <<"foo_id">>,
+                    quote_cancel_type = cxlsym,
+                    no_quote_entries = 1,
+                    symbols = _,
+                    fields = _
+                   }, DecodedQuoteCancel).
+
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),
     EncodedList = string:split(Encoded, "|", all),
