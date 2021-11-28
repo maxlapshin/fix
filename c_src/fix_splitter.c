@@ -28,7 +28,7 @@ static inline int is_code(enum CODE_TYPE type, int code) {
     case CHOICE_CODE: table = CHOICE_CODES; break;
     default: fprintf(stderr, "Invalid code type: %d\r\n", type); exit(1);
   }
- // fprintf(stderr, "code: %d div: %d rem: %d array_size: %lu table: %d res: %d\r\n", code, code / 8, code % 8, sizeof(INT_CODES), table[code / 8], (table[code / 8] >> (7 - (code % 8))));
+ // fprintf(stderr, "type: %d, code: %d div: %d rem: %d array_size: %lu table: %d res: %d\r\n", type, code, code / 8, code % 8, sizeof(INT_CODES), table[code / 8], (table[code / 8] >> (7 - (code % 8))));
   return (code / 8 > sizeof(INT_CODES)) ? 0 : (table[code / 8] >> (7 - (code % 8))) & 1;
 }
 // #define IS_CODE(TABLE, X) ((X / 8 > sizeof((TABLE)_CODES)) ? 0 : (TABLE)_CODES[X / 8] >> (8 - X % 8))

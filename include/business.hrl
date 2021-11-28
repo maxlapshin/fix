@@ -255,3 +255,11 @@
   symbols = [],
   fields = []
 }).
+
+-record(quote_cancel, {
+          quote_req_id,
+          quote_cancel_type,
+          no_quote_entries,
+          symbols = [],
+          fields = []
+}).

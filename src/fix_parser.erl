@@ -80,7 +80,10 @@ decode_message([{msg_type,security_list_request}|Message]) -> % SecurityListRequ
   decode_fields(Message, #security_list_request{}, security_list_request, 6);
 
 decode_message([{msg_type,security_list}|Message]) -> % SecurityList
-  decode_fields(Message, #security_list{}, security_list, 5).
+  decode_fields(Message, #security_list{}, security_list, 5);
+
+decode_message([{msg_type,quote_cancel}|Message]) -> % QuoteCancel
+  decode_fields(Message, #quote_cancel{}, quote_cancel, 5).
 
 field_index(heartbeat, sender_comp_id) -> false;
 field_index(heartbeat, target_comp_id) -> false;
@@ -348,6 +351,13 @@ field_index(security_list, msg_seq_num) -> false;
 field_index(security_list, sending_time) -> false;
 field_index(security_list, security_req_id) -> 2;
 field_index(security_list, security_request_result) -> 3;
+field_index(quote_cancel, sender_comp_id) -> false;
+field_index(quote_cancel, target_comp_id) -> false;
+field_index(quote_cancel, msg_seq_num) -> false;
+field_index(quote_cancel, sending_time) -> false;
+field_index(quote_cancel, quote_req_id) -> 2;
+field_index(quote_cancel, quote_cancel_type) -> 3;
+field_index(quote_cancel, no_quote_entries) -> 4;
 field_index(_,_) -> undefined.
 
 decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->
@@ -1845,7 +1855,14 @@ decode_typed_field(def_offer_size, V) -> parse_num(V);
 decode_typed_field(no_quote_entries, V) -> parse_num(V);
 decode_typed_field(no_quote_sets, V) -> parse_num(V);
 decode_typed_field(quote_status, V) -> parse_num(V);
-decode_typed_field(quote_cancel_type, V) -> parse_num(V);
+decode_typed_field(quote_cancel_type, <<"1">>) -> cxlsym;
+decode_typed_field(quote_cancel_type, <<"2">>) -> cxlsectype;
+decode_typed_field(quote_cancel_type, <<"3">>) -> cxlunder;
+decode_typed_field(quote_cancel_type, <<"4">>) -> cxlall;
+decode_typed_field(quote_cancel_type, <<"5">>) -> cxlquote;
+decode_typed_field(quote_cancel_type, <<"6">>) -> cxlquotetype;
+decode_typed_field(quote_cancel_type, <<"7">>) -> cxlsecissuer;
+decode_typed_field(quote_cancel_type, <<"8">>) -> cxlissuer;
 decode_typed_field(quote_entry_id, V) -> V;
 decode_typed_field(quote_reject_reason, V) -> parse_num(V);
 decode_typed_field(quote_response_level, V) -> parse_num(V);
@@ -2979,7 +2996,14 @@ encode_typed_field(def_offer_size, V) when is_integer(V) -> list_to_binary(integ
 encode_typed_field(no_quote_entries, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(no_quote_sets, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(quote_status, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
-encode_typed_field(quote_cancel_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
+encode_typed_field(quote_cancel_type, cxlsym) -> <<"1">>;
+encode_typed_field(quote_cancel_type, cxlsectype) -> <<"2">>;
+encode_typed_field(quote_cancel_type, cxlunder) -> <<"3">>;
+encode_typed_field(quote_cancel_type, cxlall) -> <<"4">>;
+encode_typed_field(quote_cancel_type, cxlquote) -> <<"5">>;
+encode_typed_field(quote_cancel_type, cxlquotetype) -> <<"6">>;
+encode_typed_field(quote_cancel_type, cxlsecissuer) -> <<"7">>;
+encode_typed_field(quote_cancel_type, cxlissuer) -> <<"8">>;
 encode_typed_field(quote_reject_reason, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(quote_response_level, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
 encode_typed_field(quote_request_type, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -4500,6 +4524,7 @@ number_by_message(request_for_positions) -> <<"AN">>;
 number_by_message(position_report) -> <<"AP">>;
 number_by_message(quote_request) -> <<"R">>;
 number_by_message(quote) -> <<"S">>;
+number_by_message(quote_cancel) -> <<"Z">>;
 number_by_message(mass_quote) -> <<"i">>;
 number_by_message(security_list_request) -> <<"x">>;
 number_by_message(security_list) -> <<"y">>;
