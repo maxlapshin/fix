@@ -252,6 +252,7 @@
 -record(security_list, {
   security_req_id,
   security_request_result,
+  no_related_sym,
   symbols = [],
   fields = []
 }).
