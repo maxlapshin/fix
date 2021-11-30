@@ -208,6 +208,7 @@ security_list_decoding_test() ->
     ?assertMatch(#security_list{
                     security_req_id= <<"SLR_01631014961437">>,
                     security_request_result = 0,
+                    no_related_sym = 6,
                     symbols = _,
                     fields = _
                    }, DecodedSL).

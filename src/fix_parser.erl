@@ -351,6 +351,7 @@ field_index(security_list, msg_seq_num) -> false;
 field_index(security_list, sending_time) -> false;
 field_index(security_list, security_req_id) -> 2;
 field_index(security_list, security_request_result) -> 3;
+field_index(security_list, no_related_sym) -> 4;
 field_index(quote_cancel, sender_comp_id) -> false;
 field_index(quote_cancel, target_comp_id) -> false;
 field_index(quote_cancel, msg_seq_num) -> false;
