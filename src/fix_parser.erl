@@ -80,7 +80,7 @@ decode_message([{msg_type,security_list_request}|Message]) -> % SecurityListRequ
   decode_fields(Message, #security_list_request{}, security_list_request, 6);
 
 decode_message([{msg_type,security_list}|Message]) -> % SecurityList
-  decode_fields(Message, #security_list{}, security_list, 5);
+  decode_fields(Message, #security_list{}, security_list, 6);
 
 decode_message([{msg_type,quote_cancel}|Message]) -> % QuoteCancel
   decode_fields(Message, #quote_cancel{}, quote_cancel, 5).
@@ -352,6 +352,7 @@ field_index(security_list, sending_time) -> false;
 field_index(security_list, security_req_id) -> 2;
 field_index(security_list, security_request_result) -> 3;
 field_index(security_list, no_related_sym) -> 4;
+field_index(security_list, security_reject_reason) -> 5;
 field_index(quote_cancel, sender_comp_id) -> false;
 field_index(quote_cancel, target_comp_id) -> false;
 field_index(quote_cancel, msg_seq_num) -> false;
@@ -2226,7 +2227,12 @@ decode_typed_field(leg_currency, V) -> V;
 decode_typed_field(tot_no_security_types, V) -> parse_num(V);
 decode_typed_field(no_security_types, V) -> parse_num(V);
 decode_typed_field(security_list_request_type, V) -> parse_num(V);
-decode_typed_field(security_request_result, V) -> parse_num(V);
+decode_typed_field(security_request_result, 0) -> val_idreq;
+decode_typed_field(security_request_result, 1) -> inval_idreq;
+decode_typed_field(security_request_result, 2) -> noinstrumentsfound;
+decode_typed_field(security_request_result, 3) -> notauthorized;
+decode_typed_field(security_request_result, 4) -> instrumentunavailable;
+decode_typed_field(security_request_result, 5) -> notsupported;
 decode_typed_field(round_lot, V) -> parse_num(V);
 decode_typed_field(min_trade_vol, V) -> parse_num(V);
 decode_typed_field(multi_leg_rpt_type_req, V) -> parse_num(V);
@@ -3510,6 +3516,17 @@ encode_typed_field(business_reject_reason, throttlelimitexceeded) -> <<"8">>;
 encode_typed_field(business_reject_reason, throttlelimitexceeded_session) -> <<"9">>;
 encode_typed_field(business_reject_reason, throttled_messages) -> <<"10">>;
 encode_typed_field(business_reject_reason, invalidpriceincrement) -> <<"18">>;
+encode_typed_field(security_reject_reason, invalid_instrument_requested) -> <<"1">>;
+encode_typed_field(security_reject_reason, instrument_already_exists) -> <<"2">>;
+encode_typed_field(security_reject_reason, request_type_not_supported) -> <<"3">>;
+encode_typed_field(security_reject_reason, system_unavailable) -> <<"4">>;
+encode_typed_field(security_reject_reason, ineligible_instrument_group) -> <<"5">>;
+encode_typed_field(security_reject_reason, instrument_id_unavailable) -> <<"6">>;
+encode_typed_field(security_reject_reason, invalid_option_leg) -> <<"7">>;
+encode_typed_field(security_reject_reason, invalid_future_leg) -> <<"8">>;
+encode_typed_field(security_reject_reason, invalid_fx_leg) -> <<"10">>;
+encode_typed_field(security_reject_reason, invalid_leg_price) -> <<"11">>;
+encode_typed_field(security_reject_reason, invalid_instrument_structure) -> <<"12">>;
 encode_typed_field(_Key, V) when is_binary(V) -> V;
 encode_typed_field(_Key, V) when is_list(V) -> V;
 encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -4474,6 +4491,7 @@ number_by_field(default_appl_ver_id) -> <<"1137">>;
 number_by_field(quote_msg_id) -> <<"1166">>;
 number_by_field(private_quote) -> <<"1171">>;
 number_by_field(security_list_type) -> <<"1470">>;
+number_by_field(security_reject_reason) -> <<"1607">>;
 number_by_field(Key) when is_binary(Key) -> Key.
 
 message_by_number(<<"0">>) -> heartbeat;
