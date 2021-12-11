@@ -179,7 +179,7 @@ security_list_encoding_test() ->
     EncodedSecurityList = fix:pack(security_list,
            [{sending_time, "20210907-11:42:41.582"},
             {security_req_id, <<"SLR_01631014961437">>},
-            {security_request_result, 0},
+            {security_request_result, val_idreq},
             {no_related_sym, 6},
             {symbol, <<"EUR/USD">>},
             {security_type, <<"FXSPOT">>},
@@ -200,18 +200,42 @@ security_list_encoding_test() ->
            ?FIX_5_0_SP2),
     ExpectedSecurityList = "8=FIXT.1.1|9=227|35=y|49=Crypto-LP-T|56=Crypto-RFQ-T|34=2|52=20210907-11:42:41.582|320=SLR_01631014961437|560=0|146=6|55=EUR/USD|167=FXSPOT|55=EUR/USD|167=FXFWD|55=USD/JPY|167=FXSPOT|55=USD/JPY|167=FXFWD|55=XRP/USD|167=CASH|55=LTC/USD|167=CASH|10=229|",
     ok = compare(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)),
-    ?assertEqual(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)).
+    ?assertEqual(ExpectedSecurityList, fix:convert_pretty(EncodedSecurityList)),
+
+    RejectSecurityList = fix:pack(security_list,
+           [{sending_time, "20210907-11:42:41.582"},
+            {security_req_id, <<"SLR_01631014961437">>},
+            {security_request_result, inval_idreq},
+            {security_reject_reason, request_type_not_supported}
+           ],
+           2,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedReject = "8=FIXT.1.1|9=102|35=y|49=Crypto-LP-T|56=Crypto-RFQ-T|34=2|52=20210907-11:42:41.582|320=SLR_01631014961437|560=1|1607=3|10=181|",
+    ok = compare(ExpectedReject, fix:convert_pretty(RejectSecurityList)),
+    ?assertEqual(ExpectedReject, fix:convert_pretty(RejectSecurityList)).
 
 security_list_decoding_test() ->
     SecurityList = <<"8=FIXT.1.1|9=227|35=y|34=2|49=Crypto-LP-T|52=20210907-11:42:41.582|56=Crypto-RFQ-T|320=SLR_01631014961437|560=0|146=6|55=EUR/USD|167=FXSPOT|55=EUR/USD|167=FXFWD|55=USD/JPY|167=FXSPOT|55=USD/JPY|167=FXFWD|55=XRP/USD|167=CASH|55=LTC/USD|167=CASH|10=229|">>,
     {ok, DecodedSL, _, <<>>} = fix:decode_printable(SecurityList),
     ?assertMatch(#security_list{
-                    security_req_id= <<"SLR_01631014961437">>,
-                    security_request_result = 0,
+                    security_req_id = <<"SLR_01631014961437">>,
+                    security_request_result = val_idreq,
                     no_related_sym = 6,
                     symbols = _,
                     fields = _
-                   }, DecodedSL).
+                   }, DecodedSL),
+
+    RejectSecurityList = <<"8=FIXT.1.1|9=102|35=y|49=Crypto-LP-T|56=Crypto-RFQ-T|34=2|52=20210907-11:42:41.582|320=SLR_01631014961437|560=1|1607=3|10=181|">>,
+    {ok, DecodedReject, _, <<>>} = fix:decode_printable(RejectSecurityList),
+    ?assertMatch(#security_list{
+                    security_req_id = <<"SLR_01631014961437">>,
+                    security_request_result = inval_idreq,
+                    security_reject_reason = request_type_not_supported,
+                    symbols = _,
+                    fields = _
+                   }, DecodedReject).
 
 quote_request_encoding_test() ->
     Sender = <<"Crypto-LP-Q">>,
