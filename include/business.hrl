@@ -265,3 +265,10 @@
           symbols = [],
           fields = []
 }).
+
+-record(quote_status_report, {
+          quote_id,
+          quote_status,
+          quote_type,
+          fields = []
+}).

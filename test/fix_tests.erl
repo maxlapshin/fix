@@ -403,6 +403,33 @@ quote_cancel_decoding_test() ->
                     fields = _
                    }, DecodedQuoteCancel).
 
+quote_status_report_encoding_test() ->
+    Sender = <<"OTPUATQUOTE">>,
+    Target = <<"OTPSMQUOTE">>,
+
+    EncodedQuoteStatusReport = fix:pack(quote_status_report,
+           [{sending_time, "20220125-16:52:33.679"},
+            {quote_id, <<"q_id_USD/UAH">>},
+            {quote_status, canceled},
+            {quote_type, tradeable}
+           ],
+           5,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedQuoteStatusReport = "8=FIXT.1.1|9=95|35=AI|49=OTPUATQUOTE|56=OTPSMQUOTE|34=5|52=20220125-16:52:33.679|117=q_id_USD/UAH|297=17|537=1|10=060|",
+    ok = compare(ExpectedQuoteStatusReport, fix:convert_pretty(EncodedQuoteStatusReport)),
+    ?assertEqual(ExpectedQuoteStatusReport, fix:convert_pretty(EncodedQuoteStatusReport)).
+
+quote_status_report_decoding_test() ->
+    QuoteStatusReport = <<"8=FIXT.1.1|9=95|35=AI|34=5|49=OTPUATQUOTE|52=20220125-16:52:33.679|56=OTPSMQUOTE|117=q_id_USD/UAH|297=17|537=1|10=060|">>,
+    {ok, DecodedQuoteStatusReport, _, <<>>} = fix:decode_printable(QuoteStatusReport),
+    ?assertMatch(#quote_status_report{
+                    quote_id = <<"q_id_USD/UAH">>,
+                    quote_status = canceled,
+                    quote_type = tradeable
+                   }, DecodedQuoteStatusReport).
+
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),
     EncodedList = string:split(Encoded, "|", all),
