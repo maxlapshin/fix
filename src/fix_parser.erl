@@ -65,7 +65,7 @@ decode_message([{msg_type,position_report}|Message]) -> % PositionReport
   decode_fields(Message, #position_report{}, position_report, 5);
 
 decode_message([{msg_type,quote}|Message]) -> % Quote
-  decode_fields(Message, #quote{}, quote, 11);
+  decode_fields(Message, #quote{}, quote, 12);
 
 decode_message([{msg_type,quote_request}|Message]) -> % QuoteRequest
   decode_fields(Message, #quote_request{}, quote_request, 6);
@@ -83,7 +83,10 @@ decode_message([{msg_type,security_list}|Message]) -> % SecurityList
   decode_fields(Message, #security_list{}, security_list, 6);
 
 decode_message([{msg_type,quote_cancel}|Message]) -> % QuoteCancel
-  decode_fields(Message, #quote_cancel{}, quote_cancel, 5).
+  decode_fields(Message, #quote_cancel{}, quote_cancel, 5);
+
+decode_message([{msg_type,quote_status_report}|Message]) -> % QuoteStatusReport
+  decode_fields(Message, #quote_status_report{}, quote_status_report, 5).
 
 field_index(heartbeat, sender_comp_id) -> false;
 field_index(heartbeat, target_comp_id) -> false;
@@ -315,6 +318,7 @@ field_index(quote, offer_size) -> 7;
 field_index(quote, quote_type) -> 8;
 field_index(quote, quote_msg_id) -> 9;
 field_index(quote, symbol) -> 10;
+field_index(quote, settl_date) -> 11;
 field_index(quote_request, sender_comp_id) -> false;
 field_index(quote_request, target_comp_id) -> false;
 field_index(quote_request, msg_seq_num) -> false;
@@ -360,6 +364,9 @@ field_index(quote_cancel, sending_time) -> false;
 field_index(quote_cancel, quote_req_id) -> 2;
 field_index(quote_cancel, quote_cancel_type) -> 3;
 field_index(quote_cancel, no_quote_entries) -> 4;
+field_index(quote_status_report, quote_id) -> 2;
+field_index(quote_status_report, quote_status) -> 3;
+field_index(quote_status_report, quote_type) -> 4;
 field_index(_,_) -> undefined.
 
 decode_fields([{Code,Value}|Message], Record, RecordName, Default) ->
@@ -3527,6 +3534,28 @@ encode_typed_field(security_reject_reason, invalid_future_leg) -> <<"8">>;
 encode_typed_field(security_reject_reason, invalid_fx_leg) -> <<"10">>;
 encode_typed_field(security_reject_reason, invalid_leg_price) -> <<"11">>;
 encode_typed_field(security_reject_reason, invalid_instrument_structure) -> <<"12">>;
+encode_typed_field(quote_status, invalid_instrument_structure) -> <<"12">>;
+encode_typed_field(quote_status, accpt) -> <<"0">>;
+encode_typed_field(quote_status, cxlsym) -> <<"1">>;
+encode_typed_field(quote_status, cxlsectype) -> <<"2">>;
+encode_typed_field(quote_status, cxlunder) -> <<"3">>;
+encode_typed_field(quote_status, cxlall) -> <<"4">>;
+encode_typed_field(quote_status, rej) -> <<"5">>;
+encode_typed_field(quote_status, removed) -> <<"6">>;
+encode_typed_field(quote_status, expired) -> <<"7">>;
+encode_typed_field(quote_status, query) -> <<"8">>;
+encode_typed_field(quote_status, quotenotfound) -> <<"9">>;
+encode_typed_field(quote_status, pending) -> <<"10">>;
+encode_typed_field(quote_status, pass) -> <<"11">>;
+encode_typed_field(quote_status, lockedmarketwarning) -> <<"12">>;
+encode_typed_field(quote_status, crossmarketwarning) -> <<"13">>;
+encode_typed_field(quote_status, canceledduetolockmarket) -> <<"14">>;
+encode_typed_field(quote_status, canceledduetocrossmarket) -> <<"15">>;
+encode_typed_field(quote_status, active) -> <<"16">>;
+encode_typed_field(quote_status, canceled) -> <<"17">>;
+encode_typed_field(quote_status, unsolicitedquotereplenishment) -> <<"18">>;
+encode_typed_field(quote_status, pendingendtrade) -> <<"19">>;
+encode_typed_field(quote_status, toolatetoend) -> <<"20">>;
 encode_typed_field(_Key, V) when is_binary(V) -> V;
 encode_typed_field(_Key, V) when is_list(V) -> V;
 encode_typed_field(_Key, V) when is_integer(V) -> list_to_binary(integer_to_list(V));
@@ -4539,6 +4568,7 @@ number_by_message(market_data_request_reject) -> <<"Y">>;
 number_by_message(business_message_reject) -> <<"j">>;
 number_by_message(order_mass_status_request) -> <<"AF">>;
 number_by_message(quote_request_reject) -> <<"AG">>;
+number_by_message(quote_status_report) -> <<"AI">>;
 number_by_message(request_for_positions) -> <<"AN">>;
 number_by_message(position_report) -> <<"AP">>;
 number_by_message(quote_request) -> <<"R">>;

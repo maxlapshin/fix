@@ -118,17 +118,18 @@ quote_encoding_test() ->
             {offer_px, <<"105.48890454985164">>},
             {bid_size, 5000000},
             {offer_size, 5000000},
+            {settl_date, <<"2022-04-29">>},
             {quote_type, tradeable},
             {quote_msg_id, <<"q_msg_id_USD/JPY_1">>}],
            3,
            Sender,
            Target),
-    Expected = "8=FIX.4.4|9=216|35=S|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=3|52=20210907-11:42:41.654|55=USD/JPY|117=q_id_USD/JPY|131=QRS_11631014961606|132=99.53816278537646|133=105.48890454985164|134=5000000|135=5000000|537=1|1166=q_msg_id_USD/JPY_1|10=036|",
+    Expected = "8=FIX.4.4|9=230|35=S|49=Crypto-LP-Q|56=Crypto-RFQ-Q|34=3|52=20210907-11:42:41.654|55=USD/JPY|117=q_id_USD/JPY|131=QRS_11631014961606|132=99.53816278537646|133=105.48890454985164|134=5000000|135=5000000|64=2022-04-29|537=1|1166=q_msg_id_USD/JPY_1|10=183|",
     compare(Expected, fix:convert_pretty(Encoded)),
     ?assertEqual(Expected, fix:convert_pretty(Encoded)).
 
 quote_decoding_test() ->
-    Quote1 = <<"8=FIXT.1.1|9=207|35=S|34=2|49=Crypto-LP-Q|52=20210907-11:42:41.653|56=Crypto-RFQ-Q|55=LTC/USD|117=q_id_LTC/USD|131=QRS_11631014961606|132=299.5514016087717|133=330.0882584096762|134=349|135=351|537=1|1166=q_msg_id_LTC/USD_1|10=132|">>,
+    Quote1 = <<"8=FIXT.1.1|9=221|35=S|34=2|49=Crypto-LP-Q|52=20210907-11:42:41.653|56=Crypto-RFQ-Q|55=LTC/USD|117=q_id_LTC/USD|131=QRS_11631014961606|132=299.5514016087717|133=330.0882584096762|134=349|135=351|64=2022-04-29|537=1|1166=q_msg_id_LTC/USD_1|10=023|">>,
     {ok, DecodedQuote1, _, <<>>} = fix:decode_printable(Quote1),
     ?assertMatch(#quote{
                     symbol = <<"LTC/USD">>,
@@ -140,6 +141,7 @@ quote_decoding_test() ->
                     offer_size = 351,
                     quote_type = tradeable,
                     quote_msg_id = <<"q_msg_id_LTC/USD_1">>,
+                    settl_date = <<"2022-04-29">>,
                     fields = []
                    }, DecodedQuote1).
 
@@ -402,6 +404,33 @@ quote_cancel_decoding_test() ->
                     symbols = _,
                     fields = _
                    }, DecodedQuoteCancel).
+
+quote_status_report_encoding_test() ->
+    Sender = <<"OTPUATQUOTE">>,
+    Target = <<"OTPSMQUOTE">>,
+
+    EncodedQuoteStatusReport = fix:pack(quote_status_report,
+           [{sending_time, "20220125-16:52:33.679"},
+            {quote_id, <<"q_id_USD/UAH">>},
+            {quote_status, canceled},
+            {quote_type, tradeable}
+           ],
+           5,
+           Sender,
+           Target,
+           ?FIX_5_0_SP2),
+    ExpectedQuoteStatusReport = "8=FIXT.1.1|9=95|35=AI|49=OTPUATQUOTE|56=OTPSMQUOTE|34=5|52=20220125-16:52:33.679|117=q_id_USD/UAH|297=17|537=1|10=060|",
+    ok = compare(ExpectedQuoteStatusReport, fix:convert_pretty(EncodedQuoteStatusReport)),
+    ?assertEqual(ExpectedQuoteStatusReport, fix:convert_pretty(EncodedQuoteStatusReport)).
+
+quote_status_report_decoding_test() ->
+    QuoteStatusReport = <<"8=FIXT.1.1|9=95|35=AI|34=5|49=OTPUATQUOTE|52=20220125-16:52:33.679|56=OTPSMQUOTE|117=q_id_USD/UAH|297=17|537=1|10=060|">>,
+    {ok, DecodedQuoteStatusReport, _, <<>>} = fix:decode_printable(QuoteStatusReport),
+    ?assertMatch(#quote_status_report{
+                    quote_id = <<"q_id_USD/UAH">>,
+                    quote_status = canceled,
+                    quote_type = tradeable
+                   }, DecodedQuoteStatusReport).
 
 compare(Expected, Encoded) ->
     ExpectedList = string:split(Expected, "|", all),

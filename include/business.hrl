@@ -213,6 +213,7 @@
   quote_type,
   quote_msg_id,
   symbol,
+  settl_date,
   fields = []
 }).
 
@@ -263,5 +264,12 @@
           quote_cancel_type,
           no_quote_entries,
           symbols = [],
+          fields = []
+}).
+
+-record(quote_status_report, {
+          quote_id,
+          quote_status,
+          quote_type,
           fields = []
 }).
