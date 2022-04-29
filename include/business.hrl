@@ -213,6 +213,7 @@
   quote_type,
   quote_msg_id,
   symbol,
+  settl_date,
   fields = []
 }).
 

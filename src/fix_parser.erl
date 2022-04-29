@@ -65,7 +65,7 @@ decode_message([{msg_type,position_report}|Message]) -> % PositionReport
   decode_fields(Message, #position_report{}, position_report, 5);
 
 decode_message([{msg_type,quote}|Message]) -> % Quote
-  decode_fields(Message, #quote{}, quote, 11);
+  decode_fields(Message, #quote{}, quote, 12);
 
 decode_message([{msg_type,quote_request}|Message]) -> % QuoteRequest
   decode_fields(Message, #quote_request{}, quote_request, 6);
@@ -318,6 +318,7 @@ field_index(quote, offer_size) -> 7;
 field_index(quote, quote_type) -> 8;
 field_index(quote, quote_msg_id) -> 9;
 field_index(quote, symbol) -> 10;
+field_index(quote, settl_date) -> 11;
 field_index(quote_request, sender_comp_id) -> false;
 field_index(quote_request, target_comp_id) -> false;
 field_index(quote_request, msg_seq_num) -> false;
