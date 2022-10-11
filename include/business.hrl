@@ -221,6 +221,7 @@
           quote_req_id,
           private_quote,
           no_related_sym,
+          booking_type,
           symbols = [],
           fields = []
 }).

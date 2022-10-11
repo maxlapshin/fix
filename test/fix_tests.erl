@@ -278,12 +278,13 @@ quote_request_encoding_test() ->
     ?assertEqual(ExpectedQuoteRequest, fix:convert_pretty(EncodedQuoteRequest)).
 
 quote_request_decoding_test() ->
-    QuoteRequest = <<"8=FIXT.1.1|9=310|35=R|34=2|49=Crypto-RFQ-Q|52=20210907-11:42:41.619|56=Crypto-LP-Q|131=QRS_11631014961606|1171=N|146=3|55=EUR/USD|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.618|55=LTC/USD|167=CASH|537=1|63=1|64=20210907|60=20210907-11:42:41.619|55=USD/JPY|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.619|10=022|">>,
+    QuoteRequest = <<"8=FIXT.1.1|9=316|35=R|34=2|49=Crypto-RFQ-Q|52=20210907-11:42:41.619|56=Crypto-LP-Q|131=QRS_11631014961606|775=0|1171=N|146=3|55=EUR/USD|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.618|55=LTC/USD|167=CASH|537=1|63=1|64=20210907|60=20210907-11:42:41.619|55=USD/JPY|167=FXSPOT|537=1|63=0|64=20210909|60=20210907-11:42:41.619|10=045|">>,
     {ok, DecodedQuoteRequest, _, <<>>} = fix:decode_printable(QuoteRequest),
     ?assertMatch(#quote_request{
                     quote_req_id = <<"QRS_11631014961606">>,
                     no_related_sym = 3,
                     private_quote = <<"N">>,
+                    booking_type = regularbooking,
                     symbols = _,
                     fields = _
                    }, DecodedQuoteRequest).

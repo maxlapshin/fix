@@ -68,7 +68,7 @@ decode_message([{msg_type,quote}|Message]) -> % Quote
   decode_fields(Message, #quote{}, quote, 12);
 
 decode_message([{msg_type,quote_request}|Message]) -> % QuoteRequest
-  decode_fields(Message, #quote_request{}, quote_request, 6);
+  decode_fields(Message, #quote_request{}, quote_request, 7);
 
 decode_message([{msg_type,quote_request_reject}|Message]) -> % QuoteRequestReject
   decode_fields(Message, #quote_request_reject{}, quote_request_reject, 6);
@@ -326,6 +326,7 @@ field_index(quote_request, sending_time) -> false;
 field_index(quote_request, quote_req_id) -> 2;
 field_index(quote_request, private_quote) -> 3;
 field_index(quote_request, no_related_sym) -> 4;
+field_index(quote_request, booking_type) -> 5;
 field_index(mass_quote, sender_comp_id) -> false;
 field_index(mass_quote, target_comp_id) -> false;
 field_index(mass_quote, msg_seq_num) -> false;
@@ -2457,7 +2458,6 @@ decode_typed_field(trd_reg_timestamp_origin, V) -> V;
 decode_typed_field(confirm_ref_id, V) -> V;
 decode_typed_field(confirm_type, V) -> parse_num(V);
 decode_typed_field(confirm_rej_reason, V) -> parse_num(V);
-decode_typed_field(booking_type, V) -> parse_num(V);
 decode_typed_field(individual_alloc_rej_code, V) -> parse_num(V);
 decode_typed_field(settl_inst_msg_id, V) -> V;
 decode_typed_field(no_settl_inst, V) -> parse_num(V);
